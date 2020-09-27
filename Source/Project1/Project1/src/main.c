@@ -41,6 +41,7 @@ typedef enum{
 } state_machine_t;
 
 void exercise_A(void);
+void exercise_B(void);
 
 int main (void)
 {
@@ -52,8 +53,10 @@ int main (void)
 	/* Insert application code here, after the board has been initialized. */
 	
 	// Exercise A)
-	exercise_A();
+	//exercise_A();
 	
+	// Exercise B)
+	exercise_B();
 		
 }
 
@@ -165,4 +168,47 @@ void exercise_A(void)
 			break;
 		}
 	}
+}
+
+void exercise_B(void)
+{
+	// Configure LEDS and QT
+	config_led_gpio();
+	qt_sensor_t *qt = config_qt_gpio();
+	evk_led_t evkled_b;
+	memset(&evkled_b, 0, sizeof(evkled_b));
+	
+	while (1)
+	{
+		bool toggle = false;
+		poll_qt_button(&qt->button_s._up, QT_PRESSED);
+		poll_qt_button(&qt->button_s._down, QT_PRESSED);
+		poll_qt_button(&qt->button_s._enter, QT_PRESSED);
+		
+		if (qt->button_s._up.active)
+		{
+			if ((evkled_b.ledx + 1) < 8)
+				evkled_b.ledx++;
+			toggle = true;
+			set_ledx_num_b(evkled_b.ledx);
+		}
+		else if (qt->button_s._down.active)
+		{
+			if ((evkled_b.ledx - 1) >= 0)
+				evkled_b.ledx--;
+			toggle = true;
+			set_ledx_num_b(evkled_b.ledx);
+		}
+		else if (qt->button_s._enter.active)
+		{
+			memset(&evkled_b, 0, sizeof(evkled_b));
+			set_ledx_num_b(evkled_b.ledx);
+		}
+		
+		if (toggle)
+		{
+			gpio_tgl_gpio_pin(LED3_GPIO);
+		}
+		
+	}	
 }
