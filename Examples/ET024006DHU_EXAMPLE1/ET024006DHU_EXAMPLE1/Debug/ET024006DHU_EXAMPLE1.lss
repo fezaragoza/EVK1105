@@ -1,0 +1,4254 @@
+
+ET024006DHU_EXAMPLE1.elf:     file format elf32-avr32
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .reset        00002008  80000000  80000000  00000400  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .rela.got     00000000  80002008  80002008  00002408  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .text         00001330  80002008  80002008  00002408  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  3 .exception    00000200  80003400  80003400  00003800  2**9
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .rodata       00025f58  80003600  80003600  00003a00  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  5 .dalign       00000004  00000004  00000004  00000000  2**0
+                  ALLOC
+  6 .data         00000020  00000008  80029558  00029c08  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .bss          00000100  00000028  00000028  00000000  2**2
+                  ALLOC
+  8 .heap         0000eed8  00000128  00000128  00000000  2**0
+                  ALLOC
+  9 .comment      00000030  00000000  00000000  00029c28  2**0
+                  CONTENTS, READONLY
+ 10 .debug_aranges 00000530  00000000  00000000  00029c58  2**3
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_pubnames 00000c53  00000000  00000000  0002a188  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_info   0000786f  00000000  00000000  0002addb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_abbrev 00001395  00000000  00000000  0003264a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .debug_line   000048be  00000000  00000000  000339df  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 15 .debug_frame  00000b84  00000000  00000000  000382a0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 16 .debug_str    00001cce  00000000  00000000  00038e24  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 17 .debug_loc    00002a54  00000000  00000000  0003aaf2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 18 .debug_macinfo 0077681b  00000000  00000000  0003d546  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 19 .stack        00001000  0000f000  0000f000  00000000  2**0
+                  ALLOC
+ 20 .debug_ranges 00000728  00000000  00000000  007b3d68  2**3
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .reset:
+
+80000000 <_start>:
+
+  .global _start
+  .type _start, @function
+_start:
+  // Jump to the C runtime startup routine.
+  lda.w   pc, _stext
+80000000:	fe cf d1 78 	sub	pc,pc,-11912
+
+80000004 <_trampoline>:
+80000004:	e0 8f 10 00 	bral	80002004 <program_start>
+	...
+
+80002004 <program_start>:
+  rjmp    program_start
+
+  .org  PROGRAM_START_OFFSET
+program_start:
+  // Jump to the C runtime startup routine.
+  lda.w   pc, _stext
+80002004:	fe cf f1 7c 	sub	pc,pc,-3716
+
+Disassembly of section .text:
+
+80002008 <et024006_SetLimits>:
+80002008:	eb cd 40 80 	pushm	r7,lr
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000200c:	fc 1e c0 00 	movh	lr,0xc000
+80002010:	30 28       	mov	r8,2
+80002012:	bc 08       	st.h	lr[0x0],r8
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002014:	ef dc c1 08 	bfextu	r7,r12,0x8,0x8
+80002018:	fc 18 c0 20 	movh	r8,0xc020
+8000201c:	b0 07       	st.h	r8[0x0],r7
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000201e:	30 37       	mov	r7,3
+80002020:	bc 07       	st.h	lr[0x0],r7
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002022:	b0 0c       	st.h	r8[0x0],r12
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002024:	30 4c       	mov	r12,4
+80002026:	bc 0c       	st.h	lr[0x0],r12
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002028:	f9 da c1 08 	bfextu	r12,r10,0x8,0x8
+8000202c:	b0 0c       	st.h	r8[0x0],r12
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000202e:	30 5c       	mov	r12,5
+80002030:	bc 0c       	st.h	lr[0x0],r12
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002032:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002034:	30 6a       	mov	r10,6
+80002036:	bc 0a       	st.h	lr[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002038:	f5 db c1 08 	bfextu	r10,r11,0x8,0x8
+8000203c:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000203e:	30 7a       	mov	r10,7
+80002040:	bc 0a       	st.h	lr[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002042:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002044:	30 8a       	mov	r10,8
+80002046:	bc 0a       	st.h	lr[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002048:	f5 d9 c1 08 	bfextu	r10,r9,0x8,0x8
+8000204c:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000204e:	30 9a       	mov	r10,9
+80002050:	bc 0a       	st.h	lr[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002052:	b0 09       	st.h	r8[0x0],r9
+  et024006_WriteRegister( HIMAX_COL_ADDR_END1, (x2 & 0xff) );
+  et024006_WriteRegister( HIMAX_ROW_ADDR_START2, (y1 >> 8) );
+  et024006_WriteRegister( HIMAX_ROW_ADDR_START1, (y1 & 0xff) );
+  et024006_WriteRegister( HIMAX_ROW_ADDR_END2, (y2 >> 8) );
+  et024006_WriteRegister( HIMAX_ROW_ADDR_END1, (y2 & 0xff) );
+}
+80002054:	e3 cd 80 80 	ldm	sp++,r7,pc
+
+80002058 <et024006_SetQuickLimits>:
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002058:	fc 19 c0 00 	movh	r9,0xc000
+8000205c:	30 28       	mov	r8,2
+8000205e:	b2 08       	st.h	r9[0x0],r8
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002060:	f5 dc c1 08 	bfextu	r10,r12,0x8,0x8
+80002064:	fc 18 c0 20 	movh	r8,0xc020
+80002068:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000206a:	30 3a       	mov	r10,3
+8000206c:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000206e:	b0 0c       	st.h	r8[0x0],r12
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002070:	30 6a       	mov	r10,6
+80002072:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002074:	f5 db c1 08 	bfextu	r10,r11,0x8,0x8
+80002078:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000207a:	30 7a       	mov	r10,7
+8000207c:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000207e:	b0 0b       	st.h	r8[0x0],r11
+{
+  et024006_WriteRegister( HIMAX_COL_ADDR_START2, (x >> 8) );
+  et024006_WriteRegister( HIMAX_COL_ADDR_START1, (x & 0xff) );
+  et024006_WriteRegister( HIMAX_ROW_ADDR_START2, (y >> 8) );
+  et024006_WriteRegister( HIMAX_ROW_ADDR_START1, (y & 0xff) );
+}
+80002080:	5e fc       	retal	r12
+80002082:	d7 03       	nop
+
+80002084 <et024006_DrawQuickPixel>:
+  et024006_WriteRegister( HIMAX_ROW_ADDR_END1, (y & 0xff) );
+}
+
+
+void et024006_DrawQuickPixel( uint16_t x, uint16_t y, et024006_color_t color )
+{
+80002084:	eb cd 40 80 	pushm	r7,lr
+80002088:	14 97       	mov	r7,r10
+  // Sanity check on parameters.
+  Assert( x < ET024006_WIDTH );
+  Assert( y < ET024006_HEIGHT );
+
+  // Set up draw area and write the two bytes of pixel data.
+  et024006_SetQuickLimits( x, y );
+8000208a:	5c 7b       	castu.h	r11
+8000208c:	5c 7c       	castu.h	r12
+8000208e:	f0 1f 00 06 	mcall	800020a4 <et024006_DrawQuickPixel+0x20>
+  return *ET024006_PARAM_ADDR;
+}
+
+__always_inline static void et024006_SelectRegister( uint8_t address )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002092:	32 29       	mov	r9,34
+80002094:	fc 18 c0 00 	movh	r8,0xc000
+80002098:	b0 09       	st.h	r8[0x0],r9
+  et024006_SendSPI( color & 0xff );
+  et024006_SendSPI( color >> 8 );
+  et024006_DeselectSPI();
+#endif
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  *ET024006_PARAM_ADDR = color;
+8000209a:	fc 18 c0 20 	movh	r8,0xc020
+8000209e:	b0 07       	st.h	r8[0x0],r7
+#endif
+
+}
+800020a0:	e3 cd 80 80 	ldm	sp++,r7,pc
+800020a4:	80 00       	ld.sh	r0,r0[0x0]
+800020a6:	20 58       	sub	r8,5
+
+800020a8 <et024006_PrintString>:
+void et024006_PrintString(char *lcd_string, const unsigned char *font_style,
+                          uint16_t x,
+                          uint16_t y,
+                          uint16_t fcolor,
+                          int bcolor)
+{
+800020a8:	d4 31       	pushm	r0-r7,lr
+800020aa:	20 dd       	sub	sp,52
+800020ac:	18 97       	mov	r7,r12
+800020ae:	50 6b       	stdsp	sp[0x18],r11
+800020b0:	50 8a       	stdsp	sp[0x20],r10
+800020b2:	50 29       	stdsp	sp[0x8],r9
+800020b4:	10 94       	mov	r4,r8
+800020b6:	41 63       	lddsp	r3,sp[0x58]
+  unsigned char mask = 0, xfont, yfont, font_size;
+  const unsigned char *data;
+  uint16_t saved_x = x;
+
+  // if string is empty there is nothing to do
+  if( *lcd_string == '\0')
+800020b8:	19 89       	ld.ub	r9,r12[0x0]
+800020ba:	30 08       	mov	r8,0
+800020bc:	f0 09 18 00 	cp.b	r9,r8
+800020c0:	e0 80 01 0c 	breq	800022d8 <et024006_PrintString+0x230>
+    return;
+
+  data = font_style;  // point to the start of the font table
+  xfont = *data;  // get font x width
+800020c4:	16 98       	mov	r8,r11
+800020c6:	11 3a       	ld.ub	r10,r8++
+800020c8:	50 4a       	stdsp	sp[0x10],r10
+  data++;
+  yfont = *data;  // get font y length
+800020ca:	11 89       	ld.ub	r9,r8[0x0]
+800020cc:	50 39       	stdsp	sp[0xc],r9
+  data++;
+  font_size = *data;  // get data bytes per font
+800020ce:	11 98       	ld.ub	r8,r8[0x1]
+800020d0:	50 58       	stdsp	sp[0x14],r8
+
+  // If transparent mode
+  if(bcolor == -1)
+800020d2:	5b f3       	cp.w	r3,-1
+800020d4:	e0 81 00 8d 	brne	800021ee <et024006_PrintString+0x146>
+  {
+    // set window to display size
+    et024006_SetLimits( 0, 0, ET024006_WIDTH - 1, ET024006_HEIGHT - 1 );
+800020d8:	e0 69 00 ef 	mov	r9,239
+800020dc:	e0 6a 01 3f 	mov	r10,319
+800020e0:	30 0b       	mov	r11,0
+800020e2:	16 9c       	mov	r12,r11
+800020e4:	f0 1f 00 7e 	mcall	800022dc <et024006_PrintString+0x234>
+        data =  (font_style + font_size) +  // header offset
+          (font_size * (int)(*lcd_string - 32)); // character select
+      }
+      // Print default character
+      else
+        data =  (font_style + font_size) + font_size * 95;
+800020e8:	40 58       	lddsp	r8,sp[0x14]
+800020ea:	50 c8       	stdsp	sp[0x30],r8
+800020ec:	f0 08 00 18 	add	r8,r8,r8<<0x1
+800020f0:	a5 78       	lsl	r8,0x5
+800020f2:	40 69       	lddsp	r9,sp[0x18]
+800020f4:	10 09       	add	r9,r8
+800020f6:	50 b9       	stdsp	sp[0x2c],r9
+800020f8:	ee c8 ff ff 	sub	r8,r7,-1
+800020fc:	50 98       	stdsp	sp[0x24],r8
+800020fe:	40 8a       	lddsp	r10,sp[0x20]
+80002100:	5c 8a       	casts.h	r10
+80002102:	50 aa       	stdsp	sp[0x28],r10
+      for (row = y; row < (y + yfont); row++)
+      {
+        mask = 0x80;
+        for (col = x; col < (x + xfont); col++)
+        {
+          if (*data & mask) // if pixel data then put dot
+80002104:	30 03       	mov	r3,0
+          {
+            et024006_DrawQuickPixel( col, row, fcolor );
+80002106:	08 90       	mov	r0,r4
+80002108:	5c 70       	castu.h	r0
+    // set window to display size
+    et024006_SetLimits( 0, 0, ET024006_WIDTH - 1, ET024006_HEIGHT - 1 );
+
+    do
+    {
+      if(*lcd_string =='\n') {
+8000210a:	40 99       	lddsp	r9,sp[0x24]
+8000210c:	f3 38 ff ff 	ld.ub	r8,r9[-1]
+80002110:	30 aa       	mov	r10,10
+80002112:	f4 08 18 00 	cp.b	r8,r10
+80002116:	c0 b1       	brne	8000212c <et024006_PrintString+0x84>
+        x = saved_x;
+        y += yfont;
+80002118:	40 28       	lddsp	r8,sp[0x8]
+8000211a:	40 39       	lddsp	r9,sp[0xc]
+8000211c:	12 08       	add	r8,r9
+8000211e:	5c 88       	casts.h	r8
+80002120:	50 28       	stdsp	sp[0x8],r8
+80002122:	40 98       	lddsp	r8,sp[0x24]
+80002124:	40 8a       	lddsp	r10,sp[0x20]
+80002126:	5c 8a       	casts.h	r10
+80002128:	50 aa       	stdsp	sp[0x28],r10
+        lcd_string++;  // next character in string
+        continue;
+8000212a:	c5 a8       	rjmp	800021de <et024006_PrintString+0x136>
+      } else if(*lcd_string =='\t') {
+8000212c:	30 99       	mov	r9,9
+8000212e:	f2 08 18 00 	cp.b	r8,r9
+80002132:	c0 81       	brne	80002142 <et024006_PrintString+0x9a>
+        x += xfont;
+80002134:	40 a8       	lddsp	r8,sp[0x28]
+80002136:	40 49       	lddsp	r9,sp[0x10]
+80002138:	12 08       	add	r8,r9
+8000213a:	5c 88       	casts.h	r8
+8000213c:	50 a8       	stdsp	sp[0x28],r8
+8000213e:	40 98       	lddsp	r8,sp[0x24]
+        lcd_string++;  // next character in string
+        continue;
+80002140:	c4 f8       	rjmp	800021de <et024006_PrintString+0x136>
+      }
+      // Checks if the character can be printed
+      if (*lcd_string >= 32 && *lcd_string < (32 + 96))
+80002142:	f0 ca 00 20 	sub	r10,r8,32
+80002146:	35 f9       	mov	r9,95
+80002148:	f2 0a 18 00 	cp.b	r10,r9
+8000214c:	e0 88 00 04 	brls	80002154 <et024006_PrintString+0xac>
+80002150:	40 b5       	lddsp	r5,sp[0x2c]
+80002152:	c0 a8       	rjmp	80002166 <et024006_PrintString+0xbe>
+      {
+        // point to character data in font table
+        data =  (font_style + font_size) +  // header offset
+80002154:	22 08       	sub	r8,32
+80002156:	40 ca       	lddsp	r10,sp[0x30]
+80002158:	f0 0a 02 45 	mul	r5,r8,r10
+8000215c:	40 59       	lddsp	r9,sp[0x14]
+8000215e:	12 05       	add	r5,r9
+80002160:	40 68       	lddsp	r8,sp[0x18]
+80002162:	f0 05 00 05 	add	r5,r8,r5
+      }
+      // Print default character
+      else
+        data =  (font_style + font_size) + font_size * 95;
+
+      for (row = y; row < (y + yfont); row++)
+80002166:	40 22       	lddsp	r2,sp[0x8]
+80002168:	5c 72       	castu.h	r2
+8000216a:	40 3a       	lddsp	r10,sp[0xc]
+8000216c:	e4 0a 00 0a 	add	r10,r2,r10
+80002170:	50 1a       	stdsp	sp[0x4],r10
+80002172:	04 3a       	cp.w	r10,r2
+80002174:	e0 8a 00 2f 	brle	800021d2 <et024006_PrintString+0x12a>
+80002178:	40 21       	lddsp	r1,sp[0x8]
+8000217a:	5c 81       	casts.h	r1
+      {
+        mask = 0x80;
+        for (col = x; col < (x + xfont); col++)
+8000217c:	40 a9       	lddsp	r9,sp[0x28]
+8000217e:	5c 79       	castu.h	r9
+80002180:	50 09       	stdsp	sp[0x0],r9
+80002182:	12 94       	mov	r4,r9
+80002184:	40 48       	lddsp	r8,sp[0x10]
+80002186:	10 04       	add	r4,r8
+80002188:	40 aa       	lddsp	r10,sp[0x28]
+8000218a:	5c 8a       	casts.h	r10
+8000218c:	50 7a       	stdsp	sp[0x1c],r10
+8000218e:	c1 b8       	rjmp	800021c4 <et024006_PrintString+0x11c>
+        {
+          if (*data & mask) // if pixel data then put dot
+          {
+            et024006_DrawQuickPixel( col, row, fcolor );
+          }
+          mask >>= 1;
+80002190:	a1 96       	lsr	r6,0x1
+      for (row = y; row < (y + yfont); row++)
+      {
+        mask = 0x80;
+        for (col = x; col < (x + xfont); col++)
+        {
+          if (*data & mask) // if pixel data then put dot
+80002192:	0b 88       	ld.ub	r8,r5[0x0]
+80002194:	ed e8 00 08 	and	r8,r6,r8
+80002198:	e6 08 18 00 	cp.b	r8,r3
+8000219c:	c0 50       	breq	800021a6 <et024006_PrintString+0xfe>
+          {
+            et024006_DrawQuickPixel( col, row, fcolor );
+8000219e:	00 9a       	mov	r10,r0
+800021a0:	04 9b       	mov	r11,r2
+800021a2:	f0 1f 00 50 	mcall	800022e0 <et024006_PrintString+0x238>
+        data =  (font_style + font_size) + font_size * 95;
+
+      for (row = y; row < (y + yfont); row++)
+      {
+        mask = 0x80;
+        for (col = x; col < (x + xfont); col++)
+800021a6:	2f f7       	sub	r7,-1
+800021a8:	5c 87       	casts.h	r7
+800021aa:	0e 9c       	mov	r12,r7
+800021ac:	5c 7c       	castu.h	r12
+800021ae:	08 3c       	cp.w	r12,r4
+800021b0:	cf 05       	brlt	80002190 <et024006_PrintString+0xe8>
+      }
+      // Print default character
+      else
+        data =  (font_style + font_size) + font_size * 95;
+
+      for (row = y; row < (y + yfont); row++)
+800021b2:	2f f1       	sub	r1,-1
+800021b4:	5c 81       	casts.h	r1
+800021b6:	e5 d1 c0 10 	bfextu	r2,r1,0x0,0x10
+800021ba:	40 19       	lddsp	r9,sp[0x4]
+800021bc:	04 39       	cp.w	r9,r2
+800021be:	e0 8a 00 0a 	brle	800021d2 <et024006_PrintString+0x12a>
+            et024006_DrawQuickPixel( col, row, fcolor );
+          }
+          mask >>= 1;
+        }
+        // Next row data
+        data++;
+800021c2:	2f f5       	sub	r5,-1
+        data =  (font_style + font_size) + font_size * 95;
+
+      for (row = y; row < (y + yfont); row++)
+      {
+        mask = 0x80;
+        for (col = x; col < (x + xfont); col++)
+800021c4:	40 0c       	lddsp	r12,sp[0x0]
+800021c6:	08 3c       	cp.w	r12,r4
+800021c8:	cf 54       	brge	800021b2 <et024006_PrintString+0x10a>
+800021ca:	40 77       	lddsp	r7,sp[0x1c]
+800021cc:	e0 66 00 80 	mov	r6,128
+800021d0:	ce 1b       	rjmp	80002192 <et024006_PrintString+0xea>
+        }
+        // Next row data
+        data++;
+      }
+      // move to next character start pixel
+      x += xfont;
+800021d2:	40 a8       	lddsp	r8,sp[0x28]
+800021d4:	40 4a       	lddsp	r10,sp[0x10]
+800021d6:	14 08       	add	r8,r10
+800021d8:	5c 88       	casts.h	r8
+800021da:	50 a8       	stdsp	sp[0x28],r8
+800021dc:	40 98       	lddsp	r8,sp[0x24]
+800021de:	40 99       	lddsp	r9,sp[0x24]
+800021e0:	2f f9       	sub	r9,-1
+800021e2:	50 99       	stdsp	sp[0x24],r9
+      lcd_string++;  // next character in string
+
+    }while(*lcd_string !='\0');  // keep spitting chars out until end of string
+800021e4:	11 88       	ld.ub	r8,r8[0x0]
+800021e6:	e6 08 18 00 	cp.b	r8,r3
+800021ea:	c9 01       	brne	8000210a <et024006_PrintString+0x62>
+800021ec:	c7 68       	rjmp	800022d8 <et024006_PrintString+0x230>
+800021ee:	f8 c8 ff ff 	sub	r8,r12,-1
+800021f2:	50 08       	stdsp	sp[0x0],r8
+800021f4:	40 8c       	lddsp	r12,sp[0x20]
+800021f6:	5c 8c       	casts.h	r12
+      for (row=0; row < yfont;row++)
+      {
+        mask = 0x80;
+        for (col = 0; col < xfont; col++)
+        {
+          if (*data & mask) // if pixel data then put dot
+800021f8:	30 06       	mov	r6,0
+          {
+            *ET024006_PARAM_ADDR = fcolor;
+          }
+          else  // else use background color
+          {
+            *ET024006_PARAM_ADDR = bcolor;
+800021fa:	5c 83       	casts.h	r3
+800021fc:	fc 15 c0 20 	movh	r5,0xc020
+  }
+  else
+  {
+    do
+    {
+      if(*lcd_string =='\n') {
+80002200:	40 0a       	lddsp	r10,sp[0x0]
+80002202:	f5 31 ff ff 	ld.ub	r1,r10[-1]
+80002206:	30 a8       	mov	r8,10
+80002208:	f0 01 18 00 	cp.b	r1,r8
+8000220c:	c0 b1       	brne	80002222 <et024006_PrintString+0x17a>
+        x = saved_x;
+        y += yfont;
+8000220e:	40 28       	lddsp	r8,sp[0x8]
+80002210:	40 39       	lddsp	r9,sp[0xc]
+80002212:	12 08       	add	r8,r9
+80002214:	5c 88       	casts.h	r8
+80002216:	50 28       	stdsp	sp[0x8],r8
+80002218:	14 98       	mov	r8,r10
+8000221a:	40 8a       	lddsp	r10,sp[0x20]
+8000221c:	5c 8a       	casts.h	r10
+8000221e:	50 1a       	stdsp	sp[0x4],r10
+        lcd_string++;  // next character in string
+        continue;
+80002220:	c5 28       	rjmp	800022c4 <et024006_PrintString+0x21c>
+      } else if(*lcd_string =='\t') {
+80002222:	30 98       	mov	r8,9
+80002224:	f0 01 18 00 	cp.b	r1,r8
+80002228:	c0 71       	brne	80002236 <et024006_PrintString+0x18e>
+        x += xfont;
+8000222a:	40 49       	lddsp	r9,sp[0x10]
+8000222c:	12 0c       	add	r12,r9
+8000222e:	5c 8c       	casts.h	r12
+80002230:	50 1c       	stdsp	sp[0x4],r12
+80002232:	40 08       	lddsp	r8,sp[0x0]
+        lcd_string++;  // next character in string
+        continue;
+80002234:	c4 88       	rjmp	800022c4 <et024006_PrintString+0x21c>
+      // point to character data in font table
+      data =  (font_style + font_size) +  // header offset
+        (font_size * (int)(*lcd_string - 32)); // character select
+
+      // set a window for the character
+      et024006_SetLimits( x, y, x + xfont - 1, y + yfont - 1 );
+80002236:	40 32       	lddsp	r2,sp[0xc]
+80002238:	40 47       	lddsp	r7,sp[0x10]
+8000223a:	f8 07 00 08 	add	r8,r12,r7
+8000223e:	5c 88       	casts.h	r8
+80002240:	50 18       	stdsp	sp[0x4],r8
+80002242:	04 99       	mov	r9,r2
+80002244:	20 19       	sub	r9,1
+80002246:	40 28       	lddsp	r8,sp[0x8]
+80002248:	10 09       	add	r9,r8
+8000224a:	40 1a       	lddsp	r10,sp[0x4]
+8000224c:	20 1a       	sub	r10,1
+8000224e:	5c 79       	castu.h	r9
+80002250:	5c 7a       	castu.h	r10
+80002252:	10 9b       	mov	r11,r8
+80002254:	5c 7b       	castu.h	r11
+80002256:	5c 7c       	castu.h	r12
+80002258:	f0 1f 00 21 	mcall	800022dc <et024006_PrintString+0x234>
+  return *ET024006_PARAM_ADDR;
+}
+
+__always_inline static void et024006_SelectRegister( uint8_t address )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000225c:	32 29       	mov	r9,34
+8000225e:	fc 18 c0 00 	movh	r8,0xc000
+80002262:	b0 09       	st.h	r8[0x0],r9
+
+      // set a window for the character
+      et024006_SetLimits( x, y, x + xfont - 1, y + yfont - 1 );
+      et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+      for (row=0; row < yfont;row++)
+80002264:	40 3a       	lddsp	r10,sp[0xc]
+80002266:	58 0a       	cp.w	r10,0
+80002268:	c2 d0       	breq	800022c2 <et024006_PrintString+0x21a>
+        x += xfont;
+        lcd_string++;  // next character in string
+        continue;
+      }
+      // point to character data in font table
+      data =  (font_style + font_size) +  // header offset
+8000226a:	e2 ce 00 20 	sub	lr,r1,32
+8000226e:	40 59       	lddsp	r9,sp[0x14]
+80002270:	f2 0e 02 4e 	mul	lr,r9,lr
+80002274:	12 0e       	add	lr,r9
+80002276:	40 68       	lddsp	r8,sp[0x18]
+80002278:	f0 0e 00 0e 	add	lr,r8,lr
+8000227c:	30 0c       	mov	r12,0
+      for (row=0; row < yfont;row++)
+      {
+        mask = 0x80;
+        for (col = 0; col < xfont; col++)
+        {
+          if (*data & mask) // if pixel data then put dot
+8000227e:	e0 60 00 80 	mov	r0,128
+80002282:	18 91       	mov	r1,r12
+80002284:	c1 98       	rjmp	800022b6 <et024006_PrintString+0x20e>
+          }
+          else  // else use background color
+          {
+            *ET024006_PARAM_ADDR = bcolor;
+          }
+          mask >>= 1;
+80002286:	a1 99       	lsr	r9,0x1
+      for (row=0; row < yfont;row++)
+      {
+        mask = 0x80;
+        for (col = 0; col < xfont; col++)
+        {
+          if (*data & mask) // if pixel data then put dot
+80002288:	f3 eb 00 0a 	and	r10,r9,r11
+          {
+            *ET024006_PARAM_ADDR = fcolor;
+8000228c:	ec 0a 18 00 	cp.b	r10,r6
+80002290:	e8 0a 17 10 	movne	r10,r4
+80002294:	eb fa 1c 00 	st.hne	r5[0x0],r10
+          }
+          else  // else use background color
+          {
+            *ET024006_PARAM_ADDR = bcolor;
+80002298:	eb f3 0c 00 	st.heq	r5[0x0],r3
+      et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+      for (row=0; row < yfont;row++)
+      {
+        mask = 0x80;
+        for (col = 0; col < xfont; col++)
+8000229c:	2f f8       	sub	r8,-1
+8000229e:	5c 88       	casts.h	r8
+800022a0:	f0 07 19 00 	cp.h	r7,r8
+800022a4:	fe 9b ff f1 	brhi	80002286 <et024006_PrintString+0x1de>
+
+      // set a window for the character
+      et024006_SetLimits( x, y, x + xfont - 1, y + yfont - 1 );
+      et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+      for (row=0; row < yfont;row++)
+800022a8:	2f fc       	sub	r12,-1
+800022aa:	5c 8c       	casts.h	r12
+800022ac:	f8 02 19 00 	cp.h	r2,r12
+800022b0:	e0 88 00 09 	brls	800022c2 <et024006_PrintString+0x21a>
+          }
+          mask >>= 1;
+        }
+
+        // Next row data
+        data++;
+800022b4:	2f fe       	sub	lr,-1
+      et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+      for (row=0; row < yfont;row++)
+      {
+        mask = 0x80;
+        for (col = 0; col < xfont; col++)
+800022b6:	58 07       	cp.w	r7,0
+800022b8:	cf 80       	breq	800022a8 <et024006_PrintString+0x200>
+        {
+          if (*data & mask) // if pixel data then put dot
+800022ba:	1d 8b       	ld.ub	r11,lr[0x0]
+800022bc:	00 99       	mov	r9,r0
+800022be:	02 98       	mov	r8,r1
+800022c0:	ce 4b       	rjmp	80002288 <et024006_PrintString+0x1e0>
+800022c2:	40 08       	lddsp	r8,sp[0x0]
+800022c4:	40 09       	lddsp	r9,sp[0x0]
+800022c6:	2f f9       	sub	r9,-1
+800022c8:	50 09       	stdsp	sp[0x0],r9
+      }
+      // move to next character start pixel
+      x += xfont;
+      lcd_string++;  // next character in string
+
+    }while(*lcd_string !='\0');  // keep spitting chars out until end of string
+800022ca:	11 88       	ld.ub	r8,r8[0x0]
+800022cc:	ec 08 18 00 	cp.b	r8,r6
+800022d0:	c0 40       	breq	800022d8 <et024006_PrintString+0x230>
+800022d2:	40 1c       	lddsp	r12,sp[0x4]
+800022d4:	5c 8c       	casts.h	r12
+800022d6:	c9 5b       	rjmp	80002200 <et024006_PrintString+0x158>
+  }
+}
+800022d8:	2f 3d       	sub	sp,-52
+800022da:	d8 32       	popm	r0-r7,pc
+800022dc:	80 00       	ld.sh	r0,r0[0x0]
+800022de:	20 08       	sub	r8,0
+800022e0:	80 00       	ld.sh	r0,r0[0x0]
+800022e2:	20 84       	sub	r4,8
+
+800022e4 <et024006_DrawLine>:
+  et024006_DrawFilledRect( x, y, 1, length, color );
+}
+
+
+void et024006_DrawLine( uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, et024006_color_t color )
+{
+800022e4:	d4 31       	pushm	r0-r7,lr
+800022e6:	20 3d       	sub	sp,12
+800022e8:	18 95       	mov	r5,r12
+800022ea:	16 94       	mov	r4,r11
+800022ec:	14 93       	mov	r3,r10
+800022ee:	12 92       	mov	r2,r9
+800022f0:	10 91       	mov	r1,r8
+  et024006_SetLimits( 0, 0, ET024006_WIDTH - 1, ET024006_HEIGHT - 1 );
+800022f2:	e0 69 00 ef 	mov	r9,239
+800022f6:	e0 6a 01 3f 	mov	r10,319
+800022fa:	30 0b       	mov	r11,0
+800022fc:	16 9c       	mov	r12,r11
+800022fe:	f0 1f 00 3e 	mcall	800023f4 <et024006_DrawLine+0x110>
+  Assert( y2 < ET024006_HEIGHT );
+
+  // Compute deltas, ie. "width" and "height" of line, then
+  // compute x and y direction, and make deltas positive for later use.
+  int16_t xinc = 1; // Start off assuming direction is positive, ie. right.
+  int16_t dx = x2 - x1;
+80002302:	0a 13       	sub	r3,r5
+80002304:	5c 83       	casts.h	r3
+  if (dx < 0){
+80002306:	30 08       	mov	r8,0
+80002308:	f0 03 19 00 	cp.h	r3,r8
+8000230c:	c0 35       	brlt	80002312 <et024006_DrawLine+0x2e>
+8000230e:	30 10       	mov	r0,1
+80002310:	c0 48       	rjmp	80002318 <et024006_DrawLine+0x34>
+    xinc = -1;
+    dx = -dx;
+80002312:	5c 33       	neg	r3
+80002314:	5c 83       	casts.h	r3
+80002316:	3f f0       	mov	r0,-1
+  }
+  int16_t yinc = 1; // Start off assuming direction is positive, ie. down.
+  int16_t dy = y2 - y1;
+80002318:	08 12       	sub	r2,r4
+8000231a:	5c 82       	casts.h	r2
+  if (dy < 0){
+8000231c:	30 08       	mov	r8,0
+8000231e:	f0 02 19 00 	cp.h	r2,r8
+80002322:	c0 45       	brlt	8000232a <et024006_DrawLine+0x46>
+80002324:	30 18       	mov	r8,1
+80002326:	50 18       	stdsp	sp[0x4],r8
+80002328:	c0 58       	rjmp	80002332 <et024006_DrawLine+0x4e>
+    yinc = -1;
+    dy = -dy;
+8000232a:	5c 32       	neg	r2
+8000232c:	5c 82       	casts.h	r2
+8000232e:	3f f9       	mov	r9,-1
+80002330:	50 19       	stdsp	sp[0x4],r9
+  // Set up current point.
+  uint16_t x = x1;
+  uint16_t y = y1;
+  uint16_t i;
+  // A "flat" line (dx>dy) is handled differently from a "steep" line (dx<dy).
+  if (dx > dy) {
+80002332:	e4 03 19 00 	cp.h	r3,r2
+80002336:	e0 8a 00 2e 	brle	80002392 <et024006_DrawLine+0xae>
+    // Walk along X, draw pixel, and step Y when required.
+    int16_t e = dx >> 1;
+    for ( i = 0; i <= dx; ++i) {
+8000233a:	50 03       	stdsp	sp[0x0],r3
+8000233c:	58 03       	cp.w	r3,0
+8000233e:	c5 85       	brlt	800023ee <et024006_DrawLine+0x10a>
+  uint16_t y = y1;
+  uint16_t i;
+  // A "flat" line (dx>dy) is handled differently from a "steep" line (dx<dy).
+  if (dx > dy) {
+    // Walk along X, draw pixel, and step Y when required.
+    int16_t e = dx >> 1;
+80002340:	e6 07 14 01 	asr	r7,r3,0x1
+80002344:	5c 84       	casts.h	r4
+80002346:	5c 85       	casts.h	r5
+80002348:	30 06       	mov	r6,0
+    for ( i = 0; i <= dx; ++i) {
+      et024006_DrawQuickPixel(x,y,color);
+8000234a:	fd d1 c0 10 	bfextu	lr,r1,0x0,0x10
+      // Sub-pixel "error" overflowed, so we step Y and reset the "error".
+      if (e <= 0){
+8000234e:	30 01       	mov	r1,0
+80002350:	50 23       	stdsp	sp[0x8],r3
+80002352:	1c 93       	mov	r3,lr
+  // A "flat" line (dx>dy) is handled differently from a "steep" line (dx<dy).
+  if (dx > dy) {
+    // Walk along X, draw pixel, and step Y when required.
+    int16_t e = dx >> 1;
+    for ( i = 0; i <= dx; ++i) {
+      et024006_DrawQuickPixel(x,y,color);
+80002354:	06 9a       	mov	r10,r3
+80002356:	08 9b       	mov	r11,r4
+80002358:	5c 7b       	castu.h	r11
+8000235a:	f9 d5 c0 10 	bfextu	r12,r5,0x0,0x10
+8000235e:	f0 1f 00 27 	mcall	800023f8 <et024006_DrawLine+0x114>
+      // Sub-pixel "error" overflowed, so we step Y and reset the "error".
+      if (e <= 0){
+80002362:	e2 07 19 00 	cp.h	r7,r1
+80002366:	e0 89 00 08 	brgt	80002376 <et024006_DrawLine+0x92>
+        e += dx;
+8000236a:	40 29       	lddsp	r9,sp[0x8]
+8000236c:	12 07       	add	r7,r9
+8000236e:	5c 87       	casts.h	r7
+        y += yinc;
+80002370:	40 18       	lddsp	r8,sp[0x4]
+80002372:	10 04       	add	r4,r8
+80002374:	5c 84       	casts.h	r4
+  uint16_t i;
+  // A "flat" line (dx>dy) is handled differently from a "steep" line (dx<dy).
+  if (dx > dy) {
+    // Walk along X, draw pixel, and step Y when required.
+    int16_t e = dx >> 1;
+    for ( i = 0; i <= dx; ++i) {
+80002376:	2f f6       	sub	r6,-1
+80002378:	5c 86       	casts.h	r6
+8000237a:	f1 d6 c0 10 	bfextu	r8,r6,0x0,0x10
+8000237e:	40 09       	lddsp	r9,sp[0x0]
+80002380:	12 38       	cp.w	r8,r9
+80002382:	e0 89 00 36 	brgt	800023ee <et024006_DrawLine+0x10a>
+      if (e <= 0){
+        e += dx;
+        y += yinc;
+      }
+      // Walk one step along X.
+      e -= dy;
+80002386:	04 17       	sub	r7,r2
+80002388:	5c 87       	casts.h	r7
+8000238a:	e0 05 00 05 	add	r5,r0,r5
+8000238e:	5c 85       	casts.h	r5
+80002390:	ce 2b       	rjmp	80002354 <et024006_DrawLine+0x70>
+      x += xinc;
+    }
+  } else {
+    // Walk along Y, draw pixel, and step X when required.
+    int16_t e = dy >> 1;
+    for (i = 0; i <= dy; ++i) {
+80002392:	50 02       	stdsp	sp[0x0],r2
+80002394:	58 02       	cp.w	r2,0
+80002396:	c2 c5       	brlt	800023ee <et024006_DrawLine+0x10a>
+      e -= dy;
+      x += xinc;
+    }
+  } else {
+    // Walk along Y, draw pixel, and step X when required.
+    int16_t e = dy >> 1;
+80002398:	e4 07 14 01 	asr	r7,r2,0x1
+8000239c:	5c 84       	casts.h	r4
+8000239e:	5c 85       	casts.h	r5
+800023a0:	30 06       	mov	r6,0
+    for (i = 0; i <= dy; ++i) {
+      et024006_DrawQuickPixel(x,y,color);
+800023a2:	fd d1 c0 10 	bfextu	lr,r1,0x0,0x10
+      // Sub-pixel "error" overflowed, so we step X and reset the "error".
+      if (e <= 0){
+800023a6:	30 01       	mov	r1,0
+800023a8:	50 22       	stdsp	sp[0x8],r2
+800023aa:	40 12       	lddsp	r2,sp[0x4]
+800023ac:	50 10       	stdsp	sp[0x4],r0
+800023ae:	1c 90       	mov	r0,lr
+    }
+  } else {
+    // Walk along Y, draw pixel, and step X when required.
+    int16_t e = dy >> 1;
+    for (i = 0; i <= dy; ++i) {
+      et024006_DrawQuickPixel(x,y,color);
+800023b0:	00 9a       	mov	r10,r0
+800023b2:	08 9b       	mov	r11,r4
+800023b4:	5c 7b       	castu.h	r11
+800023b6:	f9 d5 c0 10 	bfextu	r12,r5,0x0,0x10
+800023ba:	f0 1f 00 10 	mcall	800023f8 <et024006_DrawLine+0x114>
+      // Sub-pixel "error" overflowed, so we step X and reset the "error".
+      if (e <= 0){
+800023be:	e2 07 19 00 	cp.h	r7,r1
+800023c2:	e0 89 00 08 	brgt	800023d2 <et024006_DrawLine+0xee>
+        e += dy;
+800023c6:	40 29       	lddsp	r9,sp[0x8]
+800023c8:	12 07       	add	r7,r9
+800023ca:	5c 87       	casts.h	r7
+        x += xinc;
+800023cc:	40 18       	lddsp	r8,sp[0x4]
+800023ce:	10 05       	add	r5,r8
+800023d0:	5c 85       	casts.h	r5
+      x += xinc;
+    }
+  } else {
+    // Walk along Y, draw pixel, and step X when required.
+    int16_t e = dy >> 1;
+    for (i = 0; i <= dy; ++i) {
+800023d2:	2f f6       	sub	r6,-1
+800023d4:	5c 86       	casts.h	r6
+800023d6:	f1 d6 c0 10 	bfextu	r8,r6,0x0,0x10
+800023da:	40 09       	lddsp	r9,sp[0x0]
+800023dc:	12 38       	cp.w	r8,r9
+800023de:	e0 89 00 08 	brgt	800023ee <et024006_DrawLine+0x10a>
+      if (e <= 0){
+        e += dy;
+        x += xinc;
+      }
+      // Walk one step along Y.
+      e -= dx;
+800023e2:	06 17       	sub	r7,r3
+800023e4:	5c 87       	casts.h	r7
+800023e6:	e4 04 00 04 	add	r4,r2,r4
+800023ea:	5c 84       	casts.h	r4
+800023ec:	ce 2b       	rjmp	800023b0 <et024006_DrawLine+0xcc>
+      y += yinc;
+    }
+  }
+}
+800023ee:	2f dd       	sub	sp,-12
+800023f0:	d8 32       	popm	r0-r7,pc
+800023f2:	00 00       	add	r0,r0
+800023f4:	80 00       	ld.sh	r0,r0[0x0]
+800023f6:	20 08       	sub	r8,0
+800023f8:	80 00       	ld.sh	r0,r0[0x0]
+800023fa:	20 84       	sub	r4,8
+
+800023fc <et024006_DuplicatePixel>:
+  return *ET024006_PARAM_ADDR;
+}
+
+__always_inline static void et024006_SelectRegister( uint8_t address )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800023fc:	32 29       	mov	r9,34
+800023fe:	fc 18 c0 00 	movh	r8,0xc000
+80002402:	b0 09       	st.h	r8[0x0],r9
+  Assert( count > 0 );
+
+  et024006_SelectRegister( HIMAX_SRAMWRITE );
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  //uint8_t countLowByte = count;
+  while (count >= 8) {
+80002404:	58 7b       	cp.w	r11,7
+80002406:	e0 88 00 13 	brls	8000242c <et024006_DuplicatePixel+0x30>
+8000240a:	16 99       	mov	r9,r11
+    *ET024006_PARAM_ADDR = color;
+8000240c:	fc 18 c0 20 	movh	r8,0xc020
+80002410:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+80002412:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+80002414:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+80002416:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+80002418:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+8000241a:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+8000241c:	b0 0c       	st.h	r8[0x0],r12
+    *ET024006_PARAM_ADDR = color;
+8000241e:	b0 0c       	st.h	r8[0x0],r12
+    count-=8;
+80002420:	20 89       	sub	r9,8
+  Assert( count > 0 );
+
+  et024006_SelectRegister( HIMAX_SRAMWRITE );
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  //uint8_t countLowByte = count;
+  while (count >= 8) {
+80002422:	58 79       	cp.w	r9,7
+80002424:	fe 9b ff f6 	brhi	80002410 <et024006_DuplicatePixel+0x14>
+
+
+
+/* --- Pixel block operations --- */
+
+void et024006_DuplicatePixel( et024006_color_t color, uint32_t count )
+80002428:	f7 db c0 03 	bfextu	r11,r11,0x0,0x3
+    *ET024006_PARAM_ADDR = color;
+    *ET024006_PARAM_ADDR = color;
+    *ET024006_PARAM_ADDR = color;
+    count-=8;
+  }
+  while (count > 0) {
+8000242c:	58 0b       	cp.w	r11,0
+8000242e:	5e 0c       	reteq	r12
+    *ET024006_PARAM_ADDR = color;
+80002430:	fc 18 c0 20 	movh	r8,0xc020
+80002434:	b0 0c       	st.h	r8[0x0],r12
+    --count;
+80002436:	20 1b       	sub	r11,1
+    *ET024006_PARAM_ADDR = color;
+    *ET024006_PARAM_ADDR = color;
+    *ET024006_PARAM_ADDR = color;
+    count-=8;
+  }
+  while (count > 0) {
+80002438:	cf e1       	brne	80002434 <et024006_DuplicatePixel+0x38>
+8000243a:	5e fc       	retal	r12
+
+8000243c <et024006_DrawFilledRect>:
+  }
+}
+
+
+void et024006_DrawFilledRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, et024006_color_t color )
+{
+8000243c:	eb cd 40 e0 	pushm	r5-r7,lr
+80002440:	14 97       	mov	r7,r10
+80002442:	12 96       	mov	r6,r9
+80002444:	10 95       	mov	r5,r8
+  // More sanity check.
+  Assert( x2 < ET024006_WIDTH );
+  Assert( y2 < ET024006_HEIGHT );
+
+  // Set up draw area and copy pixel color until area is full.
+  et024006_SetLimits( x, y, x2, y2 );
+80002446:	f6 c9 00 01 	sub	r9,r11,1
+8000244a:	0c 09       	add	r9,r6
+8000244c:	f8 ca 00 01 	sub	r10,r12,1
+80002450:	0e 0a       	add	r10,r7
+80002452:	5c 79       	castu.h	r9
+80002454:	5c 7a       	castu.h	r10
+80002456:	5c 7b       	castu.h	r11
+80002458:	5c 7c       	castu.h	r12
+8000245a:	f0 1f 00 07 	mcall	80002474 <et024006_DrawFilledRect+0x38>
+  uint32_t count = (uint32_t) width * height;
+  et024006_DuplicatePixel( color, count );
+8000245e:	f7 d6 c0 10 	bfextu	r11,r6,0x0,0x10
+80002462:	5c 77       	castu.h	r7
+80002464:	af 3b       	mul	r11,r7
+80002466:	f9 d5 c0 10 	bfextu	r12,r5,0x0,0x10
+8000246a:	f0 1f 00 04 	mcall	80002478 <et024006_DrawFilledRect+0x3c>
+}
+8000246e:	e3 cd 80 e0 	ldm	sp++,r5-r7,pc
+80002472:	00 00       	add	r0,r0
+80002474:	80 00       	ld.sh	r0,r0[0x0]
+80002476:	20 08       	sub	r8,0
+80002478:	80 00       	ld.sh	r0,r0[0x0]
+8000247a:	23 fc       	sub	r12,63
+
+8000247c <et024006_DrawVertLine>:
+  et024006_DrawFilledRect( x, y, length, 1, color );
+}
+
+
+void et024006_DrawVertLine( uint16_t x, uint16_t y, uint16_t length, et024006_color_t color )
+{
+8000247c:	d4 01       	pushm	lr
+  et024006_DrawFilledRect( x, y, 1, length, color );
+8000247e:	f1 d9 c0 10 	bfextu	r8,r9,0x0,0x10
+80002482:	f3 da c0 10 	bfextu	r9,r10,0x0,0x10
+80002486:	30 1a       	mov	r10,1
+80002488:	5c 7b       	castu.h	r11
+8000248a:	5c 7c       	castu.h	r12
+8000248c:	f0 1f 00 02 	mcall	80002494 <et024006_DrawVertLine+0x18>
+}
+80002490:	d8 02       	popm	pc
+80002492:	00 00       	add	r0,r0
+80002494:	80 00       	ld.sh	r0,r0[0x0]
+80002496:	24 3c       	sub	r12,67
+
+80002498 <et024006_DrawHorizLine>:
+  return color;
+}
+
+
+void et024006_DrawHorizLine( uint16_t x, uint16_t y, uint16_t length, et024006_color_t color )
+{
+80002498:	d4 01       	pushm	lr
+  et024006_DrawFilledRect( x, y, length, 1, color );
+8000249a:	f1 d9 c0 10 	bfextu	r8,r9,0x0,0x10
+8000249e:	30 19       	mov	r9,1
+800024a0:	5c 7a       	castu.h	r10
+800024a2:	5c 7b       	castu.h	r11
+800024a4:	5c 7c       	castu.h	r12
+800024a6:	f0 1f 00 02 	mcall	800024ac <et024006_DrawHorizLine+0x14>
+}
+800024aa:	d8 02       	popm	pc
+800024ac:	80 00       	ld.sh	r0,r0[0x0]
+800024ae:	24 3c       	sub	r12,67
+
+800024b0 <et024006_CopyPixelsToScreen>:
+  }
+}
+
+
+void et024006_CopyPixelsToScreen( et024006_color_t const * pixels, uint32_t count )
+{
+800024b0:	eb cd 40 80 	pushm	r7,lr
+  return *ET024006_PARAM_ADDR;
+}
+
+__always_inline static void et024006_SelectRegister( uint8_t address )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800024b4:	32 29       	mov	r9,34
+800024b6:	fc 18 c0 00 	movh	r8,0xc000
+800024ba:	b0 09       	st.h	r8[0x0],r9
+  Assert( count > 0 );
+
+  et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  while (count >= 8)
+800024bc:	58 7b       	cp.w	r11,7
+800024be:	e0 88 00 23 	brls	80002504 <et024006_CopyPixelsToScreen+0x54>
+800024c2:	16 9a       	mov	r10,r11
+800024c4:	18 98       	mov	r8,r12
+  {
+    *ET024006_PARAM_ADDR = *pixels++;
+800024c6:	fc 19 c0 20 	movh	r9,0xc020
+800024ca:	90 0e       	ld.sh	lr,r8[0x0]
+800024cc:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024ce:	90 1e       	ld.sh	lr,r8[0x2]
+800024d0:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024d2:	90 2e       	ld.sh	lr,r8[0x4]
+800024d4:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024d6:	90 3e       	ld.sh	lr,r8[0x6]
+800024d8:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024da:	90 4e       	ld.sh	lr,r8[0x8]
+800024dc:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024de:	90 5e       	ld.sh	lr,r8[0xa]
+800024e0:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024e2:	90 6e       	ld.sh	lr,r8[0xc]
+800024e4:	b2 0e       	st.h	r9[0x0],lr
+    *ET024006_PARAM_ADDR = *pixels++;
+800024e6:	90 7e       	ld.sh	lr,r8[0xe]
+800024e8:	b2 0e       	st.h	r9[0x0],lr
+    }
+  }
+}
+
+
+void et024006_CopyPixelsToScreen( et024006_color_t const * pixels, uint32_t count )
+800024ea:	2f 08       	sub	r8,-16
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    count-=8;
+800024ec:	20 8a       	sub	r10,8
+  Assert( count > 0 );
+
+  et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  while (count >= 8)
+800024ee:	58 7a       	cp.w	r10,7
+800024f0:	fe 9b ff ed 	brhi	800024ca <et024006_CopyPixelsToScreen+0x1a>
+    }
+  }
+}
+
+
+void et024006_CopyPixelsToScreen( et024006_color_t const * pixels, uint32_t count )
+800024f4:	20 8b       	sub	r11,8
+800024f6:	f6 08 16 03 	lsr	r8,r11,0x3
+800024fa:	2f f8       	sub	r8,-1
+800024fc:	a5 68       	lsl	r8,0x4
+800024fe:	10 0c       	add	r12,r8
+80002500:	f7 db c0 03 	bfextu	r11,r11,0x0,0x3
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    count-=8;
+  }
+  while( count )
+80002504:	58 0b       	cp.w	r11,0
+80002506:	c0 70       	breq	80002514 <et024006_CopyPixelsToScreen+0x64>
+  {
+    *ET024006_PARAM_ADDR = *pixels;
+80002508:	fc 18 c0 20 	movh	r8,0xc020
+8000250c:	19 19       	ld.sh	r9,r12++
+8000250e:	b0 09       	st.h	r8[0x0],r9
+    pixels++;
+    count--;
+80002510:	20 1b       	sub	r11,1
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    *ET024006_PARAM_ADDR = *pixels++;
+    count-=8;
+  }
+  while( count )
+80002512:	cf d1       	brne	8000250c <et024006_CopyPixelsToScreen+0x5c>
+80002514:	e3 cd 80 80 	ldm	sp++,r7,pc
+
+80002518 <et024006_PutPixmap>:
+  uint16_t map_y,
+  uint16_t x,
+  uint16_t y,
+  uint16_t width,
+  uint16_t height )
+{
+80002518:	eb cd 40 fe 	pushm	r1-r7,lr
+8000251c:	fa c4 ff e0 	sub	r4,sp,-32
+80002520:	18 97       	mov	r7,r12
+80002522:	16 95       	mov	r5,r11
+80002524:	14 92       	mov	r2,r10
+80002526:	12 91       	mov	r1,r9
+80002528:	68 0b       	ld.w	r11,r4[0x0]
+8000252a:	68 13       	ld.w	r3,r4[0x4]
+8000252c:	68 26       	ld.w	r6,r4[0x8]
+  // More sanity check.
+  Assert( x2 < ET024006_WIDTH );
+  Assert( y2 < ET024006_HEIGHT );
+
+  // Set up draw area.
+  et024006_SetLimits( x, y, x2, y2 );
+8000252e:	f6 c9 00 01 	sub	r9,r11,1
+80002532:	0c 09       	add	r9,r6
+80002534:	f0 ca 00 01 	sub	r10,r8,1
+80002538:	06 0a       	add	r10,r3
+8000253a:	5c 79       	castu.h	r9
+8000253c:	5c 7a       	castu.h	r10
+8000253e:	5c 7b       	castu.h	r11
+80002540:	f9 d8 c0 10 	bfextu	r12,r8,0x0,0x10
+80002544:	f0 1f 00 1d 	mcall	800025b8 <et024006_PutPixmap+0xa0>
+
+  // Offset into pixmap.
+  pixmap += map_x;
+80002548:	f1 d2 c0 10 	bfextu	r8,r2,0x0,0x10
+8000254c:	ee 08 00 17 	add	r7,r7,r8<<0x1
+  if (map_y > 0) {
+80002550:	58 01       	cp.w	r1,0
+80002552:	c0 70       	breq	80002560 <et024006_PutPixmap+0x48>
+    pixmap += (uint32_t) map_y * map_width;
+80002554:	f1 d5 c0 10 	bfextu	r8,r5,0x0,0x10
+80002558:	a1 78       	lsl	r8,0x1
+8000255a:	5c 71       	castu.h	r1
+8000255c:	f0 01 03 47 	mac	r7,r8,r1
+  return *ET024006_PARAM_ADDR;
+}
+
+__always_inline static void et024006_SelectRegister( uint8_t address )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002560:	32 29       	mov	r9,34
+80002562:	fc 18 c0 00 	movh	r8,0xc000
+80002566:	b0 09       	st.h	r8[0x0],r9
+  }
+  // we need access to the display SRAM now
+  et024006_SelectRegister( HIMAX_SRAMWRITE );
+
+  // In case of no horizontal pixmap clipping, easier handling is possible.
+  if ((map_width == width) && (map_x == 0)) {
+80002568:	e6 05 19 00 	cp.h	r5,r3
+8000256c:	5f 0a       	sreq	r10
+8000256e:	30 08       	mov	r8,0
+80002570:	f0 02 19 00 	cp.h	r2,r8
+80002574:	5f 09       	sreq	r9
+80002576:	f5 e9 00 09 	and	r9,r10,r9
+8000257a:	f0 09 18 00 	cp.b	r9,r8
+8000257e:	c0 51       	brne	80002588 <et024006_PutPixmap+0x70>
+    uint32_t count = (uint32_t) width * height;
+    et024006_CopyPixelsToScreen( pixmap, count );
+  } else {
+    // Copy line by line to screen.
+    uint16_t lines_left = height;
+    while (lines_left > 0) {
+80002580:	58 06       	cp.w	r6,0
+80002582:	c0 c1       	brne	8000259a <et024006_PutPixmap+0x82>
+80002584:	e3 cd 80 fe 	ldm	sp++,r1-r7,pc
+
+  // In case of no horizontal pixmap clipping, easier handling is possible.
+  if ((map_width == width) && (map_x == 0)) {
+    // Compute pixel count and copy pixels to screen.
+    uint32_t count = (uint32_t) width * height;
+    et024006_CopyPixelsToScreen( pixmap, count );
+80002588:	5c 76       	castu.h	r6
+8000258a:	5c 73       	castu.h	r3
+8000258c:	ec 03 02 4b 	mul	r11,r6,r3
+80002590:	0e 9c       	mov	r12,r7
+80002592:	f0 1f 00 0b 	mcall	800025bc <et024006_PutPixmap+0xa4>
+80002596:	e3 cd 80 fe 	ldm	sp++,r1-r7,pc
+  } else {
+    // Copy line by line to screen.
+    uint16_t lines_left = height;
+    while (lines_left > 0) {
+      et024006_CopyPixelsToScreen( pixmap, width );
+      pixmap += map_width;
+8000259a:	5c 75       	castu.h	r5
+8000259c:	a1 75       	lsl	r5,0x1
+    et024006_CopyPixelsToScreen( pixmap, count );
+  } else {
+    // Copy line by line to screen.
+    uint16_t lines_left = height;
+    while (lines_left > 0) {
+      et024006_CopyPixelsToScreen( pixmap, width );
+8000259e:	e9 d3 c0 10 	bfextu	r4,r3,0x0,0x10
+800025a2:	08 9b       	mov	r11,r4
+800025a4:	0e 9c       	mov	r12,r7
+800025a6:	f0 1f 00 06 	mcall	800025bc <et024006_PutPixmap+0xa4>
+      pixmap += map_width;
+800025aa:	0a 07       	add	r7,r5
+      --lines_left;
+800025ac:	20 16       	sub	r6,1
+800025ae:	5c 86       	casts.h	r6
+    uint32_t count = (uint32_t) width * height;
+    et024006_CopyPixelsToScreen( pixmap, count );
+  } else {
+    // Copy line by line to screen.
+    uint16_t lines_left = height;
+    while (lines_left > 0) {
+800025b0:	cf 91       	brne	800025a2 <et024006_PutPixmap+0x8a>
+800025b2:	e3 cd 80 fe 	ldm	sp++,r1-r7,pc
+800025b6:	00 00       	add	r0,r0
+800025b8:	80 00       	ld.sh	r0,r0[0x0]
+800025ba:	20 08       	sub	r8,0
+800025bc:	80 00       	ld.sh	r0,r0[0x0]
+800025be:	24 b0       	sub	r0,75
+
+800025c0 <et024006_AdjustGamma>:
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025c0:	fc 19 c0 00 	movh	r9,0xc000
+800025c4:	34 6a       	mov	r10,70
+800025c6:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025c8:	fc 18 c0 20 	movh	r8,0xc020
+800025cc:	e0 6b 00 94 	mov	r11,148
+800025d0:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025d2:	34 7b       	mov	r11,71
+800025d4:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025d6:	34 1b       	mov	r11,65
+800025d8:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025da:	34 8b       	mov	r11,72
+800025dc:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025de:	30 0b       	mov	r11,0
+800025e0:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025e2:	34 9b       	mov	r11,73
+800025e4:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025e6:	33 3b       	mov	r11,51
+800025e8:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025ea:	34 ab       	mov	r11,74
+800025ec:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025ee:	32 5b       	mov	r11,37
+800025f0:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025f2:	34 bb       	mov	r11,75
+800025f4:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025f6:	34 5b       	mov	r11,69
+800025f8:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800025fa:	34 cb       	mov	r11,76
+800025fc:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800025fe:	34 4b       	mov	r11,68
+80002600:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002602:	34 db       	mov	r11,77
+80002604:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002606:	37 7b       	mov	r11,119
+80002608:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000260a:	34 eb       	mov	r11,78
+8000260c:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000260e:	31 2b       	mov	r11,18
+80002610:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002612:	34 fb       	mov	r11,79
+80002614:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002616:	e0 6b 00 cc 	mov	r11,204
+8000261a:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000261c:	35 0b       	mov	r11,80
+8000261e:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002620:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002622:	35 1a       	mov	r10,81
+80002624:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002626:	e0 69 00 82 	mov	r9,130
+8000262a:	b0 09       	st.h	r8[0x0],r9
+  et024006_WriteRegister( HIMAX_GAMMACTRL8, 0x77 );
+  et024006_WriteRegister( HIMAX_GAMMACTRL9, 0x12 );
+  et024006_WriteRegister( HIMAX_GAMMACTRL10, 0xCC );
+  et024006_WriteRegister( HIMAX_GAMMACTRL11, 0x46 );
+  et024006_WriteRegister( HIMAX_GAMMACTRL12, 0x82 );
+}
+8000262c:	5e fc       	retal	r12
+8000262e:	d7 03       	nop
+
+80002630 <et024006_Init>:
+ *  @param cpu_hz CPU speed in Hz. This is needed for power up timings.
+ *  @param hsb_hz HSB bus speed in Hz. This parameter is needed to set up the SMC.
+ *  If SPI mode is used then this parameter is ignored.
+ */
+void et024006_Init( unsigned long cpu_hz, unsigned long hsb_hz )
+{
+80002630:	eb cd 40 c0 	pushm	r6-r7,lr
+  tft_data.cpu_hz = cpu_hz;
+80002634:	fe f7 04 80 	ld.w	r7,pc[1152]
+80002638:	8f 0c       	st.w	r7[0x0],r12
+  tft_data.hsb_hz = hsb_hz;
+8000263a:	8f 1b       	st.w	r7[0x4],r11
+
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_SPI)
+  et024006_InitSPI();
+#endif
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  smc_init(tft_data.hsb_hz);
+8000263c:	16 9c       	mov	r12,r11
+8000263e:	f0 1f 01 1f 	mcall	80002ab8 <et024006_Init+0x488>
+static void et024006_SetupInterface( void )
+{
+
+  // et024006_TE (tearing sync) signal from display is input
+  // without any pull resistors
+  gpio_enable_gpio_pin(ET024006DHU_TE_PIN);
+80002642:	35 5c       	mov	r12,85
+80002644:	f0 1f 01 1e 	mcall	80002abc <et024006_Init+0x48c>
+
+  // Backlight pin (PWM) for display is output
+  gpio_enable_module_pin(ET024006DHU_BL_PIN, ET024006DHU_BL_FUNCTION);
+80002648:	30 2b       	mov	r11,2
+8000264a:	33 2c       	mov	r12,50
+8000264c:	f0 1f 01 1d 	mcall	80002ac0 <et024006_Init+0x490>
+  // Turns backlight ON
+  /*TODO Add backlight driver */
+
+  // Reset pin for display is output
+  gpio_set_gpio_pin(ET024006DHU_RESET_PIN);
+80002650:	35 2c       	mov	r12,82
+80002652:	f0 1f 01 1d 	mcall	80002ac4 <et024006_Init+0x494>
+/*! \brief Does a hard reset of the display.
+ */
+static void et024006_ResetDisplay( void )
+{
+  // clear reset line
+  gpio_clr_gpio_pin(ET024006DHU_RESET_PIN);
+80002656:	35 2c       	mov	r12,82
+80002658:	f0 1f 01 1c 	mcall	80002ac8 <et024006_Init+0x498>
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_us_2_cy(unsigned long us, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)us * fcpu_hz + 999999) / 1000000;
+8000265c:	6e 07       	ld.w	r7,r7[0x0]
+8000265e:	33 28       	mov	r8,50
+80002660:	ee 08 06 46 	mulu.d	r6,r7,r8
+80002664:	ee 78 42 40 	mov	r8,1000000
+80002668:	30 09       	mov	r9,0
+8000266a:	ee 7a 42 3f 	mov	r10,999999
+8000266e:	30 0b       	mov	r11,0
+80002670:	ec 0a 00 0a 	add	r10,r6,r10
+80002674:	ee 0b 00 4b 	adc	r11,r7,r11
+80002678:	f0 1f 01 15 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+8000267c:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002680:	f0 0a 00 0a 	add	r10,r8,r10
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+80002684:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+80002688:	14 38       	cp.w	r8,r10
+8000268a:	e0 88 00 09 	brls	8000269c <et024006_Init+0x6c>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+8000268e:	12 38       	cp.w	r8,r9
+80002690:	fe 98 ff fa 	brls	80002684 <et024006_Init+0x54>
+80002694:	12 3a       	cp.w	r10,r9
+80002696:	e0 83 00 a2 	brlo	800027da <et024006_Init+0x1aa>
+8000269a:	cf 5b       	rjmp	80002684 <et024006_Init+0x54>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+8000269c:	12 38       	cp.w	r8,r9
+8000269e:	e0 8b 00 9e 	brhi	800027da <et024006_Init+0x1aa>
+800026a2:	12 3a       	cp.w	r10,r9
+800026a4:	e0 83 00 9b 	brlo	800027da <et024006_Init+0x1aa>
+800026a8:	ce eb       	rjmp	80002684 <et024006_Init+0x54>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+800026aa:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+800026ae:	14 38       	cp.w	r8,r10
+800026b0:	e0 88 00 09 	brls	800026c2 <et024006_Init+0x92>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+800026b4:	12 38       	cp.w	r8,r9
+800026b6:	fe 98 ff fa 	brls	800026aa <et024006_Init+0x7a>
+800026ba:	12 3a       	cp.w	r10,r9
+800026bc:	e0 83 00 a9 	brlo	8000280e <et024006_Init+0x1de>
+800026c0:	cf 5b       	rjmp	800026aa <et024006_Init+0x7a>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+800026c2:	12 38       	cp.w	r8,r9
+800026c4:	e0 8b 00 a5 	brhi	8000280e <et024006_Init+0x1de>
+800026c8:	12 3a       	cp.w	r10,r9
+800026ca:	e0 83 00 a2 	brlo	8000280e <et024006_Init+0x1de>
+800026ce:	ce eb       	rjmp	800026aa <et024006_Init+0x7a>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+800026d0:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+800026d4:	14 38       	cp.w	r8,r10
+800026d6:	e0 88 00 09 	brls	800026e8 <et024006_Init+0xb8>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+800026da:	12 38       	cp.w	r8,r9
+800026dc:	fe 98 ff fa 	brls	800026d0 <et024006_Init+0xa0>
+800026e0:	12 3a       	cp.w	r10,r9
+800026e2:	e0 83 01 1e 	brlo	8000291e <et024006_Init+0x2ee>
+800026e6:	cf 5b       	rjmp	800026d0 <et024006_Init+0xa0>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+800026e8:	12 38       	cp.w	r8,r9
+800026ea:	e0 8b 01 1a 	brhi	8000291e <et024006_Init+0x2ee>
+800026ee:	12 3a       	cp.w	r10,r9
+800026f0:	e0 83 01 17 	brlo	8000291e <et024006_Init+0x2ee>
+800026f4:	ce eb       	rjmp	800026d0 <et024006_Init+0xa0>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+800026f6:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+800026fa:	14 38       	cp.w	r8,r10
+800026fc:	e0 88 00 09 	brls	8000270e <et024006_Init+0xde>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+80002700:	12 38       	cp.w	r8,r9
+80002702:	fe 98 ff fa 	brls	800026f6 <et024006_Init+0xc6>
+80002706:	12 3a       	cp.w	r10,r9
+80002708:	e0 83 01 29 	brlo	8000295a <et024006_Init+0x32a>
+8000270c:	cf 5b       	rjmp	800026f6 <et024006_Init+0xc6>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+8000270e:	12 38       	cp.w	r8,r9
+80002710:	e0 8b 01 25 	brhi	8000295a <et024006_Init+0x32a>
+80002714:	12 3a       	cp.w	r10,r9
+80002716:	e0 83 01 22 	brlo	8000295a <et024006_Init+0x32a>
+8000271a:	ce eb       	rjmp	800026f6 <et024006_Init+0xc6>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+8000271c:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+80002720:	14 38       	cp.w	r8,r10
+80002722:	e0 88 00 09 	brls	80002734 <et024006_Init+0x104>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+80002726:	12 38       	cp.w	r8,r9
+80002728:	fe 98 ff fa 	brls	8000271c <et024006_Init+0xec>
+8000272c:	12 3a       	cp.w	r10,r9
+8000272e:	e0 83 01 35 	brlo	80002998 <et024006_Init+0x368>
+80002732:	cf 5b       	rjmp	8000271c <et024006_Init+0xec>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+80002734:	12 38       	cp.w	r8,r9
+80002736:	e0 8b 01 31 	brhi	80002998 <et024006_Init+0x368>
+8000273a:	12 3a       	cp.w	r10,r9
+8000273c:	e0 83 01 2e 	brlo	80002998 <et024006_Init+0x368>
+80002740:	ce eb       	rjmp	8000271c <et024006_Init+0xec>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+80002742:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+80002746:	14 38       	cp.w	r8,r10
+80002748:	e0 88 00 09 	brls	8000275a <et024006_Init+0x12a>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+8000274c:	12 38       	cp.w	r8,r9
+8000274e:	fe 98 ff fa 	brls	80002742 <et024006_Init+0x112>
+80002752:	12 3a       	cp.w	r10,r9
+80002754:	e0 83 01 40 	brlo	800029d4 <et024006_Init+0x3a4>
+80002758:	cf 5b       	rjmp	80002742 <et024006_Init+0x112>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+8000275a:	12 38       	cp.w	r8,r9
+8000275c:	e0 8b 01 3c 	brhi	800029d4 <et024006_Init+0x3a4>
+80002760:	12 3a       	cp.w	r10,r9
+80002762:	e0 83 01 39 	brlo	800029d4 <et024006_Init+0x3a4>
+80002766:	ce eb       	rjmp	80002742 <et024006_Init+0x112>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+80002768:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+8000276c:	14 38       	cp.w	r8,r10
+8000276e:	e0 88 00 09 	brls	80002780 <et024006_Init+0x150>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+80002772:	12 38       	cp.w	r8,r9
+80002774:	fe 98 ff fa 	brls	80002768 <et024006_Init+0x138>
+80002778:	12 3a       	cp.w	r10,r9
+8000277a:	e0 83 01 4b 	brlo	80002a10 <et024006_Init+0x3e0>
+8000277e:	cf 5b       	rjmp	80002768 <et024006_Init+0x138>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+80002780:	12 38       	cp.w	r8,r9
+80002782:	e0 8b 01 47 	brhi	80002a10 <et024006_Init+0x3e0>
+80002786:	12 3a       	cp.w	r10,r9
+80002788:	e0 83 01 44 	brlo	80002a10 <et024006_Init+0x3e0>
+8000278c:	ce eb       	rjmp	80002768 <et024006_Init+0x138>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+8000278e:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+80002792:	14 38       	cp.w	r8,r10
+80002794:	e0 88 00 09 	brls	800027a6 <et024006_Init+0x176>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+80002798:	12 38       	cp.w	r8,r9
+8000279a:	fe 98 ff fa 	brls	8000278e <et024006_Init+0x15e>
+8000279e:	12 3a       	cp.w	r10,r9
+800027a0:	e0 83 01 56 	brlo	80002a4c <et024006_Init+0x41c>
+800027a4:	cf 5b       	rjmp	8000278e <et024006_Init+0x15e>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+800027a6:	12 38       	cp.w	r8,r9
+800027a8:	e0 8b 01 52 	brhi	80002a4c <et024006_Init+0x41c>
+800027ac:	12 3a       	cp.w	r10,r9
+800027ae:	e0 83 01 4f 	brlo	80002a4c <et024006_Init+0x41c>
+800027b2:	ce eb       	rjmp	8000278e <et024006_Init+0x15e>
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+800027b4:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+800027b8:	14 38       	cp.w	r8,r10
+800027ba:	e0 88 00 09 	brls	800027cc <et024006_Init+0x19c>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+800027be:	12 38       	cp.w	r8,r9
+800027c0:	fe 98 ff fa 	brls	800027b4 <et024006_Init+0x184>
+800027c4:	12 3a       	cp.w	r10,r9
+800027c6:	e0 83 01 64 	brlo	80002a8e <et024006_Init+0x45e>
+800027ca:	cf 5b       	rjmp	800027b4 <et024006_Init+0x184>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+800027cc:	12 38       	cp.w	r8,r9
+800027ce:	e0 8b 01 60 	brhi	80002a8e <et024006_Init+0x45e>
+800027d2:	12 3a       	cp.w	r10,r9
+800027d4:	e0 83 01 5d 	brlo	80002a8e <et024006_Init+0x45e>
+800027d8:	ce eb       	rjmp	800027b4 <et024006_Init+0x184>
+  // 50us delay
+  cpu_delay_us( 50, tft_data.cpu_hz );
+
+  gpio_set_gpio_pin(ET024006DHU_RESET_PIN);
+800027da:	35 2c       	mov	r12,82
+800027dc:	f0 1f 00 ba 	mcall	80002ac4 <et024006_Init+0x494>
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+800027e0:	fe f8 02 d4 	ld.w	r8,pc[724]
+800027e4:	70 07       	ld.w	r7,r8[0x0]
+800027e6:	30 58       	mov	r8,5
+800027e8:	ee 08 06 46 	mulu.d	r6,r7,r8
+800027ec:	e0 68 03 e8 	mov	r8,1000
+800027f0:	30 09       	mov	r9,0
+800027f2:	e0 6a 03 e7 	mov	r10,999
+800027f6:	30 0b       	mov	r11,0
+800027f8:	ec 0a 00 0a 	add	r10,r6,r10
+800027fc:	ee 0b 00 4b 	adc	r11,r7,r11
+80002800:	f0 1f 00 b3 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002804:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002808:	f0 0a 00 0a 	add	r10,r8,r10
+8000280c:	c4 fb       	rjmp	800026aa <et024006_Init+0x7a>
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+  smc_init(tft_data.hsb_hz);
+#endif
+  et024006_SetupInterface();
+  et024006_ResetDisplay();
+  et024006_AdjustGamma();
+8000280e:	f0 1f 00 b1 	mcall	80002ad0 <et024006_Init+0x4a0>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002812:	fc 19 c0 00 	movh	r9,0xc000
+80002816:	30 1a       	mov	r10,1
+80002818:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000281a:	fc 18 c0 20 	movh	r8,0xc020
+8000281e:	30 6b       	mov	r11,6
+80002820:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002822:	33 ab       	mov	r11,58
+80002824:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002826:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002828:	33 bb       	mov	r11,59
+8000282a:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000282c:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000282e:	33 ca       	mov	r10,60
+80002830:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002832:	e0 6a 00 f0 	mov	r10,240
+80002836:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002838:	33 db       	mov	r11,61
+8000283a:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000283c:	30 07       	mov	r7,0
+8000283e:	b0 07       	st.h	r8[0x0],r7
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002840:	33 eb       	mov	r11,62
+80002842:	b2 0b       	st.h	r9[0x0],r11
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002844:	33 8b       	mov	r11,56
+80002846:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002848:	34 0c       	mov	r12,64
+8000284a:	b2 0c       	st.h	r9[0x0],r12
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000284c:	30 fe       	mov	lr,15
+8000284e:	b0 0e       	st.h	r8[0x0],lr
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002850:	34 1e       	mov	lr,65
+80002852:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002854:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002856:	32 7a       	mov	r10,39
+80002858:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000285a:	30 2a       	mov	r10,2
+8000285c:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000285e:	32 8e       	mov	lr,40
+80002860:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002862:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002864:	32 9e       	mov	lr,41
+80002866:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002868:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000286a:	32 ae       	mov	lr,42
+8000286c:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000286e:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002870:	32 ce       	mov	lr,44
+80002872:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002874:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002876:	32 de       	mov	lr,45
+80002878:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000287a:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000287c:	31 9a       	mov	r10,25
+8000287e:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002880:	34 9a       	mov	r10,73
+80002882:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002884:	e0 6a 00 93 	mov	r10,147
+80002888:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000288a:	30 8a       	mov	r10,8
+8000288c:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000288e:	31 6a       	mov	r10,22
+80002890:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002892:	36 8a       	mov	r10,104
+80002894:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002896:	32 3a       	mov	r10,35
+80002898:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+8000289a:	e0 6a 00 95 	mov	r10,149
+8000289e:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028a0:	32 4e       	mov	lr,36
+800028a2:	b2 0e       	st.h	r9[0x0],lr
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028a4:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028a6:	32 5a       	mov	r10,37
+800028a8:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028aa:	e0 6a 00 ff 	mov	r10,255
+800028ae:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028b0:	e0 6a 00 90 	mov	r10,144
+800028b4:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028b6:	37 fa       	mov	r10,127
+800028b8:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028ba:	33 5a       	mov	r10,53
+800028bc:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028be:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028c0:	33 6a       	mov	r10,54
+800028c2:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028c4:	37 8a       	mov	r10,120
+800028c6:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028c8:	31 da       	mov	r10,29
+800028ca:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028cc:	30 7a       	mov	r10,7
+800028ce:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028d0:	31 ea       	mov	r10,30
+800028d2:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028d4:	b0 07       	st.h	r8[0x0],r7
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028d6:	31 fa       	mov	r10,31
+800028d8:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028da:	30 4a       	mov	r10,4
+800028dc:	b0 0a       	st.h	r8[0x0],r10
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028de:	32 0a       	mov	r10,32
+800028e0:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028e2:	b0 0c       	st.h	r8[0x0],r12
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028e4:	34 4a       	mov	r10,68
+800028e6:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028e8:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800028ea:	34 5a       	mov	r10,69
+800028ec:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800028ee:	31 29       	mov	r9,18
+800028f0:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+800028f2:	4f 18       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+800028f4:	70 07       	ld.w	r7,r8[0x0]
+800028f6:	30 a8       	mov	r8,10
+800028f8:	ee 08 06 46 	mulu.d	r6,r7,r8
+800028fc:	e0 68 03 e8 	mov	r8,1000
+80002900:	30 09       	mov	r9,0
+80002902:	e0 6a 03 e7 	mov	r10,999
+80002906:	30 0b       	mov	r11,0
+80002908:	ec 0a 00 0a 	add	r10,r6,r10
+8000290c:	ee 0b 00 4b 	adc	r11,r7,r11
+80002910:	f0 1f 00 6f 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002914:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002918:	f0 0a 00 0a 	add	r10,r8,r10
+8000291c:	cd aa       	rjmp	800026d0 <et024006_Init+0xa0>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000291e:	31 c9       	mov	r9,28
+80002920:	fc 18 c0 00 	movh	r8,0xc000
+80002924:	b0 09       	st.h	r8[0x0],r9
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002926:	30 49       	mov	r9,4
+80002928:	fc 18 c0 20 	movh	r8,0xc020
+8000292c:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+8000292e:	4e 28       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+80002930:	70 07       	ld.w	r7,r8[0x0]
+80002932:	31 48       	mov	r8,20
+80002934:	ee 08 06 46 	mulu.d	r6,r7,r8
+80002938:	e0 68 03 e8 	mov	r8,1000
+8000293c:	30 09       	mov	r9,0
+8000293e:	e0 6a 03 e7 	mov	r10,999
+80002942:	30 0b       	mov	r11,0
+80002944:	ec 0a 00 0a 	add	r10,r6,r10
+80002948:	ee 0b 00 4b 	adc	r11,r7,r11
+8000294c:	f0 1f 00 60 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002950:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002954:	f0 0a 00 0a 	add	r10,r8,r10
+80002958:	cc fa       	rjmp	800026f6 <et024006_Init+0xc6>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+8000295a:	34 39       	mov	r9,67
+8000295c:	fc 18 c0 00 	movh	r8,0xc000
+80002960:	b0 09       	st.h	r8[0x0],r9
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002962:	e0 69 00 80 	mov	r9,128
+80002966:	fc 18 c0 20 	movh	r8,0xc020
+8000296a:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+8000296c:	4d 28       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+8000296e:	70 07       	ld.w	r7,r8[0x0]
+80002970:	30 58       	mov	r8,5
+80002972:	ee 08 06 46 	mulu.d	r6,r7,r8
+80002976:	e0 68 03 e8 	mov	r8,1000
+8000297a:	30 09       	mov	r9,0
+8000297c:	e0 6a 03 e7 	mov	r10,999
+80002980:	30 0b       	mov	r11,0
+80002982:	ec 0a 00 0a 	add	r10,r6,r10
+80002986:	ee 0b 00 4b 	adc	r11,r7,r11
+8000298a:	f0 1f 00 51 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+8000298e:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002992:	f0 0a 00 0a 	add	r10,r8,r10
+80002996:	cc 3a       	rjmp	8000271c <et024006_Init+0xec>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002998:	31 b9       	mov	r9,27
+8000299a:	fc 18 c0 00 	movh	r8,0xc000
+8000299e:	b0 09       	st.h	r8[0x0],r9
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800029a0:	30 89       	mov	r9,8
+800029a2:	fc 18 c0 20 	movh	r8,0xc020
+800029a6:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+800029a8:	4c 38       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+800029aa:	70 07       	ld.w	r7,r8[0x0]
+800029ac:	32 88       	mov	r8,40
+800029ae:	ee 08 06 46 	mulu.d	r6,r7,r8
+800029b2:	e0 68 03 e8 	mov	r8,1000
+800029b6:	30 09       	mov	r9,0
+800029b8:	e0 6a 03 e7 	mov	r10,999
+800029bc:	30 0b       	mov	r11,0
+800029be:	ec 0a 00 0a 	add	r10,r6,r10
+800029c2:	ee 0b 00 4b 	adc	r11,r7,r11
+800029c6:	f0 1f 00 42 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+800029ca:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+800029ce:	f0 0a 00 0a 	add	r10,r8,r10
+800029d2:	cb 8a       	rjmp	80002742 <et024006_Init+0x112>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+800029d4:	31 b9       	mov	r9,27
+800029d6:	fc 18 c0 00 	movh	r8,0xc000
+800029da:	b0 09       	st.h	r8[0x0],r9
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+800029dc:	31 09       	mov	r9,16
+800029de:	fc 18 c0 20 	movh	r8,0xc020
+800029e2:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+800029e4:	4b 48       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+800029e6:	70 07       	ld.w	r7,r8[0x0]
+800029e8:	32 88       	mov	r8,40
+800029ea:	ee 08 06 46 	mulu.d	r6,r7,r8
+800029ee:	e0 68 03 e8 	mov	r8,1000
+800029f2:	30 09       	mov	r9,0
+800029f4:	e0 6a 03 e7 	mov	r10,999
+800029f8:	30 0b       	mov	r11,0
+800029fa:	ec 0a 00 0a 	add	r10,r6,r10
+800029fe:	ee 0b 00 4b 	adc	r11,r7,r11
+80002a02:	f0 1f 00 33 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002a06:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002a0a:	f0 0a 00 0a 	add	r10,r8,r10
+80002a0e:	ca da       	rjmp	80002768 <et024006_Init+0x138>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002a10:	32 69       	mov	r9,38
+80002a12:	fc 18 c0 00 	movh	r8,0xc000
+80002a16:	b0 09       	st.h	r8[0x0],r9
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002a18:	30 49       	mov	r9,4
+80002a1a:	fc 18 c0 20 	movh	r8,0xc020
+80002a1e:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+80002a20:	4a 58       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+80002a22:	70 07       	ld.w	r7,r8[0x0]
+80002a24:	32 88       	mov	r8,40
+80002a26:	ee 08 06 46 	mulu.d	r6,r7,r8
+80002a2a:	e0 68 03 e8 	mov	r8,1000
+80002a2e:	30 09       	mov	r9,0
+80002a30:	e0 6a 03 e7 	mov	r10,999
+80002a34:	30 0b       	mov	r11,0
+80002a36:	ec 0a 00 0a 	add	r10,r6,r10
+80002a3a:	ee 0b 00 4b 	adc	r11,r7,r11
+80002a3e:	f0 1f 00 24 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002a42:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002a46:	f0 0a 00 0a 	add	r10,r8,r10
+80002a4a:	ca 2a       	rjmp	8000278e <et024006_Init+0x15e>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002a4c:	fc 19 c0 00 	movh	r9,0xc000
+80002a50:	32 6a       	mov	r10,38
+80002a52:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002a54:	fc 18 c0 20 	movh	r8,0xc020
+80002a58:	32 4b       	mov	r11,36
+80002a5a:	b0 0b       	st.h	r8[0x0],r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002a5c:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002a5e:	32 c9       	mov	r9,44
+80002a60:	b0 09       	st.h	r8[0x0],r9
+ *
+ * \return the converted number of CPU cycles.
+ */
+__always_inline static uint32_t cpu_ms_2_cy(unsigned long ms, unsigned long fcpu_hz)
+{
+  return ((unsigned long long)ms * fcpu_hz + 999) / 1000;
+80002a62:	49 58       	lddpc	r8,80002ab4 <et024006_Init+0x484>
+80002a64:	70 07       	ld.w	r7,r8[0x0]
+80002a66:	32 88       	mov	r8,40
+80002a68:	ee 08 06 46 	mulu.d	r6,r7,r8
+80002a6c:	e0 68 03 e8 	mov	r8,1000
+80002a70:	30 09       	mov	r9,0
+80002a72:	e0 6a 03 e7 	mov	r10,999
+80002a76:	30 0b       	mov	r11,0
+80002a78:	ec 0a 00 0a 	add	r10,r6,r10
+80002a7c:	ee 0b 00 4b 	adc	r11,r7,r11
+80002a80:	f0 1f 00 13 	mcall	80002acc <et024006_Init+0x49c>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002a84:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002a88:	f0 0a 00 0a 	add	r10,r8,r10
+80002a8c:	c9 4a       	rjmp	800027b4 <et024006_Init+0x184>
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002a8e:	fc 19 c0 00 	movh	r9,0xc000
+80002a92:	32 68       	mov	r8,38
+80002a94:	b2 08       	st.h	r9[0x0],r8
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002a96:	fc 18 c0 20 	movh	r8,0xc020
+80002a9a:	33 ca       	mov	r10,60
+80002a9c:	b0 0a       	st.h	r8[0x0],r10
+}
+
+__always_inline static uint8_t et024006_ReadRegister( uint8_t address )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002a9e:	37 0a       	mov	r10,112
+80002aa0:	b2 0a       	st.h	r9[0x0],r10
+  return *ET024006_PARAM_ADDR;
+80002aa2:	90 0b       	ld.sh	r11,r8[0x0]
+80002aa4:	5c 5b       	castu.b	r11
+
+/* --- Register manipulation functions --- */
+#if(ET024006_IFACE_MODE == ET024006_IFACE_MODE_EBI)
+__always_inline static void et024006_WriteRegister( uint8_t address, uint8_t value )
+{
+  *ET024006_CMD_ADDR = (uint16_t) address;
+80002aa6:	b2 0a       	st.h	r9[0x0],r10
+  *ET024006_PARAM_ADDR = (uint16_t) value;
+80002aa8:	16 99       	mov	r9,r11
+80002aaa:	a3 b9       	sbr	r9,0x3
+80002aac:	b0 09       	st.h	r8[0x0],r9
+  et024006_GeneralSettings();
+  et024006_InterfaceSettings();
+  et024006_PowerSettings();
+  et024006_PowerUp();
+  et024006_PowerOn();
+}
+80002aae:	e3 cd 80 c0 	ldm	sp++,r6-r7,pc
+80002ab2:	00 00       	add	r0,r0
+80002ab4:	00 00       	add	r0,r0
+80002ab6:	00 28       	rsub	r8,r0
+80002ab8:	80 00       	ld.sh	r0,r0[0x0]
+80002aba:	2a d4       	sub	r4,-83
+80002abc:	80 00       	ld.sh	r0,r0[0x0]
+80002abe:	2c 74       	sub	r4,-57
+80002ac0:	80 00       	ld.sh	r0,r0[0x0]
+80002ac2:	2b f0       	sub	r0,-65
+80002ac4:	80 00       	ld.sh	r0,r0[0x0]
+80002ac6:	2c 8c       	sub	r12,-56
+80002ac8:	80 00       	ld.sh	r0,r0[0x0]
+80002aca:	2c a8       	sub	r8,-54
+80002acc:	80 00       	ld.sh	r0,r0[0x0]
+80002ace:	30 d4       	mov	r4,13
+80002ad0:	80 00       	ld.sh	r0,r0[0x0]
+80002ad2:	25 c0       	sub	r0,92
+
+80002ad4 <smc_init>:
+
+static void smc_enable_muxed_pins(void);
+
+
+void smc_init(unsigned long hsb_hz)
+{
+80002ad4:	eb cd 40 fc 	pushm	r2-r7,lr
+  unsigned long hsb_mhz_up = (hsb_hz + 999999) / 1000000;
+80002ad8:	ee 78 42 3f 	mov	r8,999999
+80002adc:	f8 08 00 09 	add	r9,r12,r8
+80002ae0:	e0 68 de 83 	mov	r8,56963
+80002ae4:	ea 18 43 1b 	orh	r8,0x431b
+80002ae8:	f2 08 06 48 	mulu.d	r8,r9,r8
+80002aec:	f2 08 16 12 	lsr	r8,r9,0x12
+//! Whether to use the NCS0 pin
+#ifdef SMC_USE_NCS0
+  #include SMC_COMPONENT_CS0
+
+  // Setup SMC for NCS0
+  SMC_CS_SETUP(0)
+80002af0:	f0 08 00 25 	add	r5,r8,r8<<0x2
+80002af4:	a3 65       	lsl	r5,0x2
+80002af6:	ea c5 fc 19 	sub	r5,r5,-999
+80002afa:	e0 69 4d d3 	mov	r9,19923
+80002afe:	ea 19 10 62 	orh	r9,0x1062
+80002b02:	ea 09 06 44 	mulu.d	r4,r5,r9
+80002b06:	a7 85       	lsr	r5,0x6
+80002b08:	f0 0a 15 04 	lsl	r10,r8,0x4
+80002b0c:	f4 08 01 07 	sub	r7,r10,r8
+80002b10:	a1 77       	lsl	r7,0x1
+80002b12:	ee c7 fc 19 	sub	r7,r7,-999
+80002b16:	ee 09 06 46 	mulu.d	r6,r7,r9
+80002b1a:	0e 94       	mov	r4,r7
+80002b1c:	a7 84       	lsr	r4,0x6
+80002b1e:	f4 08 01 07 	sub	r7,r10,r8
+80002b22:	a3 67       	lsl	r7,0x2
+80002b24:	ee c7 fc 19 	sub	r7,r7,-999
+80002b28:	ee 09 06 46 	mulu.d	r6,r7,r9
+80002b2c:	a7 87       	lsr	r7,0x6
+80002b2e:	f0 03 10 5a 	mul	r3,r8,90
+80002b32:	e6 c3 fc 19 	sub	r3,r3,-999
+80002b36:	e6 09 06 42 	mulu.d	r2,r3,r9
+80002b3a:	e6 0c 16 06 	lsr	r12,r3,0x6
+80002b3e:	e0 63 00 d2 	mov	r3,210
+80002b42:	f0 03 02 43 	mul	r3,r8,r3
+80002b46:	e6 c3 fc 19 	sub	r3,r3,-999
+80002b4a:	e6 09 06 42 	mulu.d	r2,r3,r9
+80002b4e:	e6 06 16 06 	lsr	r6,r3,0x6
+80002b52:	f4 08 01 0b 	sub	r11,r10,r8
+80002b56:	a5 6b       	lsl	r11,0x4
+80002b58:	f6 cb fc 19 	sub	r11,r11,-999
+80002b5c:	f6 09 06 4a 	mulu.d	r10,r11,r9
+80002b60:	f6 0e 16 06 	lsr	lr,r11,0x6
+80002b64:	f0 03 10 64 	mul	r3,r8,100
+80002b68:	e6 c3 fc 19 	sub	r3,r3,-999
+80002b6c:	e6 09 06 42 	mulu.d	r2,r3,r9
+80002b70:	a7 83       	lsr	r3,0x6
+80002b72:	e0 6a 01 0e 	mov	r10,270
+80002b76:	b5 38       	mul	r8,r10
+80002b78:	f0 c8 fc 19 	sub	r8,r8,-999
+80002b7c:	f0 09 06 48 	mulu.d	r8,r8,r9
+80002b80:	a7 89       	lsr	r9,0x6
+80002b82:	ec 04 00 0a 	add	r10,r6,r4
+80002b86:	1c 3a       	cp.w	r10,lr
+80002b88:	f4 0e 17 20 	movhs	lr,r10
+80002b8c:	ee 05 00 0b 	add	r11,r7,r5
+80002b90:	18 3b       	cp.w	r11,r12
+80002b92:	f6 0c 17 20 	movhs	r12,r11
+80002b96:	06 3b       	cp.w	r11,r3
+80002b98:	e6 0b 17 30 	movlo	r11,r3
+80002b9c:	12 3a       	cp.w	r10,r9
+80002b9e:	f4 09 17 20 	movhs	r9,r10
+80002ba2:	eb e4 11 05 	or	r5,r5,r4<<0x10
+80002ba6:	fe 6a 1c 00 	mov	r10,-123904
+80002baa:	95 05       	st.w	r10[0x0],r5
+80002bac:	ef e6 11 07 	or	r7,r7,r6<<0x10
+80002bb0:	ef ec 10 87 	or	r7,r7,r12<<0x8
+80002bb4:	ef ee 11 87 	or	r7,r7,lr<<0x18
+80002bb8:	95 17       	st.w	r10[0x4],r7
+80002bba:	1c 39       	cp.w	r9,lr
+80002bbc:	f2 0e 17 20 	movhs	lr,r9
+80002bc0:	18 3b       	cp.w	r11,r12
+80002bc2:	f8 0b 17 30 	movlo	r11,r12
+80002bc6:	f7 ee 11 0b 	or	r11,r11,lr<<0x10
+80002bca:	95 2b       	st.w	r10[0x8],r11
+80002bcc:	e0 68 10 03 	mov	r8,4099
+80002bd0:	95 38       	st.w	r10[0xc],r8
+80002bd2:	30 19       	mov	r9,1
+80002bd4:	48 48       	lddpc	r8,80002be4 <smc_init+0x110>
+80002bd6:	b0 89       	st.b	r8[0x0],r9
+        {ATPASTE2(EBI_NCS_5,_PIN),ATPASTE2(EBI_NCS_5,_FUNCTION)},
+    #endif
+#endif
+ };
+
+  gpio_enable_module(SMC_EBI_GPIO_MAP, sizeof(SMC_EBI_GPIO_MAP) / sizeof(SMC_EBI_GPIO_MAP[0]));
+80002bd8:	31 4b       	mov	r11,20
+80002bda:	48 4c       	lddpc	r12,80002be8 <smc_init+0x114>
+80002bdc:	f0 1f 00 04 	mcall	80002bec <smc_init+0x118>
+  #undef NCS_CONTROLLED_WRITE
+  #undef NWAIT_MODE
+#endif
+  // Put the multiplexed MCU pins used for the SM under control of the SMC.
+  smc_enable_muxed_pins();
+}
+80002be0:	e3 cd 80 fc 	ldm	sp++,r2-r7,pc
+80002be4:	00 00       	add	r0,r0
+80002be6:	00 30       	cp.w	r0,r0
+80002be8:	80 00       	ld.sh	r0,r0[0x0]
+80002bea:	3c 10       	mov	r0,-63
+80002bec:	80 00       	ld.sh	r0,r0[0x0]
+80002bee:	2c 44       	sub	r4,-60
+
+80002bf0 <gpio_enable_module_pin>:
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_module_pin(uint32_t pin, uint32_t function)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+80002bf0:	f8 08 16 05 	lsr	r8,r12,0x5
+80002bf4:	a9 68       	lsl	r8,0x8
+80002bf6:	e0 28 f0 00 	sub	r8,61440
+
+	/* Enable the correct function. */
+	switch (function) {
+80002bfa:	58 1b       	cp.w	r11,1
+80002bfc:	c0 d0       	breq	80002c16 <gpio_enable_module_pin+0x26>
+80002bfe:	c0 63       	brcs	80002c0a <gpio_enable_module_pin+0x1a>
+80002c00:	58 2b       	cp.w	r11,2
+80002c02:	c1 00       	breq	80002c22 <gpio_enable_module_pin+0x32>
+80002c04:	58 3b       	cp.w	r11,3
+80002c06:	c1 40       	breq	80002c2e <gpio_enable_module_pin+0x3e>
+80002c08:	5e ff       	retal	1
+	case 0: /* A function. */
+		gpio_port->pmr0c = 1 << (pin & 0x1F);
+80002c0a:	30 19       	mov	r9,1
+80002c0c:	f2 0c 09 49 	lsl	r9,r9,r12
+80002c10:	91 69       	st.w	r8[0x18],r9
+		gpio_port->pmr1c = 1 << (pin & 0x1F);
+80002c12:	91 a9       	st.w	r8[0x28],r9
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+80002c14:	c1 28       	rjmp	80002c38 <gpio_enable_module_pin+0x48>
+
+	case 1: /* B function. */
+		gpio_port->pmr0s = 1 << (pin & 0x1F);
+80002c16:	30 19       	mov	r9,1
+80002c18:	f2 0c 09 49 	lsl	r9,r9,r12
+80002c1c:	91 59       	st.w	r8[0x14],r9
+		gpio_port->pmr1c = 1 << (pin & 0x1F);
+80002c1e:	91 a9       	st.w	r8[0x28],r9
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+80002c20:	c0 c8       	rjmp	80002c38 <gpio_enable_module_pin+0x48>
+
+	case 2: /* C function. */
+		gpio_port->pmr0c = 1 << (pin & 0x1F);
+80002c22:	30 19       	mov	r9,1
+80002c24:	f2 0c 09 49 	lsl	r9,r9,r12
+80002c28:	91 69       	st.w	r8[0x18],r9
+		gpio_port->pmr1s = 1 << (pin & 0x1F);
+80002c2a:	91 99       	st.w	r8[0x24],r9
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+80002c2c:	c0 68       	rjmp	80002c38 <gpio_enable_module_pin+0x48>
+
+	case 3: /* D function. */
+		gpio_port->pmr0s = 1 << (pin & 0x1F);
+80002c2e:	30 19       	mov	r9,1
+80002c30:	f2 0c 09 49 	lsl	r9,r9,r12
+80002c34:	91 59       	st.w	r8[0x14],r9
+		gpio_port->pmr1s = 1 << (pin & 0x1F);
+80002c36:	91 99       	st.w	r8[0x24],r9
+	default:
+		return GPIO_INVALID_ARGUMENT;
+	}
+
+	/* Disable GPIO control. */
+	gpio_port->gperc = 1 << (pin & 0x1F);
+80002c38:	30 19       	mov	r9,1
+80002c3a:	f2 0c 09 4c 	lsl	r12,r9,r12
+80002c3e:	91 2c       	st.w	r8[0x8],r12
+80002c40:	5e fd       	retal	0
+80002c42:	d7 03       	nop
+
+80002c44 <gpio_enable_module>:
+ * \param size The number of pins in \a gpiomap.
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+80002c44:	d4 21       	pushm	r4-r7,lr
+80002c46:	18 97       	mov	r7,r12
+80002c48:	16 94       	mov	r4,r11
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+80002c4a:	58 0b       	cp.w	r11,0
+80002c4c:	c0 31       	brne	80002c52 <gpio_enable_module+0xe>
+80002c4e:	30 05       	mov	r5,0
+80002c50:	c0 d8       	rjmp	80002c6a <gpio_enable_module+0x26>
+80002c52:	30 06       	mov	r6,0
+80002c54:	0c 95       	mov	r5,r6
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+80002c56:	6e 1b       	ld.w	r11,r7[0x4]
+80002c58:	6e 0c       	ld.w	r12,r7[0x0]
+80002c5a:	f0 1f 00 06 	mcall	80002c70 <gpio_enable_module+0x2c>
+80002c5e:	18 45       	or	r5,r12
+		gpiomap++;
+80002c60:	2f 87       	sub	r7,-8
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+80002c62:	2f f6       	sub	r6,-1
+80002c64:	0c 34       	cp.w	r4,r6
+80002c66:	fe 9b ff f8 	brhi	80002c56 <gpio_enable_module+0x12>
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+		gpiomap++;
+	}
+
+	return status;
+}
+80002c6a:	0a 9c       	mov	r12,r5
+80002c6c:	d8 22       	popm	r4-r7,pc
+80002c6e:	00 00       	add	r0,r0
+80002c70:	80 00       	ld.sh	r0,r0[0x0]
+80002c72:	2b f0       	sub	r0,-65
+
+80002c74 <gpio_enable_gpio_pin>:
+ *            AVR32_PWM_3_PIN for PWM channel 3 can also be used to release
+ *            module pins for GPIO.
+ */
+void gpio_enable_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+80002c74:	f8 08 16 05 	lsr	r8,r12,0x5
+80002c78:	a9 68       	lsl	r8,0x8
+80002c7a:	e0 28 f0 00 	sub	r8,61440
+	
+	gpio_port->oderc = 1 << (pin & 0x1F);
+80002c7e:	30 19       	mov	r9,1
+80002c80:	f2 0c 09 4c 	lsl	r12,r9,r12
+80002c84:	f1 4c 00 48 	st.w	r8[72],r12
+	gpio_port->gpers = 1 << (pin & 0x1F);
+80002c88:	91 1c       	st.w	r8[0x4],r12
+}
+80002c8a:	5e fc       	retal	r12
+
+80002c8c <gpio_set_gpio_pin>:
+ *
+ * \param pin The pin number.
+ */
+void gpio_set_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+80002c8c:	f8 08 16 05 	lsr	r8,r12,0x5
+80002c90:	a9 68       	lsl	r8,0x8
+80002c92:	e0 28 f0 00 	sub	r8,61440
+	
+	/* Value to be driven on the I/O line: 1. */
+	gpio_port->ovrs  = 1 << (pin & 0x1F);
+80002c96:	30 19       	mov	r9,1
+80002c98:	f2 0c 09 4c 	lsl	r12,r9,r12
+80002c9c:	f1 4c 00 54 	st.w	r8[84],r12
+	/* The GPIO output driver is enabled for that pin. */ 
+	gpio_port->oders = 1 << (pin & 0x1F);
+80002ca0:	f1 4c 00 44 	st.w	r8[68],r12
+	/* The GPIO module controls that pin. */
+	gpio_port->gpers = 1 << (pin & 0x1F);
+80002ca4:	91 1c       	st.w	r8[0x4],r12
+}
+80002ca6:	5e fc       	retal	r12
+
+80002ca8 <gpio_clr_gpio_pin>:
+ *
+ * \param pin The pin number.
+ */
+void gpio_clr_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+80002ca8:	f8 08 16 05 	lsr	r8,r12,0x5
+80002cac:	a9 68       	lsl	r8,0x8
+80002cae:	e0 28 f0 00 	sub	r8,61440
+	
+	/* Value to be driven on the I/O line: 0. */
+	gpio_port->ovrc  = 1 << (pin & 0x1F);
+80002cb2:	30 19       	mov	r9,1
+80002cb4:	f2 0c 09 4c 	lsl	r12,r9,r12
+80002cb8:	f1 4c 00 58 	st.w	r8[88],r12
+	/* The GPIO output driver is enabled for that pin. */
+	gpio_port->oders = 1 << (pin & 0x1F);
+80002cbc:	f1 4c 00 44 	st.w	r8[68],r12
+	/* The GPIO module controls that pin. */
+	gpio_port->gpers = 1 << (pin & 0x1F);
+80002cc0:	91 1c       	st.w	r8[0x4],r12
+}
+80002cc2:	5e fc       	retal	r12
+
+80002cc4 <_get_interrupt_handler>:
+__int_handler _get_interrupt_handler(uint32_t int_level)
+{
+	/* ICR3 is mapped first, ICR0 last.
+	Code in exception.S puts int_level in R12 which is used by the compiler
+	to pass a single argument to a function. */
+	uint32_t int_grp = AVR32_INTC.icr[AVR32_INTC_INT3 - int_level];
+80002cc4:	fe 78 08 00 	mov	r8,-63488
+80002cc8:	e0 69 00 83 	mov	r9,131
+80002ccc:	f2 0c 01 0c 	sub	r12,r9,r12
+80002cd0:	f0 0c 03 29 	ld.w	r9,r8[r12<<0x2]
+	uint32_t int_req = AVR32_INTC.irr[int_grp];
+80002cd4:	f2 ca ff c0 	sub	r10,r9,-64
+80002cd8:	f0 0a 03 28 	ld.w	r8,r8[r10<<0x2]
+	exception.S will provide the interrupt handler with a clean interrupt
+	stack frame, with nothing more pushed onto the stack. The interrupt
+	handler must manage the `rete' instruction, which can be done using
+	pure assembly, inline assembly or the `__attribute__((__interrupt__))'
+	C function attribute.*/
+	return (int_req)
+80002cdc:	58 08       	cp.w	r8,0
+80002cde:	c0 21       	brne	80002ce2 <_get_interrupt_handler+0x1e>
+80002ce0:	5e fd       	retal	0
+		? _int_handler_table[int_grp]._int_line_handler_table[32
+			- clz(int_req) - 1]
+80002ce2:	f0 08 12 00 	clz	r8,r8
+	stack frame, with nothing more pushed onto the stack. The interrupt
+	handler must manage the `rete' instruction, which can be done using
+	pure assembly, inline assembly or the `__attribute__((__interrupt__))'
+	C function attribute.*/
+	return (int_req)
+		? _int_handler_table[int_grp]._int_line_handler_table[32
+80002ce6:	48 5a       	lddpc	r10,80002cf8 <_get_interrupt_handler+0x34>
+80002ce8:	f4 09 00 39 	add	r9,r10,r9<<0x3
+80002cec:	f0 08 11 1f 	rsub	r8,r8,31
+80002cf0:	72 19       	ld.w	r9,r9[0x4]
+	exception.S will provide the interrupt handler with a clean interrupt
+	stack frame, with nothing more pushed onto the stack. The interrupt
+	handler must manage the `rete' instruction, which can be done using
+	pure assembly, inline assembly or the `__attribute__((__interrupt__))'
+	C function attribute.*/
+	return (int_req)
+80002cf2:	f2 08 03 2c 	ld.w	r12,r9[r8<<0x2]
+		? _int_handler_table[int_grp]._int_line_handler_table[32
+			- clz(int_req) - 1]
+		: NULL;
+}
+80002cf6:	5e fc       	retal	r12
+80002cf8:	80 00       	ld.sh	r0,r0[0x0]
+80002cfa:	3c b0       	mov	r0,-53
+
+80002cfc <pm_set_osc0_mode>:
+ * \param mode Oscillator 0 mode (i.e. AVR32_PM_OSCCTRL0_MODE_x).
+ */
+static void pm_set_osc0_mode(volatile avr32_pm_t *pm, unsigned int mode)
+{
+  // Read
+  u_avr32_pm_oscctrl0_t u_avr32_pm_oscctrl0 = {pm->oscctrl0};
+80002cfc:	78 a8       	ld.w	r8,r12[0x28]
+  // Modify
+  u_avr32_pm_oscctrl0.OSCCTRL0.mode = mode;
+80002cfe:	f1 db d0 03 	bfins	r8,r11,0x0,0x3
+  // Write
+  pm->oscctrl0 = u_avr32_pm_oscctrl0.oscctrl0;
+80002d02:	99 a8       	st.w	r12[0x28],r8
+}
+80002d04:	5e fc       	retal	r12
+80002d06:	d7 03       	nop
+
+80002d08 <pm_enable_osc0_crystal>:
+  pm_set_osc0_mode(pm, AVR32_PM_OSCCTRL0_MODE_EXT_CLOCK);
+}
+
+
+void pm_enable_osc0_crystal(volatile avr32_pm_t *pm, unsigned int fosc0)
+{
+80002d08:	d4 01       	pushm	lr
+  pm_set_osc0_mode(pm, (fosc0 <  900000) ? AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G0 :
+80002d0a:	ec 5b bb 9f 	cp.w	r11,899999
+80002d0e:	e0 8b 00 04 	brhi	80002d16 <pm_enable_osc0_crystal+0xe>
+80002d12:	30 4b       	mov	r11,4
+80002d14:	c1 38       	rjmp	80002d3a <pm_enable_osc0_crystal+0x32>
+80002d16:	e0 68 c6 bf 	mov	r8,50879
+80002d1a:	ea 18 00 2d 	orh	r8,0x2d
+80002d1e:	10 3b       	cp.w	r11,r8
+80002d20:	e0 8b 00 04 	brhi	80002d28 <pm_enable_osc0_crystal+0x20>
+80002d24:	30 5b       	mov	r11,5
+80002d26:	c0 a8       	rjmp	80002d3a <pm_enable_osc0_crystal+0x32>
+80002d28:	e0 68 12 00 	mov	r8,4608
+80002d2c:	ea 18 00 7a 	orh	r8,0x7a
+80002d30:	10 3b       	cp.w	r11,r8
+80002d32:	f9 bb 03 06 	movlo	r11,6
+80002d36:	f9 bb 02 07 	movhs	r11,7
+80002d3a:	f0 1f 00 02 	mcall	80002d40 <pm_enable_osc0_crystal+0x38>
+                       (fosc0 < 3000000) ? AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G1 :
+                       (fosc0 < 8000000) ? AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G2 :
+                                           AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G3);
+}
+80002d3e:	d8 02       	popm	pc
+80002d40:	80 00       	ld.sh	r0,r0[0x0]
+80002d42:	2c fc       	sub	r12,-49
+
+80002d44 <pm_enable_clk0_no_wait>:
+
+
+void pm_enable_clk0_no_wait(volatile avr32_pm_t *pm, unsigned int startup)
+{
+  // Read register
+  u_avr32_pm_oscctrl0_t u_avr32_pm_oscctrl0 = {pm->oscctrl0};
+80002d44:	78 a8       	ld.w	r8,r12[0x28]
+  // Modify
+  u_avr32_pm_oscctrl0.OSCCTRL0.startup = startup;
+80002d46:	f1 db d1 03 	bfins	r8,r11,0x8,0x3
+  // Write back
+  pm->oscctrl0 = u_avr32_pm_oscctrl0.oscctrl0;
+80002d4a:	99 a8       	st.w	r12[0x28],r8
+
+  pm->mcctrl |= AVR32_PM_MCCTRL_OSC0EN_MASK;
+80002d4c:	78 08       	ld.w	r8,r12[0x0]
+80002d4e:	a3 a8       	sbr	r8,0x2
+80002d50:	99 08       	st.w	r12[0x0],r8
+}
+80002d52:	5e fc       	retal	r12
+
+80002d54 <pm_wait_for_clk0_ready>:
+
+
+void pm_wait_for_clk0_ready(volatile avr32_pm_t *pm)
+{
+  while (!(pm->poscsr & AVR32_PM_POSCSR_OSC0RDY_MASK));
+80002d54:	79 58       	ld.w	r8,r12[0x54]
+80002d56:	e2 18 00 80 	andl	r8,0x80,COH
+80002d5a:	cf d0       	breq	80002d54 <pm_wait_for_clk0_ready>
+}
+80002d5c:	5e fc       	retal	r12
+80002d5e:	d7 03       	nop
+
+80002d60 <pm_enable_clk0>:
+                                           AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G3);
+}
+
+
+void pm_enable_clk0(volatile avr32_pm_t *pm, unsigned int startup)
+{
+80002d60:	eb cd 40 80 	pushm	r7,lr
+80002d64:	18 97       	mov	r7,r12
+  pm_enable_clk0_no_wait(pm, startup);
+80002d66:	f0 1f 00 04 	mcall	80002d74 <pm_enable_clk0+0x14>
+  pm_wait_for_clk0_ready(pm);
+80002d6a:	0e 9c       	mov	r12,r7
+80002d6c:	f0 1f 00 03 	mcall	80002d78 <pm_enable_clk0+0x18>
+}
+80002d70:	e3 cd 80 80 	ldm	sp++,r7,pc
+80002d74:	80 00       	ld.sh	r0,r0[0x0]
+80002d76:	2d 44       	sub	r4,-44
+80002d78:	80 00       	ld.sh	r0,r0[0x0]
+80002d7a:	2d 54       	sub	r4,-43
+
+80002d7c <pm_switch_to_clock>:
+
+
+void pm_switch_to_clock(volatile avr32_pm_t *pm, unsigned long clock)
+{
+  // Read
+  u_avr32_pm_mcctrl_t u_avr32_pm_mcctrl = {pm->mcctrl};
+80002d7c:	78 08       	ld.w	r8,r12[0x0]
+  // Modify
+  u_avr32_pm_mcctrl.MCCTRL.mcsel = clock;
+80002d7e:	f1 db d0 02 	bfins	r8,r11,0x0,0x2
+  // Write back
+  pm->mcctrl = u_avr32_pm_mcctrl.mcctrl;
+80002d82:	99 08       	st.w	r12[0x0],r8
+}
+80002d84:	5e fc       	retal	r12
+80002d86:	d7 03       	nop
+
+80002d88 <pm_switch_to_osc0>:
+
+
+void pm_switch_to_osc0(volatile avr32_pm_t *pm, unsigned int fosc0, unsigned int startup)
+{
+80002d88:	eb cd 40 c0 	pushm	r6-r7,lr
+80002d8c:	18 97       	mov	r7,r12
+80002d8e:	14 96       	mov	r6,r10
+  pm_enable_osc0_crystal(pm, fosc0);            // Enable the Osc0 in crystal mode
+80002d90:	f0 1f 00 06 	mcall	80002da8 <pm_switch_to_osc0+0x20>
+  pm_enable_clk0(pm, startup);                  // Crystal startup time - This parameter is critical and depends on the characteristics of the crystal
+80002d94:	0c 9b       	mov	r11,r6
+80002d96:	0e 9c       	mov	r12,r7
+80002d98:	f0 1f 00 05 	mcall	80002dac <pm_switch_to_osc0+0x24>
+  pm_switch_to_clock(pm, AVR32_PM_MCSEL_OSC0);  // Then switch main clock to Osc0
+80002d9c:	30 1b       	mov	r11,1
+80002d9e:	0e 9c       	mov	r12,r7
+80002da0:	f0 1f 00 04 	mcall	80002db0 <pm_switch_to_osc0+0x28>
+}
+80002da4:	e3 cd 80 c0 	ldm	sp++,r6-r7,pc
+80002da8:	80 00       	ld.sh	r0,r0[0x0]
+80002daa:	2d 08       	sub	r8,-48
+80002dac:	80 00       	ld.sh	r0,r0[0x0]
+80002dae:	2d 60       	sub	r0,-42
+80002db0:	80 00       	ld.sh	r0,r0[0x0]
+80002db2:	2d 7c       	sub	r12,-41
+
+80002db4 <pcl_switch_to_osc>:
+        return PASS;
+}
+#endif // UC3D device-specific implementation
+
+long int pcl_switch_to_osc(pcl_osc_t osc, unsigned int fcrystal, unsigned int startup)
+{
+80002db4:	d4 01       	pushm	lr
+#ifndef AVR32_PM_VERSION_RESETVALUE
+// Implementation for UC3A, UC3A3, UC3B parts.
+  if(PCL_OSC0 == osc)
+80002db6:	58 0c       	cp.w	r12,0
+80002db8:	c0 40       	breq	80002dc0 <pcl_switch_to_osc+0xc>
+80002dba:	fe 7c d8 f0 	mov	r12,-10000
+80002dbe:	d8 02       	popm	pc
+  {
+    // Configure OSC0 in crystal mode, external crystal with a FOSC0 Hz frequency,
+    // enable the OSC0, set the main clock source as being OSC0.
+    pm_switch_to_osc0(&AVR32_PM, fcrystal, startup);
+80002dc0:	fe 7c 0c 00 	mov	r12,-62464
+80002dc4:	f0 1f 00 02 	mcall	80002dcc <pcl_switch_to_osc+0x18>
+80002dc8:	d8 0a       	popm	pc,r12=0
+80002dca:	00 00       	add	r0,r0
+80002dcc:	80 00       	ld.sh	r0,r0[0x0]
+80002dce:	2d 88       	sub	r8,-40
+
+80002dd0 <pwm_channel_init>:
+
+int pwm_channel_init( unsigned int channel_id, const avr32_pwm_channel_t *pwm_channel)
+{
+  volatile avr32_pwm_t *pwm = &AVR32_PWM;
+
+  if (pwm_channel == 0) // Null pointer.
+80002dd0:	58 0b       	cp.w	r11,0
+80002dd2:	c1 90       	breq	80002e04 <pwm_channel_init+0x34>
+    return PWM_INVALID_ARGUMENT;
+  if (channel_id > AVR32_PWM_LINES_MSB) // Control input values.
+80002dd4:	58 6c       	cp.w	r12,6
+80002dd6:	e0 8b 00 17 	brhi	80002e04 <pwm_channel_init+0x34>
+    return PWM_INVALID_INPUT;
+
+  pwm->channel[channel_id].cmr= pwm_channel->cmr;   // Channel mode.
+80002dda:	76 0a       	ld.w	r10,r11[0x0]
+80002ddc:	fe 78 30 00 	mov	r8,-53248
+80002de0:	f8 c9 ff f0 	sub	r9,r12,-16
+80002de4:	a5 79       	lsl	r9,0x5
+80002de6:	f0 09 00 09 	add	r9,r8,r9
+80002dea:	93 0a       	st.w	r9[0x0],r10
+  pwm->channel[channel_id].cdty= pwm_channel->cdty; // Duty cycle, should be < CPRD.
+80002dec:	76 19       	ld.w	r9,r11[0x4]
+80002dee:	a5 7c       	lsl	r12,0x5
+80002df0:	f0 0c 00 0c 	add	r12,r8,r12
+80002df4:	f8 c8 fd fc 	sub	r8,r12,-516
+80002df8:	91 09       	st.w	r8[0x0],r9
+  pwm->channel[channel_id].cprd= pwm_channel->cprd; // Channel period.
+80002dfa:	76 28       	ld.w	r8,r11[0x8]
+80002dfc:	f8 cc fd f8 	sub	r12,r12,-520
+80002e00:	99 08       	st.w	r12[0x0],r8
+80002e02:	5e fd       	retal	0
+
+  return PWM_SUCCESS;
+80002e04:	5e ff       	retal	1
+
+80002e06 <pwm_start_channels>:
+}
+
+
+int pwm_start_channels(unsigned long channels_bitmask)
+{
+  if (channels_bitmask & ~((1 << (AVR32_PWM_LINES_MSB + 1)) - 1))
+80002e06:	18 98       	mov	r8,r12
+80002e08:	e0 18 ff 80 	andl	r8,0xff80
+80002e0c:	c0 20       	breq	80002e10 <pwm_start_channels+0xa>
+80002e0e:	5e ff       	retal	1
+    return PWM_INVALID_INPUT;
+
+  AVR32_PWM.ena = channels_bitmask; // Enable channels.
+80002e10:	fe 78 30 00 	mov	r8,-53248
+80002e14:	91 1c       	st.w	r8[0x4],r12
+80002e16:	5e fd       	retal	0
+
+80002e18 <pwm_async_update_channel>:
+
+int pwm_async_update_channel(unsigned int channel_id, const avr32_pwm_channel_t *pwm_channel)
+{
+  volatile avr32_pwm_t *pwm = &AVR32_PWM;
+
+  if (channel_id > AVR32_PWM_LINES_MSB)
+80002e18:	58 6c       	cp.w	r12,6
+80002e1a:	e0 88 00 03 	brls	80002e20 <pwm_async_update_channel+0x8>
+80002e1e:	5e ff       	retal	1
+     return PWM_INVALID_INPUT;
+
+  pwm->channel[channel_id].cmr= pwm_channel->cmr;   // Channel mode register: update of the period or duty cycle.
+80002e20:	76 0a       	ld.w	r10,r11[0x0]
+80002e22:	fe 78 30 00 	mov	r8,-53248
+80002e26:	f8 c9 ff f0 	sub	r9,r12,-16
+80002e2a:	a5 79       	lsl	r9,0x5
+80002e2c:	f0 09 00 09 	add	r9,r8,r9
+80002e30:	93 0a       	st.w	r9[0x0],r10
+  pwm->channel[channel_id].cupd= pwm_channel->cupd; // Channel update CPRDx or CDTYx according to CPD value in CMRx.
+80002e32:	76 49       	ld.w	r9,r11[0x10]
+80002e34:	a5 7c       	lsl	r12,0x5
+80002e36:	18 08       	add	r8,r12
+80002e38:	f0 c8 fd f0 	sub	r8,r8,-528
+80002e3c:	91 09       	st.w	r8[0x0],r9
+80002e3e:	5e fd       	retal	0
+
+80002e40 <pwm_init>:
+
+
+int pwm_init(const pwm_opt_t *opt)
+{
+  volatile avr32_pwm_t *pwm = &AVR32_PWM;
+  bool global_interrupt_enabled = Is_global_interrupt_enabled();
+80002e40:	e1 b8 00 00 	mfsr	r8,0x0
+
+  if (opt == 0 ) // Null pointer.
+80002e44:	58 0c       	cp.w	r12,0
+80002e46:	c0 21       	brne	80002e4a <pwm_init+0xa>
+80002e48:	5e ff       	retal	1
+    return PWM_INVALID_INPUT;
+
+  // Disable interrupt.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+80002e4a:	e6 18 00 01 	andh	r8,0x1,COH
+80002e4e:	c0 91       	brne	80002e60 <pwm_init+0x20>
+80002e50:	d3 03       	ssrf	0x10
+  pwm->idr = ((1 << (AVR32_PWM_LINES_MSB + 1)) - 1) << AVR32_PWM_IDR_CHID0_OFFSET;
+80002e52:	fe 78 30 00 	mov	r8,-53248
+80002e56:	37 f9       	mov	r9,127
+80002e58:	91 59       	st.w	r8[0x14],r9
+  pwm->isr;
+80002e5a:	70 78       	ld.w	r8,r8[0x1c]
+  if (global_interrupt_enabled) Enable_global_interrupt();
+80002e5c:	d5 03       	csrf	0x10
+80002e5e:	c0 68       	rjmp	80002e6a <pwm_init+0x2a>
+  if (opt == 0 ) // Null pointer.
+    return PWM_INVALID_INPUT;
+
+  // Disable interrupt.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  pwm->idr = ((1 << (AVR32_PWM_LINES_MSB + 1)) - 1) << AVR32_PWM_IDR_CHID0_OFFSET;
+80002e60:	fe 78 30 00 	mov	r8,-53248
+80002e64:	37 f9       	mov	r9,127
+80002e66:	91 59       	st.w	r8[0x14],r9
+  pwm->isr;
+80002e68:	70 78       	ld.w	r8,r8[0x1c]
+  if (global_interrupt_enabled) Enable_global_interrupt();
+
+  // Set PWM mode register.
+  pwm->mr =
+    ((opt->diva)<<AVR32_PWM_DIVA_OFFSET) |
+80002e6a:	78 08       	ld.w	r8,r12[0x0]
+80002e6c:	78 39       	ld.w	r9,r12[0xc]
+80002e6e:	a9 69       	lsl	r9,0x8
+80002e70:	f3 e8 11 09 	or	r9,r9,r8<<0x10
+80002e74:	78 18       	ld.w	r8,r12[0x4]
+80002e76:	10 49       	or	r9,r8
+80002e78:	78 28       	ld.w	r8,r12[0x8]
+80002e7a:	f3 e8 11 89 	or	r9,r9,r8<<0x18
+  pwm->idr = ((1 << (AVR32_PWM_LINES_MSB + 1)) - 1) << AVR32_PWM_IDR_CHID0_OFFSET;
+  pwm->isr;
+  if (global_interrupt_enabled) Enable_global_interrupt();
+
+  // Set PWM mode register.
+  pwm->mr =
+80002e7e:	fe 78 30 00 	mov	r8,-53248
+80002e82:	91 09       	st.w	r8[0x0],r9
+80002e84:	5e fd       	retal	0
+80002e86:	d7 03       	nop
+
+80002e88 <_stext>:
+
+  .global _stext
+  .type _stext, @function
+_stext:
+  // Set initial stack pointer.
+  lda.w   sp, _estack
+80002e88:	e0 7d 00 00 	mov	sp,65536
+
+  // Set up EVBA so interrupts can be enabled.
+  lda.w   r0, _evba
+  mtsr    AVR32_EVBA, r0
+80002e8c:	fe c0 fa 8c 	sub	r0,pc,-1396
+
+  // Enable the exception processing.
+  csrf    AVR32_SR_EM_OFFSET
+80002e90:	e3 b0 00 01 	mtsr	0x4,r0
+
+  // Load initialized data having a global lifetime from the data LMA.
+  lda.w   r0, _data
+  lda.w   r1, _edata
+80002e94:	d5 53       	csrf	0x15
+  cp      r0, r1
+80002e96:	30 80       	mov	r0,8
+  brhs    idata_load_loop_end
+80002e98:	32 81       	mov	r1,40
+  lda.w   r2, _data_lma
+80002e9a:	02 30       	cp.w	r0,r1
+idata_load_loop:
+  ld.d    r4, r2++
+80002e9c:	c0 62       	brcc	80002ea8 <idata_load_loop_end>
+  st.d    r0++, r4
+80002e9e:	48 92       	lddpc	r2,80002ec0 <udata_clear_loop_end+0x4>
+
+80002ea0 <idata_load_loop>:
+  cp      r0, r1
+80002ea0:	a5 05       	ld.d	r4,r2++
+  brlo    idata_load_loop
+80002ea2:	a1 24       	st.d	r0++,r4
+idata_load_loop_end:
+
+  // Clear uninitialized data having a global lifetime in the blank static storage section.
+  lda.w   r0, __bss_start
+80002ea4:	02 30       	cp.w	r0,r1
+  lda.w   r1, _end
+80002ea6:	cf d3       	brcs	80002ea0 <idata_load_loop>
+
+80002ea8 <idata_load_loop_end>:
+  cp      r0, r1
+80002ea8:	32 80       	mov	r0,40
+  brhs    udata_clear_loop_end
+80002eaa:	e0 61 01 28 	mov	r1,296
+  mov     r2, 0
+  mov     r3, 0
+80002eae:	02 30       	cp.w	r0,r1
+udata_clear_loop:
+  st.d    r0++, r2
+80002eb0:	c0 62       	brcc	80002ebc <udata_clear_loop_end>
+  cp      r0, r1
+80002eb2:	30 02       	mov	r2,0
+  brlo    udata_clear_loop
+80002eb4:	30 03       	mov	r3,0
+
+80002eb6 <udata_clear_loop>:
+  // Safety: Set the default "return" @ to the exit routine address.
+  lda.w   lr, exit
+#endif
+
+  // Start the show.
+  lda.w   pc, main
+80002eb6:	a1 22       	st.d	r0++,r2
+80002eb8:	02 30       	cp.w	r0,r1
+80002eba:	cf e3       	brcs	80002eb6 <udata_clear_loop>
+
+80002ebc <udata_clear_loop_end>:
+80002ebc:	fe cf ff f8 	sub	pc,pc,-8
+80002ec0:	80 02       	ld.sh	r2,r0[0x0]
+80002ec2:	95 58       	st.w	r10[0x14],r8
+
+80002ec4 <main>:
+}
+#endif
+
+// Main function
+int main(void)
+{
+80002ec4:	d4 31       	pushm	r0-r7,lr
+80002ec6:	20 4d       	sub	sp,16
+  U32 i;
+
+  // Set CPU and PBA clock
+  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP);
+80002ec8:	30 3a       	mov	r10,3
+80002eca:	e0 6b 1b 00 	mov	r11,6912
+80002ece:	ea 1b 00 b7 	orh	r11,0xb7
+80002ed2:	30 0c       	mov	r12,0
+80002ed4:	f0 1f 00 6e 	mcall	8000308c <main+0x1c8>
+
+  gpio_enable_gpio_pin(LED0_GPIO);
+80002ed8:	33 bc       	mov	r12,59
+80002eda:	f0 1f 00 6e 	mcall	80003090 <main+0x1cc>
+  gpio_enable_gpio_pin(LED1_GPIO);
+80002ede:	33 cc       	mov	r12,60
+80002ee0:	f0 1f 00 6c 	mcall	80003090 <main+0x1cc>
+  gpio_enable_gpio_pin(LED2_GPIO);
+80002ee4:	30 5c       	mov	r12,5
+80002ee6:	f0 1f 00 6b 	mcall	80003090 <main+0x1cc>
+  gpio_enable_gpio_pin(LED3_GPIO);
+80002eea:	30 6c       	mov	r12,6
+80002eec:	f0 1f 00 69 	mcall	80003090 <main+0x1cc>
+
+  et024006_Init( FOSC0, FOSC0 );
+80002ef0:	e0 6b 1b 00 	mov	r11,6912
+80002ef4:	ea 1b 00 b7 	orh	r11,0xb7
+80002ef8:	16 9c       	mov	r12,r11
+80002efa:	f0 1f 00 67 	mcall	80003094 <main+0x1d0>
+  pwm_opt_t opt = {
+    .diva = 0,
+    .divb = 0,
+    .prea = 0,
+    .preb = 0
+  };
+80002efe:	30 07       	mov	r7,0
+80002f00:	50 07       	stdsp	sp[0x0],r7
+80002f02:	50 17       	stdsp	sp[0x4],r7
+80002f04:	50 27       	stdsp	sp[0x8],r7
+80002f06:	50 37       	stdsp	sp[0xc],r7
+   * Chosen MCK_DIV_2
+   * CPRD = 12MHz / (60kHz * 2) = 100
+   *
+   * The duty cycle is 100% (CPRD = CDTY)
+   * */
+  pwm_init(&opt);
+80002f08:	1a 9c       	mov	r12,sp
+80002f0a:	f0 1f 00 64 	mcall	80003098 <main+0x1d4>
+  pwm_channel6.CMR.calg = PWM_MODE_LEFT_ALIGNED;
+80002f0e:	4e 4b       	lddpc	r11,8000309c <main+0x1d8>
+80002f10:	76 08       	ld.w	r8,r11[0x0]
+  pwm_channel6.CMR.cpol = PWM_POLARITY_HIGH; //PWM_POLARITY_LOW;//PWM_POLARITY_HIGH;
+  pwm_channel6.CMR.cpd = PWM_UPDATE_DUTY;
+80002f12:	e0 18 f8 ff 	andl	r8,0xf8ff
+  pwm_channel6.CMR.cpre = AVR32_PWM_CMR_CPRE_MCK_DIV_2;
+80002f16:	a9 b8       	sbr	r8,0x9
+80002f18:	30 19       	mov	r9,1
+80002f1a:	f1 d9 d0 04 	bfins	r8,r9,0x0,0x4
+80002f1e:	97 08       	st.w	r11[0x0],r8
+
+  pwm_channel_init(6, &pwm_channel6);
+80002f20:	30 6c       	mov	r12,6
+80002f22:	f0 1f 00 60 	mcall	800030a0 <main+0x1dc>
+  pwm_start_channels(AVR32_PWM_ENA_CHID6_MASK);
+80002f26:	34 0c       	mov	r12,64
+80002f28:	f0 1f 00 5f 	mcall	800030a4 <main+0x1e0>
+#elif BOARD == EVK1104 || BOARD == UC3C_EK
+  gpio_set_gpio_pin(ET024006DHU_BL_PIN);
+#endif
+
+  // Clear the display i.e. make it black
+  et024006_DrawFilledRect(0 , 0, ET024006_WIDTH, ET024006_HEIGHT, BLACK );
+80002f2c:	0e 98       	mov	r8,r7
+80002f2e:	e0 69 00 f0 	mov	r9,240
+80002f32:	e0 6a 01 40 	mov	r10,320
+80002f36:	0e 9b       	mov	r11,r7
+80002f38:	0e 9c       	mov	r12,r7
+80002f3a:	f0 1f 00 5c 	mcall	800030a8 <main+0x1e4>
+
+  // Draw the background AVR32 logo.
+  et024006_PutPixmap(avr32_logo, 320, 0, 0, 0, 0, 320, 240);
+80002f3e:	e0 68 00 f0 	mov	r8,240
+80002f42:	1a d8       	st.w	--sp,r8
+80002f44:	e0 6b 01 40 	mov	r11,320
+80002f48:	1a db       	st.w	--sp,r11
+80002f4a:	1a d7       	st.w	--sp,r7
+80002f4c:	0e 98       	mov	r8,r7
+80002f4e:	0e 99       	mov	r9,r7
+80002f50:	0e 9a       	mov	r10,r7
+80002f52:	4d 7c       	lddpc	r12,800030ac <main+0x1e8>
+80002f54:	f0 1f 00 57 	mcall	800030b0 <main+0x1ec>
+80002f58:	0e 94       	mov	r4,r7
+80002f5a:	0e 96       	mov	r6,r7
+80002f5c:	2f dd       	sub	sp,-12
+
+  // Display lines of colored squares.
+  for( i=0 ; i<16 ; i++ )
+  {
+    // From black to white.
+    et024006_DrawFilledRect(20*i,   0, 20, 20, (2*i)/*B:5*/ | ((4*i)<<5)/*G:6*/ | ((2*i)<<11)/*R:5*/ );
+80002f5e:	31 45       	mov	r5,20
+80002f60:	0e 91       	mov	r1,r7
+    // From black to blue.
+    et024006_DrawFilledRect(20*i,  20, 20, 20, (2*i) /*B:5*/);
+    // From black to green
+    et024006_DrawFilledRect(20*i, 200, 20, 20, ((4*i)<<5) /*G:6*/);
+80002f62:	e0 60 00 c8 	mov	r0,200
+
+  // Display lines of colored squares.
+  for( i=0 ; i<16 ; i++ )
+  {
+    // From black to white.
+    et024006_DrawFilledRect(20*i,   0, 20, 20, (2*i)/*B:5*/ | ((4*i)<<5)/*G:6*/ | ((2*i)<<11)/*R:5*/ );
+80002f66:	08 98       	mov	r8,r4
+80002f68:	f0 03 15 06 	lsl	r3,r8,0x6
+80002f6c:	5c 83       	casts.h	r3
+80002f6e:	f0 02 15 0b 	lsl	r2,r8,0xb
+80002f72:	5c 82       	casts.h	r2
+80002f74:	e5 e8 10 08 	or	r8,r2,r8
+80002f78:	e7 e8 10 08 	or	r8,r3,r8
+80002f7c:	5c 78       	castu.h	r8
+80002f7e:	0a 99       	mov	r9,r5
+80002f80:	0a 9a       	mov	r10,r5
+80002f82:	02 9b       	mov	r11,r1
+80002f84:	0e 9c       	mov	r12,r7
+80002f86:	f0 1f 00 49 	mcall	800030a8 <main+0x1e4>
+    // From black to blue.
+    et024006_DrawFilledRect(20*i,  20, 20, 20, (2*i) /*B:5*/);
+80002f8a:	ec 08 15 01 	lsl	r8,r6,0x1
+80002f8e:	0a 99       	mov	r9,r5
+80002f90:	0a 9a       	mov	r10,r5
+80002f92:	0a 9b       	mov	r11,r5
+80002f94:	0e 9c       	mov	r12,r7
+80002f96:	f0 1f 00 45 	mcall	800030a8 <main+0x1e4>
+    // From black to green
+    et024006_DrawFilledRect(20*i, 200, 20, 20, ((4*i)<<5) /*G:6*/);
+80002f9a:	06 98       	mov	r8,r3
+80002f9c:	e2 18 ff c0 	andl	r8,0xffc0,COH
+80002fa0:	0a 99       	mov	r9,r5
+80002fa2:	0a 9a       	mov	r10,r5
+80002fa4:	00 9b       	mov	r11,r0
+80002fa6:	0e 9c       	mov	r12,r7
+80002fa8:	f0 1f 00 40 	mcall	800030a8 <main+0x1e4>
+    // From black to red
+    et024006_DrawFilledRect(20*i, 220, 20, 20, ((2*i)<<11) /*R:5*/);
+80002fac:	04 98       	mov	r8,r2
+80002fae:	e2 18 f8 00 	andl	r8,0xf800,COH
+80002fb2:	0a 99       	mov	r9,r5
+80002fb4:	0a 9a       	mov	r10,r5
+80002fb6:	e0 6b 00 dc 	mov	r11,220
+80002fba:	0e 9c       	mov	r12,r7
+80002fbc:	f0 1f 00 3b 	mcall	800030a8 <main+0x1e4>
+
+  // Draw the background AVR32 logo.
+  et024006_PutPixmap(avr32_logo, 320, 0, 0, 0, 0, 320, 240);
+
+  // Display lines of colored squares.
+  for( i=0 ; i<16 ; i++ )
+80002fc0:	2f f6       	sub	r6,-1
+80002fc2:	2f e4       	sub	r4,-2
+80002fc4:	5c 84       	casts.h	r4
+80002fc6:	2e c7       	sub	r7,-20
+80002fc8:	59 06       	cp.w	r6,16
+80002fca:	cc e1       	brne	80002f66 <main+0xa2>
+80002fcc:	c1 f8       	rjmp	8000300a <main+0x146>
+
+#if BOARD == EVK1105
+  /* Lets do a nice fade in by increasing the duty cycle */
+  while(pwm_channel6.cdty < pwm_channel6.cprd)
+  {
+    pwm_channel6.cdty++;
+80002fce:	2f f8       	sub	r8,-1
+80002fd0:	8f 18       	st.w	r7[0x4],r8
+    pwm_channel6.cupd = pwm_channel6.cdty;
+80002fd2:	8f 48       	st.w	r7[0x10],r8
+    //pwm_channel6.cdty--;
+    pwm_async_update_channel(AVR32_PWM_ENA_CHID6, &pwm_channel6);
+80002fd4:	0e 9b       	mov	r11,r7
+80002fd6:	0c 9c       	mov	r12,r6
+80002fd8:	f0 1f 00 37 	mcall	800030b4 <main+0x1f0>
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002fdc:	e1 b8 00 42 	mfsr	r8,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+80002fe0:	e0 79 d4 c0 	mov	r9,120000
+80002fe4:	f0 09 00 0a 	add	r10,r8,r9
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+80002fe8:	e1 b9 00 42 	mfsr	r9,0x108
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+80002fec:	14 38       	cp.w	r8,r10
+80002fee:	e0 88 00 08 	brls	80002ffe <main+0x13a>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+80002ff2:	12 38       	cp.w	r8,r9
+80002ff4:	fe 98 ff fa 	brls	80002fe8 <main+0x124>
+80002ff8:	12 3a       	cp.w	r10,r9
+80002ffa:	c0 a3       	brcs	8000300e <main+0x14a>
+80002ffc:	cf 6b       	rjmp	80002fe8 <main+0x124>
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+80002ffe:	12 38       	cp.w	r8,r9
+80003000:	e0 8b 00 07 	brhi	8000300e <main+0x14a>
+80003004:	12 3a       	cp.w	r10,r9
+80003006:	cf 12       	brcc	80002fe8 <main+0x124>
+80003008:	c0 38       	rjmp	8000300e <main+0x14a>
+  }
+
+
+#if BOARD == EVK1105
+  /* Lets do a nice fade in by increasing the duty cycle */
+  while(pwm_channel6.cdty < pwm_channel6.cprd)
+8000300a:	4a 57       	lddpc	r7,8000309c <main+0x1d8>
+  {
+    pwm_channel6.cdty++;
+    pwm_channel6.cupd = pwm_channel6.cdty;
+    //pwm_channel6.cdty--;
+    pwm_async_update_channel(AVR32_PWM_ENA_CHID6, &pwm_channel6);
+8000300c:	30 66       	mov	r6,6
+  }
+
+
+#if BOARD == EVK1105
+  /* Lets do a nice fade in by increasing the duty cycle */
+  while(pwm_channel6.cdty < pwm_channel6.cprd)
+8000300e:	6e 18       	ld.w	r8,r7[0x4]
+80003010:	6e 29       	ld.w	r9,r7[0x8]
+80003012:	12 38       	cp.w	r8,r9
+80003014:	cd d3       	brcs	80002fce <main+0x10a>
+    delay_ms(10);
+  }
+#endif
+
+  // Display text.
+  et024006_PrintString("AVR UC3", (const unsigned char *)&FONT6x8, 80, 50, BLUE, -1);
+80003016:	4a 97       	lddpc	r7,800030b8 <main+0x1f4>
+80003018:	3f f6       	mov	r6,-1
+8000301a:	1a d6       	st.w	--sp,r6
+8000301c:	31 f8       	mov	r8,31
+8000301e:	33 29       	mov	r9,50
+80003020:	35 0a       	mov	r10,80
+80003022:	4a 7b       	lddpc	r11,800030bc <main+0x1f8>
+80003024:	0e 9c       	mov	r12,r7
+80003026:	f0 1f 00 27 	mcall	800030c0 <main+0x1fc>
+  et024006_PrintString("AVR UC3", (const unsigned char *)&FONT8x8, 80, 60, BLACK, -1);
+8000302a:	1a d6       	st.w	--sp,r6
+8000302c:	30 08       	mov	r8,0
+8000302e:	33 c9       	mov	r9,60
+80003030:	35 0a       	mov	r10,80
+80003032:	4a 5b       	lddpc	r11,800030c4 <main+0x200>
+80003034:	0e 9c       	mov	r12,r7
+80003036:	f0 1f 00 23 	mcall	800030c0 <main+0x1fc>
+
+  // Draw a crossed square.
+  et024006_DrawHorizLine(10, 50, 20, BLACK);
+8000303a:	30 09       	mov	r9,0
+8000303c:	31 4a       	mov	r10,20
+8000303e:	33 2b       	mov	r11,50
+80003040:	30 ac       	mov	r12,10
+80003042:	f0 1f 00 22 	mcall	800030c8 <main+0x204>
+  et024006_DrawVertLine(10, 50, 20, BLACK);
+80003046:	30 09       	mov	r9,0
+80003048:	31 4a       	mov	r10,20
+8000304a:	33 2b       	mov	r11,50
+8000304c:	30 ac       	mov	r12,10
+8000304e:	f0 1f 00 20 	mcall	800030cc <main+0x208>
+  et024006_DrawHorizLine(10, 70, 20, BLACK);
+80003052:	30 09       	mov	r9,0
+80003054:	31 4a       	mov	r10,20
+80003056:	34 6b       	mov	r11,70
+80003058:	30 ac       	mov	r12,10
+8000305a:	f0 1f 00 1c 	mcall	800030c8 <main+0x204>
+  et024006_DrawVertLine(30, 50, 20, BLACK);
+8000305e:	30 09       	mov	r9,0
+80003060:	31 4a       	mov	r10,20
+80003062:	33 2b       	mov	r11,50
+80003064:	31 ec       	mov	r12,30
+80003066:	f0 1f 00 1a 	mcall	800030cc <main+0x208>
+  et024006_DrawLine(10, 50, 30, 70, BLACK);
+8000306a:	30 08       	mov	r8,0
+8000306c:	34 69       	mov	r9,70
+8000306e:	31 ea       	mov	r10,30
+80003070:	33 2b       	mov	r11,50
+80003072:	30 ac       	mov	r12,10
+80003074:	f0 1f 00 17 	mcall	800030d0 <main+0x20c>
+  et024006_DrawLine(30, 50, 10, 70, BLACK);
+80003078:	30 08       	mov	r8,0
+8000307a:	34 69       	mov	r9,70
+8000307c:	30 aa       	mov	r10,10
+8000307e:	33 2b       	mov	r11,50
+80003080:	31 ec       	mov	r12,30
+80003082:	f0 1f 00 14 	mcall	800030d0 <main+0x20c>
+80003086:	2f ed       	sub	sp,-8
+80003088:	c0 08       	rjmp	80003088 <main+0x1c4>
+8000308a:	00 00       	add	r0,r0
+8000308c:	80 00       	ld.sh	r0,r0[0x0]
+8000308e:	2d b4       	sub	r4,-37
+80003090:	80 00       	ld.sh	r0,r0[0x0]
+80003092:	2c 74       	sub	r4,-57
+80003094:	80 00       	ld.sh	r0,r0[0x0]
+80003096:	26 30       	sub	r0,99
+80003098:	80 00       	ld.sh	r0,r0[0x0]
+8000309a:	2e 40       	sub	r0,-28
+8000309c:	00 00       	add	r0,r0
+8000309e:	00 08       	add	r8,r0
+800030a0:	80 00       	ld.sh	r0,r0[0x0]
+800030a2:	2d d0       	sub	r0,-35
+800030a4:	80 00       	ld.sh	r0,r0[0x0]
+800030a6:	2e 06       	sub	r6,-32
+800030a8:	80 00       	ld.sh	r0,r0[0x0]
+800030aa:	24 3c       	sub	r12,67
+800030ac:	80 00       	ld.sh	r0,r0[0x0]
+800030ae:	3d 50       	mov	r0,-43
+800030b0:	80 00       	ld.sh	r0,r0[0x0]
+800030b2:	25 18       	sub	r8,81
+800030b4:	80 00       	ld.sh	r0,r0[0x0]
+800030b6:	2e 18       	sub	r8,-31
+800030b8:	80 02       	ld.sh	r2,r0[0x0]
+800030ba:	95 50       	st.w	r10[0x14],r0
+800030bc:	80 00       	ld.sh	r0,r0[0x0]
+800030be:	39 08       	mov	r8,-112
+800030c0:	80 00       	ld.sh	r0,r0[0x0]
+800030c2:	20 a8       	sub	r8,10
+800030c4:	80 00       	ld.sh	r0,r0[0x0]
+800030c6:	36 00       	mov	r0,96
+800030c8:	80 00       	ld.sh	r0,r0[0x0]
+800030ca:	24 98       	sub	r8,73
+800030cc:	80 00       	ld.sh	r0,r0[0x0]
+800030ce:	24 7c       	sub	r12,71
+800030d0:	80 00       	ld.sh	r0,r0[0x0]
+800030d2:	22 e4       	sub	r4,46
+
+800030d4 <__avr32_udiv64>:
+800030d4:	d4 31       	pushm	r0-r7,lr
+800030d6:	1a 97       	mov	r7,sp
+800030d8:	20 3d       	sub	sp,12
+800030da:	10 9c       	mov	r12,r8
+800030dc:	12 9e       	mov	lr,r9
+800030de:	14 93       	mov	r3,r10
+800030e0:	58 09       	cp.w	r9,0
+800030e2:	e0 81 00 bd 	brne	8000325c <__avr32_udiv64+0x188>
+800030e6:	16 38       	cp.w	r8,r11
+800030e8:	e0 88 00 40 	brls	80003168 <__avr32_udiv64+0x94>
+800030ec:	f0 08 12 00 	clz	r8,r8
+800030f0:	c0 d0       	breq	8000310a <__avr32_udiv64+0x36>
+800030f2:	f6 08 09 4b 	lsl	r11,r11,r8
+800030f6:	f0 09 11 20 	rsub	r9,r8,32
+800030fa:	f8 08 09 4c 	lsl	r12,r12,r8
+800030fe:	f4 09 0a 49 	lsr	r9,r10,r9
+80003102:	f4 08 09 43 	lsl	r3,r10,r8
+80003106:	f3 eb 10 0b 	or	r11,r9,r11
+8000310a:	f8 0e 16 10 	lsr	lr,r12,0x10
+8000310e:	f5 dc c0 10 	bfextu	r10,r12,0x0,0x10
+80003112:	f6 0e 0d 00 	divu	r0,r11,lr
+80003116:	e6 0b 16 10 	lsr	r11,r3,0x10
+8000311a:	00 99       	mov	r9,r0
+8000311c:	f7 e1 11 0b 	or	r11,r11,r1<<0x10
+80003120:	e0 0a 02 48 	mul	r8,r0,r10
+80003124:	10 3b       	cp.w	r11,r8
+80003126:	c0 a2       	brcc	8000313a <__avr32_udiv64+0x66>
+80003128:	20 19       	sub	r9,1
+8000312a:	18 0b       	add	r11,r12
+8000312c:	18 3b       	cp.w	r11,r12
+8000312e:	c0 63       	brcs	8000313a <__avr32_udiv64+0x66>
+80003130:	10 3b       	cp.w	r11,r8
+80003132:	f7 b9 03 01 	sublo	r9,1
+80003136:	f7 dc e3 0b 	addcs	r11,r11,r12
+8000313a:	f6 08 01 01 	sub	r1,r11,r8
+8000313e:	e7 d3 c0 10 	bfextu	r3,r3,0x0,0x10
+80003142:	e2 0e 0d 00 	divu	r0,r1,lr
+80003146:	e7 e1 11 03 	or	r3,r3,r1<<0x10
+8000314a:	00 98       	mov	r8,r0
+8000314c:	e0 0a 02 4a 	mul	r10,r0,r10
+80003150:	14 33       	cp.w	r3,r10
+80003152:	c0 82       	brcc	80003162 <__avr32_udiv64+0x8e>
+80003154:	20 18       	sub	r8,1
+80003156:	18 03       	add	r3,r12
+80003158:	18 33       	cp.w	r3,r12
+8000315a:	c0 43       	brcs	80003162 <__avr32_udiv64+0x8e>
+8000315c:	14 33       	cp.w	r3,r10
+8000315e:	f7 b8 03 01 	sublo	r8,1
+80003162:	f1 e9 11 08 	or	r8,r8,r9<<0x10
+80003166:	cd f8       	rjmp	80003324 <__avr32_udiv64+0x250>
+80003168:	58 08       	cp.w	r8,0
+8000316a:	c0 51       	brne	80003174 <__avr32_udiv64+0xa0>
+8000316c:	30 19       	mov	r9,1
+8000316e:	f2 08 0d 08 	divu	r8,r9,r8
+80003172:	10 9c       	mov	r12,r8
+80003174:	f8 06 12 00 	clz	r6,r12
+80003178:	c0 41       	brne	80003180 <__avr32_udiv64+0xac>
+8000317a:	18 1b       	sub	r11,r12
+8000317c:	30 19       	mov	r9,1
+8000317e:	c4 08       	rjmp	800031fe <__avr32_udiv64+0x12a>
+80003180:	ec 01 11 20 	rsub	r1,r6,32
+80003184:	f4 01 0a 49 	lsr	r9,r10,r1
+80003188:	f8 06 09 4c 	lsl	r12,r12,r6
+8000318c:	f6 06 09 48 	lsl	r8,r11,r6
+80003190:	f6 01 0a 41 	lsr	r1,r11,r1
+80003194:	f3 e8 10 08 	or	r8,r9,r8
+80003198:	f8 03 16 10 	lsr	r3,r12,0x10
+8000319c:	eb dc c0 10 	bfextu	r5,r12,0x0,0x10
+800031a0:	e2 03 0d 00 	divu	r0,r1,r3
+800031a4:	f0 0b 16 10 	lsr	r11,r8,0x10
+800031a8:	00 9e       	mov	lr,r0
+800031aa:	f7 e1 11 0b 	or	r11,r11,r1<<0x10
+800031ae:	e0 05 02 49 	mul	r9,r0,r5
+800031b2:	12 3b       	cp.w	r11,r9
+800031b4:	c0 a2       	brcc	800031c8 <__avr32_udiv64+0xf4>
+800031b6:	20 1e       	sub	lr,1
+800031b8:	18 0b       	add	r11,r12
+800031ba:	18 3b       	cp.w	r11,r12
+800031bc:	c0 63       	brcs	800031c8 <__avr32_udiv64+0xf4>
+800031be:	12 3b       	cp.w	r11,r9
+800031c0:	f7 be 03 01 	sublo	lr,1
+800031c4:	f7 dc e3 0b 	addcs	r11,r11,r12
+800031c8:	12 1b       	sub	r11,r9
+800031ca:	f1 d8 c0 10 	bfextu	r8,r8,0x0,0x10
+800031ce:	f6 03 0d 02 	divu	r2,r11,r3
+800031d2:	f1 e3 11 08 	or	r8,r8,r3<<0x10
+800031d6:	04 99       	mov	r9,r2
+800031d8:	e4 05 02 4b 	mul	r11,r2,r5
+800031dc:	16 38       	cp.w	r8,r11
+800031de:	c0 a2       	brcc	800031f2 <__avr32_udiv64+0x11e>
+800031e0:	20 19       	sub	r9,1
+800031e2:	18 08       	add	r8,r12
+800031e4:	18 38       	cp.w	r8,r12
+800031e6:	c0 63       	brcs	800031f2 <__avr32_udiv64+0x11e>
+800031e8:	16 38       	cp.w	r8,r11
+800031ea:	f7 b9 03 01 	sublo	r9,1
+800031ee:	f1 dc e3 08 	addcs	r8,r8,r12
+800031f2:	f4 06 09 43 	lsl	r3,r10,r6
+800031f6:	f0 0b 01 0b 	sub	r11,r8,r11
+800031fa:	f3 ee 11 09 	or	r9,r9,lr<<0x10
+800031fe:	f8 06 16 10 	lsr	r6,r12,0x10
+80003202:	fd dc c0 10 	bfextu	lr,r12,0x0,0x10
+80003206:	f6 06 0d 00 	divu	r0,r11,r6
+8000320a:	e6 0b 16 10 	lsr	r11,r3,0x10
+8000320e:	00 9a       	mov	r10,r0
+80003210:	f7 e1 11 0b 	or	r11,r11,r1<<0x10
+80003214:	e0 0e 02 48 	mul	r8,r0,lr
+80003218:	10 3b       	cp.w	r11,r8
+8000321a:	c0 a2       	brcc	8000322e <__avr32_udiv64+0x15a>
+8000321c:	20 1a       	sub	r10,1
+8000321e:	18 0b       	add	r11,r12
+80003220:	18 3b       	cp.w	r11,r12
+80003222:	c0 63       	brcs	8000322e <__avr32_udiv64+0x15a>
+80003224:	10 3b       	cp.w	r11,r8
+80003226:	f7 ba 03 01 	sublo	r10,1
+8000322a:	f7 dc e3 0b 	addcs	r11,r11,r12
+8000322e:	f6 08 01 01 	sub	r1,r11,r8
+80003232:	e7 d3 c0 10 	bfextu	r3,r3,0x0,0x10
+80003236:	e2 06 0d 00 	divu	r0,r1,r6
+8000323a:	e7 e1 11 03 	or	r3,r3,r1<<0x10
+8000323e:	00 98       	mov	r8,r0
+80003240:	e0 0e 02 4b 	mul	r11,r0,lr
+80003244:	16 33       	cp.w	r3,r11
+80003246:	c0 82       	brcc	80003256 <__avr32_udiv64+0x182>
+80003248:	20 18       	sub	r8,1
+8000324a:	18 03       	add	r3,r12
+8000324c:	18 33       	cp.w	r3,r12
+8000324e:	c0 43       	brcs	80003256 <__avr32_udiv64+0x182>
+80003250:	16 33       	cp.w	r3,r11
+80003252:	f7 b8 03 01 	sublo	r8,1
+80003256:	f1 ea 11 08 	or	r8,r8,r10<<0x10
+8000325a:	c6 98       	rjmp	8000332c <__avr32_udiv64+0x258>
+8000325c:	16 39       	cp.w	r9,r11
+8000325e:	e0 8b 00 65 	brhi	80003328 <__avr32_udiv64+0x254>
+80003262:	f2 09 12 00 	clz	r9,r9
+80003266:	c0 b1       	brne	8000327c <__avr32_udiv64+0x1a8>
+80003268:	10 3a       	cp.w	r10,r8
+8000326a:	5f 2a       	srhs	r10
+8000326c:	1c 3b       	cp.w	r11,lr
+8000326e:	5f b8       	srhi	r8
+80003270:	10 4a       	or	r10,r8
+80003272:	f2 0a 18 00 	cp.b	r10,r9
+80003276:	c5 90       	breq	80003328 <__avr32_udiv64+0x254>
+80003278:	30 18       	mov	r8,1
+8000327a:	c5 98       	rjmp	8000332c <__avr32_udiv64+0x258>
+8000327c:	f0 09 09 46 	lsl	r6,r8,r9
+80003280:	f2 03 11 20 	rsub	r3,r9,32
+80003284:	fc 09 09 4e 	lsl	lr,lr,r9
+80003288:	f0 03 0a 48 	lsr	r8,r8,r3
+8000328c:	f6 09 09 4c 	lsl	r12,r11,r9
+80003290:	f4 03 0a 42 	lsr	r2,r10,r3
+80003294:	ef 46 ff f4 	st.w	r7[-12],r6
+80003298:	f6 03 0a 43 	lsr	r3,r11,r3
+8000329c:	18 42       	or	r2,r12
+8000329e:	f1 ee 10 0c 	or	r12,r8,lr
+800032a2:	f8 01 16 10 	lsr	r1,r12,0x10
+800032a6:	ed dc c0 10 	bfextu	r6,r12,0x0,0x10
+800032aa:	e6 01 0d 04 	divu	r4,r3,r1
+800032ae:	e4 03 16 10 	lsr	r3,r2,0x10
+800032b2:	08 9e       	mov	lr,r4
+800032b4:	e7 e5 11 03 	or	r3,r3,r5<<0x10
+800032b8:	e8 06 02 48 	mul	r8,r4,r6
+800032bc:	10 33       	cp.w	r3,r8
+800032be:	c0 a2       	brcc	800032d2 <__avr32_udiv64+0x1fe>
+800032c0:	20 1e       	sub	lr,1
+800032c2:	18 03       	add	r3,r12
+800032c4:	18 33       	cp.w	r3,r12
+800032c6:	c0 63       	brcs	800032d2 <__avr32_udiv64+0x1fe>
+800032c8:	10 33       	cp.w	r3,r8
+800032ca:	f7 be 03 01 	sublo	lr,1
+800032ce:	e7 dc e3 03 	addcs	r3,r3,r12
+800032d2:	10 13       	sub	r3,r8
+800032d4:	f7 d2 c0 10 	bfextu	r11,r2,0x0,0x10
+800032d8:	e6 01 0d 00 	divu	r0,r3,r1
+800032dc:	f7 e1 11 0b 	or	r11,r11,r1<<0x10
+800032e0:	00 98       	mov	r8,r0
+800032e2:	e0 06 02 46 	mul	r6,r0,r6
+800032e6:	0c 3b       	cp.w	r11,r6
+800032e8:	c0 a2       	brcc	800032fc <__avr32_udiv64+0x228>
+800032ea:	20 18       	sub	r8,1
+800032ec:	18 0b       	add	r11,r12
+800032ee:	18 3b       	cp.w	r11,r12
+800032f0:	c0 63       	brcs	800032fc <__avr32_udiv64+0x228>
+800032f2:	0c 3b       	cp.w	r11,r6
+800032f4:	f7 dc e3 0b 	addcs	r11,r11,r12
+800032f8:	f7 b8 03 01 	sublo	r8,1
+800032fc:	f1 ee 11 08 	or	r8,r8,lr<<0x10
+80003300:	ee f4 ff f4 	ld.w	r4,r7[-12]
+80003304:	0c 1b       	sub	r11,r6
+80003306:	f0 04 06 42 	mulu.d	r2,r8,r4
+8000330a:	06 95       	mov	r5,r3
+8000330c:	16 35       	cp.w	r5,r11
+8000330e:	e0 8b 00 0a 	brhi	80003322 <__avr32_udiv64+0x24e>
+80003312:	5f 0b       	sreq	r11
+80003314:	f4 09 09 49 	lsl	r9,r10,r9
+80003318:	12 32       	cp.w	r2,r9
+8000331a:	5f b9       	srhi	r9
+8000331c:	f7 e9 00 09 	and	r9,r11,r9
+80003320:	c0 60       	breq	8000332c <__avr32_udiv64+0x258>
+80003322:	20 18       	sub	r8,1
+80003324:	30 09       	mov	r9,0
+80003326:	c0 38       	rjmp	8000332c <__avr32_udiv64+0x258>
+80003328:	30 09       	mov	r9,0
+8000332a:	12 98       	mov	r8,r9
+8000332c:	10 9a       	mov	r10,r8
+8000332e:	12 93       	mov	r3,r9
+80003330:	10 92       	mov	r2,r8
+80003332:	12 9b       	mov	r11,r9
+80003334:	2f dd       	sub	sp,-12
+80003336:	d8 32       	popm	r0-r7,pc
+
+Disassembly of section .exception:
+
+80003400 <_evba>:
+_evba:
+
+	.org  0x000
+	// Unrecoverable Exception.
+_handle_Unrecoverable_Exception:
+	rjmp $
+80003400:	c0 08       	rjmp	80003400 <_evba>
+	...
+
+80003404 <_handle_TLB_Multiple_Hit>:
+
+	.org  0x004
+	// TLB Multiple Hit.
+_handle_TLB_Multiple_Hit:
+	rjmp $
+80003404:	c0 08       	rjmp	80003404 <_handle_TLB_Multiple_Hit>
+	...
+
+80003408 <_handle_Bus_Error_Data_Fetch>:
+
+	.org  0x008
+	// Bus Error Data Fetch.
+_handle_Bus_Error_Data_Fetch:
+	rjmp $
+80003408:	c0 08       	rjmp	80003408 <_handle_Bus_Error_Data_Fetch>
+	...
+
+8000340c <_handle_Bus_Error_Instruction_Fetch>:
+
+	.org  0x00C
+	// Bus Error Instruction Fetch.
+_handle_Bus_Error_Instruction_Fetch:
+	rjmp $
+8000340c:	c0 08       	rjmp	8000340c <_handle_Bus_Error_Instruction_Fetch>
+	...
+
+80003410 <_handle_NMI>:
+
+	.org  0x010
+	// NMI.
+_handle_NMI:
+	rjmp $
+80003410:	c0 08       	rjmp	80003410 <_handle_NMI>
+	...
+
+80003414 <_handle_Instruction_Address>:
+
+	.org  0x014
+	// Instruction Address.
+_handle_Instruction_Address:
+	rjmp $
+80003414:	c0 08       	rjmp	80003414 <_handle_Instruction_Address>
+	...
+
+80003418 <_handle_ITLB_Protection>:
+
+	.org  0x018
+	// ITLB Protection.
+_handle_ITLB_Protection:
+	rjmp $
+80003418:	c0 08       	rjmp	80003418 <_handle_ITLB_Protection>
+	...
+
+8000341c <_handle_Breakpoint>:
+
+	.org  0x01C
+	// Breakpoint.
+_handle_Breakpoint:
+	rjmp $
+8000341c:	c0 08       	rjmp	8000341c <_handle_Breakpoint>
+	...
+
+80003420 <_handle_Illegal_Opcode>:
+
+	.org  0x020
+	// Illegal Opcode.
+_handle_Illegal_Opcode:
+	rjmp $
+80003420:	c0 08       	rjmp	80003420 <_handle_Illegal_Opcode>
+	...
+
+80003424 <_handle_Unimplemented_Instruction>:
+
+	.org  0x024
+	// Unimplemented Instruction.
+_handle_Unimplemented_Instruction:
+	rjmp $
+80003424:	c0 08       	rjmp	80003424 <_handle_Unimplemented_Instruction>
+	...
+
+80003428 <_handle_Privilege_Violation>:
+
+	.org  0x028
+	// Privilege Violation.
+_handle_Privilege_Violation:
+	rjmp $
+80003428:	c0 08       	rjmp	80003428 <_handle_Privilege_Violation>
+	...
+
+8000342c <_handle_Floating_Point>:
+
+	.org  0x02C
+	// Floating-Point: UNUSED IN AVR32UC and AVR32AP.
+_handle_Floating_Point:
+	rjmp $
+8000342c:	c0 08       	rjmp	8000342c <_handle_Floating_Point>
+	...
+
+80003430 <_handle_Coprocessor_Absent>:
+
+	.org  0x030
+	// Coprocessor Absent: UNUSED IN AVR32UC.
+_handle_Coprocessor_Absent:
+	rjmp $
+80003430:	c0 08       	rjmp	80003430 <_handle_Coprocessor_Absent>
+	...
+
+80003434 <_handle_Data_Address_Read>:
+
+	.org  0x034
+	// Data Address (Read).
+_handle_Data_Address_Read:
+	rjmp $
+80003434:	c0 08       	rjmp	80003434 <_handle_Data_Address_Read>
+	...
+
+80003438 <_handle_Data_Address_Write>:
+
+	.org  0x038
+	// Data Address (Write).
+_handle_Data_Address_Write:
+	rjmp $
+80003438:	c0 08       	rjmp	80003438 <_handle_Data_Address_Write>
+	...
+
+8000343c <_handle_DTLB_Protection_Read>:
+
+	.org  0x03C
+	// DTLB Protection (Read).
+_handle_DTLB_Protection_Read:
+	rjmp $
+8000343c:	c0 08       	rjmp	8000343c <_handle_DTLB_Protection_Read>
+	...
+
+80003440 <_handle_DTLB_Protection_Write>:
+
+	.org  0x040
+	// DTLB Protection (Write).
+_handle_DTLB_Protection_Write:
+	rjmp $
+80003440:	c0 08       	rjmp	80003440 <_handle_DTLB_Protection_Write>
+	...
+
+80003444 <_handle_DTLB_Modified>:
+
+	.org  0x044
+	// DTLB Modified: UNUSED IN AVR32UC.
+_handle_DTLB_Modified:
+	rjmp $
+80003444:	c0 08       	rjmp	80003444 <_handle_DTLB_Modified>
+	...
+
+80003450 <_handle_ITLB_Miss>:
+
+	.org  0x050
+	// ITLB Miss.
+_handle_ITLB_Miss:
+	rjmp $
+80003450:	c0 08       	rjmp	80003450 <_handle_ITLB_Miss>
+	...
+
+80003460 <_handle_DTLB_Miss_Read>:
+
+	.org  0x060
+	// DTLB Miss (Read).
+_handle_DTLB_Miss_Read:
+	rjmp $
+80003460:	c0 08       	rjmp	80003460 <_handle_DTLB_Miss_Read>
+	...
+
+80003470 <_handle_DTLB_Miss_Write>:
+
+	.org  0x070
+	// DTLB Miss (Write).
+_handle_DTLB_Miss_Write:
+	rjmp $
+80003470:	c0 08       	rjmp	80003470 <_handle_DTLB_Miss_Write>
+	...
+
+80003500 <_handle_Supervisor_Call>:
+
+	.org  0x100
+	// Supervisor Call.
+_handle_Supervisor_Call:
+	rjmp $
+80003500:	c0 08       	rjmp	80003500 <_handle_Supervisor_Call>
+80003502:	d7 03       	nop
+
+80003504 <_int0>:
+	 * RSR_INTx by the CPU upon interrupt entry. No other register is saved
+	 * by hardware.
+	 */
+	pushm   r8-r12, lr
+#endif
+	// Pass the int_level parameter to the _get_interrupt_handler function.
+80003504:	30 0c       	mov	r12,0
+80003506:	fe b0 fb df 	rcall	80002cc4 <_get_interrupt_handler>
+8000350a:	58 0c       	cp.w	r12,0
+8000350c:	f8 0f 17 10 	movne	pc,r12
+	popm    r8-r12, lr
+#endif
+	/*
+	 * If this was a spurious interrupt (R12 == NULL), return from event
+	 * handler.
+	 */
+80003510:	d6 03       	rete
+
+80003512 <_int1>:
+	 * RSR_INTx by the CPU upon interrupt entry. No other register is saved
+	 * by hardware.
+	 */
+	pushm   r8-r12, lr
+#endif
+	// Pass the int_level parameter to the _get_interrupt_handler function.
+80003512:	30 1c       	mov	r12,1
+80003514:	fe b0 fb d8 	rcall	80002cc4 <_get_interrupt_handler>
+80003518:	58 0c       	cp.w	r12,0
+8000351a:	f8 0f 17 10 	movne	pc,r12
+	popm    r8-r12, lr
+#endif
+	/*
+	 * If this was a spurious interrupt (R12 == NULL), return from event
+	 * handler.
+	 */
+8000351e:	d6 03       	rete
+
+80003520 <_int2>:
+	 * RSR_INTx by the CPU upon interrupt entry. No other register is saved
+	 * by hardware.
+	 */
+	pushm   r8-r12, lr
+#endif
+	// Pass the int_level parameter to the _get_interrupt_handler function.
+80003520:	30 2c       	mov	r12,2
+80003522:	fe b0 fb d1 	rcall	80002cc4 <_get_interrupt_handler>
+80003526:	58 0c       	cp.w	r12,0
+80003528:	f8 0f 17 10 	movne	pc,r12
+	popm    r8-r12, lr
+#endif
+	/*
+	 * If this was a spurious interrupt (R12 == NULL), return from event
+	 * handler.
+	 */
+8000352c:	d6 03       	rete
+
+8000352e <_int3>:
+	 * RSR_INTx by the CPU upon interrupt entry. No other register is saved
+	 * by hardware.
+	 */
+	pushm   r8-r12, lr
+#endif
+	// Pass the int_level parameter to the _get_interrupt_handler function.
+8000352e:	30 3c       	mov	r12,3
+80003530:	fe b0 fb ca 	rcall	80002cc4 <_get_interrupt_handler>
+80003534:	58 0c       	cp.w	r12,0
+80003536:	f8 0f 17 10 	movne	pc,r12
+	popm    r8-r12, lr
+#endif
+	/*
+	 * If this was a spurious interrupt (R12 == NULL), return from event
+	 * handler.
+	 */
+8000353a:	d6 03       	rete
+8000353c:	d7 03       	nop
+8000353e:	d7 03       	nop
+80003540:	d7 03       	nop
+80003542:	d7 03       	nop
+80003544:	d7 03       	nop
+80003546:	d7 03       	nop
+80003548:	d7 03       	nop
+8000354a:	d7 03       	nop
+8000354c:	d7 03       	nop
+8000354e:	d7 03       	nop
+80003550:	d7 03       	nop
+80003552:	d7 03       	nop
+80003554:	d7 03       	nop
+80003556:	d7 03       	nop
+80003558:	d7 03       	nop
+8000355a:	d7 03       	nop
+8000355c:	d7 03       	nop
+8000355e:	d7 03       	nop
+80003560:	d7 03       	nop
+80003562:	d7 03       	nop
+80003564:	d7 03       	nop
+80003566:	d7 03       	nop
+80003568:	d7 03       	nop
+8000356a:	d7 03       	nop
+8000356c:	d7 03       	nop
+8000356e:	d7 03       	nop
+80003570:	d7 03       	nop
+80003572:	d7 03       	nop
+80003574:	d7 03       	nop
+80003576:	d7 03       	nop
+80003578:	d7 03       	nop
+8000357a:	d7 03       	nop
+8000357c:	d7 03       	nop
+8000357e:	d7 03       	nop
+80003580:	d7 03       	nop
+80003582:	d7 03       	nop
+80003584:	d7 03       	nop
+80003586:	d7 03       	nop
+80003588:	d7 03       	nop
+8000358a:	d7 03       	nop
+8000358c:	d7 03       	nop
+8000358e:	d7 03       	nop
+80003590:	d7 03       	nop
+80003592:	d7 03       	nop
+80003594:	d7 03       	nop
+80003596:	d7 03       	nop
+80003598:	d7 03       	nop
+8000359a:	d7 03       	nop
+8000359c:	d7 03       	nop
+8000359e:	d7 03       	nop
+800035a0:	d7 03       	nop
+800035a2:	d7 03       	nop
+800035a4:	d7 03       	nop
+800035a6:	d7 03       	nop
+800035a8:	d7 03       	nop
+800035aa:	d7 03       	nop
+800035ac:	d7 03       	nop
+800035ae:	d7 03       	nop
+800035b0:	d7 03       	nop
+800035b2:	d7 03       	nop
+800035b4:	d7 03       	nop
+800035b6:	d7 03       	nop
+800035b8:	d7 03       	nop
+800035ba:	d7 03       	nop
+800035bc:	d7 03       	nop
+800035be:	d7 03       	nop
+800035c0:	d7 03       	nop
+800035c2:	d7 03       	nop
+800035c4:	d7 03       	nop
+800035c6:	d7 03       	nop
+800035c8:	d7 03       	nop
+800035ca:	d7 03       	nop
+800035cc:	d7 03       	nop
+800035ce:	d7 03       	nop
+800035d0:	d7 03       	nop
+800035d2:	d7 03       	nop
+800035d4:	d7 03       	nop
+800035d6:	d7 03       	nop
+800035d8:	d7 03       	nop
+800035da:	d7 03       	nop
+800035dc:	d7 03       	nop
+800035de:	d7 03       	nop
+800035e0:	d7 03       	nop
+800035e2:	d7 03       	nop
+800035e4:	d7 03       	nop
+800035e6:	d7 03       	nop
+800035e8:	d7 03       	nop
+800035ea:	d7 03       	nop
+800035ec:	d7 03       	nop
+800035ee:	d7 03       	nop
+800035f0:	d7 03       	nop
+800035f2:	d7 03       	nop
+800035f4:	d7 03       	nop
+800035f6:	d7 03       	nop
+800035f8:	d7 03       	nop
+800035fa:	d7 03       	nop
+800035fc:	d7 03       	nop
+800035fe:	d7 03       	nop
