@@ -16,10 +16,15 @@
 /* DEFINES */
 #define LED(x)	LED##x##_GPIO
 #define LOOP_LED(x)	for (size_t i = 0; i < x; i++)
+// Ex. A
 #define LED3_MASK 0b0001
 #define LED2_MASK 0b0010
 #define LED1_MASK 0b0100
 #define LED0_MASK 0b1000
+// Ex. B
+#define LED2_MASK_B 0b001
+#define LED1_MASK_B 0b010
+#define LED0_MASK_B 0b100
 
 /* TYPEDEFS */
 typedef struct
@@ -39,6 +44,7 @@ typedef struct
 
 void config_led_gpio(void);
 void set_ledx_num(uint8_t number);
+void set_ledx_num_b(uint8_t number); // Ex. B
 void apply_led_mask(uint8_t number, uint8_t pin, uint8_t mask);
 
 #endif /* CONF_GPIO_H_ */
