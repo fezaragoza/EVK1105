@@ -8,6 +8,8 @@ src\ASF\avr32\drivers\pm\pm.c
 
 src\ASF\common\services\clock\uc3a0_a1\sysclk.c
 
+src\resrc\conf_gpio.c
+
 src\resrc\conf_qt.c
 
 src\ASF\avr32\drivers\pm\pm_conf_clocks.c

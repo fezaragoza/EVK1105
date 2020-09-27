@@ -71,6 +71,7 @@ C_SRCS +=  \
 ../src/ASF/avr32/drivers/flashc/flashc.c \
 ../src/ASF/avr32/drivers/pm/pm.c \
 ../src/ASF/common/services/clock/uc3a0_a1/sysclk.c \
+../src/resrc/conf_gpio.c \
 ../src/resrc/conf_qt.c \
 ../src/ASF/avr32/drivers/pm/pm_conf_clocks.c \
 ../src/ASF/avr32/drivers/pm/power_clocks_lib.c \
@@ -94,6 +95,7 @@ OBJS +=  \
 src/ASF/avr32/drivers/flashc/flashc.o \
 src/ASF/avr32/drivers/pm/pm.o \
 src/ASF/common/services/clock/uc3a0_a1/sysclk.o \
+src/resrc/conf_gpio.o \
 src/resrc/conf_qt.o \
 src/ASF/avr32/drivers/pm/pm_conf_clocks.o \
 src/ASF/avr32/drivers/pm/power_clocks_lib.o \
@@ -110,6 +112,7 @@ OBJS_AS_ARGS +=  \
 src/ASF/avr32/drivers/flashc/flashc.o \
 src/ASF/avr32/drivers/pm/pm.o \
 src/ASF/common/services/clock/uc3a0_a1/sysclk.o \
+src/resrc/conf_gpio.o \
 src/resrc/conf_qt.o \
 src/ASF/avr32/drivers/pm/pm_conf_clocks.o \
 src/ASF/avr32/drivers/pm/power_clocks_lib.o \
@@ -126,6 +129,7 @@ C_DEPS +=  \
 src/ASF/avr32/drivers/flashc/flashc.d \
 src/ASF/avr32/drivers/pm/pm.d \
 src/ASF/common/services/clock/uc3a0_a1/sysclk.d \
+src/resrc/conf_gpio.d \
 src/resrc/conf_qt.d \
 src/ASF/avr32/drivers/pm/pm_conf_clocks.d \
 src/ASF/avr32/drivers/pm/power_clocks_lib.d \
@@ -142,6 +146,7 @@ C_DEPS_AS_ARGS +=  \
 src/ASF/avr32/drivers/flashc/flashc.d \
 src/ASF/avr32/drivers/pm/pm.d \
 src/ASF/common/services/clock/uc3a0_a1/sysclk.d \
+src/resrc/conf_gpio.d \
 src/resrc/conf_qt.d \
 src/ASF/avr32/drivers/pm/pm_conf_clocks.d \
 src/ASF/avr32/drivers/pm/power_clocks_lib.d \
@@ -184,6 +189,13 @@ src/ASF/avr32/drivers/pm/pm.o: ../src/ASF/avr32/drivers/pm/pm.c
 	
 
 src/ASF/common/services/clock/uc3a0_a1/sysclk.o: ../src/ASF/common/services/clock/uc3a0_a1/sysclk.c
+	@echo Building file: $<
+	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/common/boards" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/avr32/drivers/gpio" -I"../src" -I"../src/config" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/resrc/conf_gpio.o: ../src/resrc/conf_gpio.c
 	@echo Building file: $<
 	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/common/boards" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/avr32/drivers/gpio" -I"../src" -I"../src/config" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

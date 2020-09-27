@@ -33,7 +33,7 @@
 #include "resrc/conf_gpio.h"
 #include "resrc/conf_qt.h"
 
-#define NUMBER 2
+#define NUMBER 4
 
 typedef enum{
 	ENTER_NUM = 0,
@@ -86,24 +86,12 @@ int main (void)
 				else if (qt->button_s._right.active)
 				{
 					num = evkl[count].ledx;
-
 					if (position > 0)
 					{
 						--position;
 						if ((position - 1) >= 0)
 							num |= 1 << (position - 1);	
 					}
-						
-				
-					//if ((--position) != 0)
-					//{
-					//num |= 1 << position;
-					//}
-					//else
-					//{
-					//num = evkl[count].ledx;
-					//}
-				
 					// Update LEDs
 					set_ledx_num(num);
 				}
@@ -123,6 +111,7 @@ int main (void)
 					{
 						// Ready for the current number
 						num = 0;
+						// Reset position to 0
 						position = 0;
 						//Update LEDS
 						set_ledx_num(num);
@@ -141,12 +130,12 @@ int main (void)
 				poll_qt_button(&qt->button_s._enter, QT_PRESSED);
 				if (qt->button_s._down.active)
 				{
-					num = evkl[0].ledx | evkl[1].ledx;
+					num = evkl[0].ledx | evkl[1].ledx | evkl[2].ledx | evkl[3].ledx;
 					set_ledx_num(num);
 				}
 				else if (qt->button_s._up.active)
 				{
-					num = evkl[0].ledx & evkl[1].ledx;
+					num = evkl[0].ledx & evkl[1].ledx & evkl[2].ledx & evkl[3].ledx;
 					set_ledx_num(num);
 				}
 				
@@ -154,7 +143,13 @@ int main (void)
 				{
 					// LED routine
 					state = ENTER_NUM;
+					// Reset all to 0
 					num = 0;
+					count = 0;
+					position = 0;
+					memset(&evkl, 0, sizeof(evkl));
+					// Update LEDS
+					set_ledx_num(num);
 				}
 				break;
 			default:

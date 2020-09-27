@@ -77,8 +77,8 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/avr32/drivers/pm/pm.h ../src/ASF/avr32/drivers/pm/sleep.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h \
- ../src/resrc/conf_gpio.h ../src/resrc/conf_qt.h \
- ../src/ASF/avr32/boards/evk1105/evk1105.h
+ ../src/resrc/conf_gpio.h ../src/ASF/avr32/boards/evk1105/evk1105.h \
+ ../src/resrc/conf_qt.h
 
 ../src/asf.h:
 
@@ -244,6 +244,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 ../src/resrc/conf_gpio.h:
 
-../src/resrc/conf_qt.h:
-
 ../src/ASF/avr32/boards/evk1105/evk1105.h:
+
+../src/resrc/conf_qt.h:
