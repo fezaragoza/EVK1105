@@ -32,6 +32,23 @@ void set_ledx_num_b(uint8_t number)
 	apply_led_mask(number, LED2_GPIO, LED2_MASK_B);
 }
 
+void set_ledx_num_c(uint8_t number)
+{
+	apply_led_mask(number, LED0_GPIO, LED0_MASK_C);
+	apply_led_mask(number, LED1_GPIO, LED1_MASK_C);
+	apply_led_mask(number, LED2_GPIO, LED2_MASK_C);
+}
+
+void set_ledx_num_d(uint8_t number)
+{
+	apply_led_mask(number, LED0_GPIO, LED0_MASK_D);
+	apply_led_mask(number, LED1_GPIO, LED1_MASK_D);
+	apply_led_mask(number, LED2_GPIO, LED2_MASK_D);
+	apply_led_mask(number, LED3_GPIO, LED3_MASK_D);
+	apply_led_mask(number, LED4_GPIO, LED4_MASK_D);
+	apply_led_mask(number, LED5_GPIO, LED5_MASK_D);
+}
+
 void apply_led_mask(uint8_t number, uint8_t pin, uint8_t mask)
 {
 	if (number & mask)

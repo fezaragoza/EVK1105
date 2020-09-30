@@ -42,6 +42,8 @@ typedef enum{
 
 void exercise_A(void);
 void exercise_B(void);
+void exercise_C(void);
+void exercise_D(void);
 
 int main (void)
 {
@@ -56,8 +58,13 @@ int main (void)
 	//exercise_A();
 	
 	// Exercise B)
-	exercise_B();
-		
+	//exercise_B();
+	
+	// Exercise C)
+	//exercise_C();
+	
+	// Exercise D)
+	//exercise_D();
 }
 
 void exercise_A(void)
@@ -211,4 +218,129 @@ void exercise_B(void)
 		}
 		
 	}	
+}
+
+void exercise_C(void)
+{
+	// Configure LEDS and QT
+	config_led_gpio();
+	qt_sensor_t *qt = config_qt_gpio();
+	evk_led_t evkled_c;
+	memset(&evkled_c, 0, sizeof(evkled_c));
+	
+	while (1)
+	{
+		static bool reg_ready = false;
+		static uint8_t reg_value = 0;
+		static uint8_t position = 0;
+		
+		poll_qt_button(&qt->button_s._up, QT_PRESSED);
+		poll_qt_button(&qt->button_s._down, QT_PRESSED);
+		poll_qt_button(&qt->button_s._enter, QT_PRESSED);
+		
+		if (qt->button_s._up.active)
+		{
+			reg_value =  1;
+			reg_ready = true;
+			gpio_set_pin_low(LED3_GPIO); // Turn LED ON
+		}
+		else if (qt->button_s._down.active)
+		{
+			reg_value = 0;
+			reg_ready = true;
+			gpio_set_pin_high(LED3_GPIO); // Turn LED ON
+		}
+		
+		if (reg_ready)
+		{
+			poll_qt_button(&qt->button_s._left, QT_PRESSED);
+			poll_qt_button(&qt->button_s._right, QT_PRESSED);
+			if (qt->button_s._left.active)
+			{
+				if (position < 3)
+				{
+					reg_ready = false;
+					if (reg_value)
+						evkled_c.ledx |= (uint8_t)(1 << position);
+					else
+						evkled_c.ledx &= ~(uint8_t)(1 << position);
+					position++;
+				}
+				// Update LEDs
+				set_ledx_num_c(evkled_c.ledx);
+			}
+			
+			else if (qt->button_s._right.active)
+			{
+				if (position == 3)
+				{
+					--position;
+				}
+				
+				if (position >= 0)
+				{
+					reg_ready = false;
+					if ((reg_value) && (position != 0)) // Changed here, added position != 0.
+						evkled_c.ledx |= (uint8_t)(1 << position);
+					else
+						evkled_c.ledx &= ~(uint8_t)(1 << position);
+					
+					if (position != 0)
+						--position;
+					
+				}
+				// Update LEDs
+				set_ledx_num_c(evkled_c.ledx);
+			}	
+		}
+		
+		if (qt->button_s._enter.active)
+		{
+			reg_ready = false;
+			reg_value = false;
+			position = 0;
+			memset(&evkled_c, 0, sizeof(evkled_c));
+			set_ledx_num_c(evkled_c.ledx);
+		}
+		
+	}
+}
+
+void exercise_D(void)
+{
+	// Configure LEDS and QT
+	gpio_configure_pin(LED4_GPIO, GPIO_DIR_OUTPUT | GPIO_INIT_HIGH);
+	gpio_configure_pin(LED5_GPIO, GPIO_DIR_OUTPUT | GPIO_INIT_HIGH);
+	config_led_gpio();
+	evk_led_t evkled_d;
+	memset(&evkled_d, 0, sizeof(evkled_d));
+	
+	while (1)
+	{
+		static bool up_down = true;
+		static uint8_t position = 0;
+		
+		if (up_down)
+		{
+			// UP
+			if (position < 5)
+			{
+				evkled_d.ledx = (1 << ++position);
+				up_down = (position == 5) ? false : true;
+			}
+			set_ledx_num_d(evkled_d.ledx);
+		}
+		else 
+		{
+			// DOWN
+			if (position > 0)
+			{
+				evkled_d.ledx = (1 << --position);
+				up_down = (position == 0) ? true : false;
+			}
+			set_ledx_num_d(evkled_d.ledx);
+		}
+		
+		delay_ms(100);
+	}
 }
