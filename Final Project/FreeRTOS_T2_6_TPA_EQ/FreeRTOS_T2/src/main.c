@@ -214,79 +214,10 @@ intc_qt_flags_t intc_qt;
 intc_tc_flags_t intc_tc;
 tc_ch_count_t tick_count;
 
-TaskHandle_t myTask1Handle = NULL;
-TaskHandle_t myTask2Handle = NULL;
-TaskHandle_t myIntTaskHandle = NULL;
+/* TaskHandles */
+TaskHandle_t qtHandle = NULL;
 TaskHandle_t myIntTaskHandleTC = NULL;
-
-TaskHandle_t initTWITPAHandle = NULL;
-TaskHandle_t playAudioHandle = NULL;
-
-void myTask1 (void *p);
-void myTask1 (void *p)
-{
-	TickType_t myLastUnblock;
-	myLastUnblock = xTaskGetTickCount();
-	//uint16_t count = (uint16_t *) p;
-	uint16_t count = 0;
-	print_dbg("Hello from FreeRTOS: ");
-	while (1)
-	{
-		//gpio_tgl_gpio_pin(LED0_GPIO);
-		print_ulong(&AVR32_USART0, count);
-		print_dbg("\r\n");
-		vTaskDelay(pdMS_TO_TICKS( 500 ));
-		//vTaskDelayUntil( &myLastUnblock , pdMS_TO_TICKS( 500 )); // More precise than vTaskDelay, but still counts if task is suspended
-		count++;
-		//if (count == 32)
-		//{
-			//vTaskDelete(myTask1Handle);
-		//}
-	}
-}
-
-void myTask2 (void *p);
-void myTask2 (void *p)
-{
-	while (1)
-	{
-		vTaskDelay(pdMS_TO_TICKS( 5000 ));
-		vTaskSuspend(myTask1Handle);
-		vTaskDelay(pdMS_TO_TICKS( 5000 ));
-		vTaskResume(myTask1Handle);
-	}
-	
-}
-
-void myIntTask(void *p);
-void myIntTask(void *p)
-{
-	gpio_set_gpio_pin(LED0_GPIO);
-	gpio_set_gpio_pin(LED1_GPIO);
-	gpio_set_gpio_pin(LED2_GPIO);
-	gpio_set_gpio_pin(LED3_GPIO);
-	while (1)
-	{
-		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
-		if (INTC_QT_FLAG._left) {
-			INTC_QT_FLAG._left = false;
-			gpio_tgl_gpio_pin(LED0_GPIO);
-		}
-		else if (INTC_QT_FLAG._right) {
-			INTC_QT_FLAG._right = false;
-			gpio_tgl_gpio_pin(LED1_GPIO);
-		}
-		else if (INTC_QT_FLAG._up) {
-			INTC_QT_FLAG._up = false;
-			gpio_tgl_gpio_pin(LED2_GPIO);
-		}
-		else if (INTC_QT_FLAG._down) {
-			INTC_QT_FLAG._down = false;
-			gpio_tgl_gpio_pin(LED3_GPIO);
-		}
-
-	}
-}
+TaskHandle_t audioHandle = NULL;
 
 void myIntTaskTC0 (void *p);
 void myIntTaskTC0 (void *p)
@@ -327,53 +258,9 @@ void myIntTaskTC0 (void *p)
 	
 }
 
-portTASK_FUNCTION(initTWITPA, p);
-portTASK_FUNCTION(initTWITPA, p)
-{
-	/* TWI */
-	const gpio_map_t TPA6130_TWI_GPIO_MAP =
-	{
-		{TPA6130_TWI_SCL_PIN, TPA6130_TWI_SCL_FUNCTION},
-		{TPA6130_TWI_SDA_PIN, TPA6130_TWI_SDA_FUNCTION}
-	};
-
-	const twi_options_t TPA6130_TWI_OPTIONS =
-	{
-		.pba_hz = FPBA_HZ,
-		.speed  = TPA6130_TWI_MASTER_SPEED,
-		.chip   = TPA6130_TWI_ADDRESS
-	};
-
-	// Assign I/Os to SPI.
-	gpio_enable_module(TPA6130_TWI_GPIO_MAP,
-	sizeof(TPA6130_TWI_GPIO_MAP) / sizeof(TPA6130_TWI_GPIO_MAP[0]));
-
-	// Initialize as master.
-	twi_master_init(TPA6130_TWI, &TPA6130_TWI_OPTIONS);
-	
-	/* TWA */
-	tpa6130_init();
-	
-	tpa6130_dac_start(DEFAULT_DAC_SAMPLE_RATE_HZ,
-	DEFAULT_DAC_NUM_CHANNELS,
-	DEFAULT_DAC_BITS_PER_SAMPLE,
-	DEFAULT_DAC_SWAP_CHANNELS,
-	master_callback,
-	AUDIO_DAC_OUT_OF_SAMPLE_CB
-	| AUDIO_DAC_RELOAD_CB,
-	FPBA_HZ); /**/
-
-	tpa6130_set_volume(0x20); // 2F
-	tpa6130_get_volume();
-	
-	xTaskNotifyGive(playAudioHandle),
-	vTaskDelay(pdMS_TO_TICKS(100));
-	
-	vTaskDelete(NULL);
-}
-
-portTASK_FUNCTION(playAudioTask, p);
-portTASK_FUNCTION(playAudioTask, p)
+// audioHandle
+portTASK_FUNCTION(playAudioTask, p );
+portTASK_FUNCTION(playAudioTask, p )
 {
 	//print_dbg("Running audio...\r\n");
 	static uint32_t count = 0;
@@ -431,6 +318,42 @@ portTASK_FUNCTION(playAudioTask, p)
 	}
 }
 
+// qtHandle
+portTASK_FUNCTION( qtButtonTask, p );
+portTASK_FUNCTION( qtButtonTask, p )
+{
+	gpio_set_gpio_pin(LED0_GPIO);
+	gpio_set_gpio_pin(LED1_GPIO);
+	gpio_set_gpio_pin(LED2_GPIO);
+	gpio_set_gpio_pin(LED3_GPIO);
+	
+	while (1)
+	{
+		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
+		if (INTC_QT_FLAG._left) {
+			INTC_QT_FLAG._left = false;
+			//gpio_tgl_gpio_pin(LED0_GPIO);
+		}
+		else if (INTC_QT_FLAG._right) {
+			INTC_QT_FLAG._right = false;
+			//gpio_tgl_gpio_pin(LED1_GPIO);
+		}
+		else if (INTC_QT_FLAG._up) {
+			INTC_QT_FLAG._up = false;
+			//gpio_tgl_gpio_pin(LED2_GPIO);
+		}
+		else if (INTC_QT_FLAG._down) {
+			INTC_QT_FLAG._down = false;
+			//gpio_tgl_gpio_pin(LED3_GPIO);
+		}
+		else if (INTC_QT_FLAG._enter) {
+			INTC_QT_FLAG._enter = false;
+			xTaskNotifyGive(audioHandle);
+		}
+
+	}
+}
+
 ISR_FREERTOS(RT_ISR_gpio_qt_70, 70, 0)
 {
 	// UP, DOWN
@@ -445,11 +368,11 @@ ISR_FREERTOS(RT_ISR_gpio_qt_70, 70, 0)
 		gpio_clear_pin_interrupt_flag(QT1081_TOUCH_SENSOR_DOWN);
 	}
 	
-	//BaseType_t checkIfYieldRequired = xTaskResumeFromISR(myIntTaskHandle);
-	//return (checkIfYieldRequired ? 1 : 0);
+	BaseType_t checkIfYieldRequired = xTaskResumeFromISR(qtHandle);
+	return (checkIfYieldRequired ? 1 : 0);
 	
-	vTaskNotifyGiveFromISR(playAudioHandle, 0);
-	return 1;
+	//vTaskNotifyGiveFromISR(playAudioHandle, 0);
+	//return 1;
 }
 
 ISR_FREERTOS(RT_ISR_gpio_qt_71, 70, 0)
@@ -469,11 +392,11 @@ ISR_FREERTOS(RT_ISR_gpio_qt_71, 70, 0)
 		gpio_clear_pin_interrupt_flag(QT1081_TOUCH_SENSOR_RIGHT);
 	}
 	
-	//BaseType_t checkIfYieldRequired = xTaskResumeFromISR(myIntTaskHandle);
-	//return (checkIfYieldRequired ? 1 : 0);
+	BaseType_t checkIfYieldRequired = xTaskResumeFromISR(qtHandle);
+	return (checkIfYieldRequired ? 1 : 0);
 	
-	vTaskNotifyGiveFromISR(playAudioHandle, 0);
-	return 1;
+	//vTaskNotifyGiveFromISR(playAudioHandle, 0);
+	//return 1;
 }
 
 //ISR_FREERTOS(RT_ISR_tc0_irq_448, 448, 1)
@@ -488,7 +411,7 @@ ISR_FREERTOS(RT_ISR_gpio_qt_71, 70, 0)
 	//return (checkIfYieldRequired ? 1 : 0);
 //}
 
-/*! \brief Initializes the MCU system clocks.
+/*! \brief Initializes the MCU system clocks and TWI-TPA for audio
  */
 static void init_sys_clocks(void)
 {
@@ -593,16 +516,8 @@ static void init_twi_tpa(void)
 	
 }
 
-int main (void)
+static void init_qt_interrupt(void)
 {
-	/* Insert system clock initialization code here (sysclk_init()). */
-	init_sys_clocks();
-	
-	// Initialize RS232 debug text output.
-	init_dbg_rs232(FPBA_HZ); /**/
-	
-	init_twi_tpa();
-	
 	/* INTC */
 	Disable_global_interrupt();
 	//INTC_init_interrupts();
@@ -610,34 +525,41 @@ int main (void)
 	INTC_register_interrupt(&RT_ISR_gpio_qt_70, 70, AVR32_INTC_INT0);
 	INTC_register_interrupt(&RT_ISR_gpio_qt_71, 71, AVR32_INTC_INT0);
 	Enable_global_interrupt();
-	
+		
 	/* GPIO */
 	gpio_enable_pin_interrupt(QT1081_TOUCH_SENSOR_UP,    GPIO_RISING_EDGE);
 	gpio_enable_pin_interrupt(QT1081_TOUCH_SENSOR_DOWN,  GPIO_RISING_EDGE);
 	gpio_enable_pin_interrupt(QT1081_TOUCH_SENSOR_LEFT,  GPIO_RISING_EDGE);
 	gpio_enable_pin_interrupt(QT1081_TOUCH_SENSOR_RIGHT, GPIO_RISING_EDGE);
 	gpio_enable_pin_interrupt(QT1081_TOUCH_SENSOR_ENTER, GPIO_RISING_EDGE);
-	
+		
 	memset(&INTC_QT_FLAG, 0, sizeof(INTC_QT_FLAG));
+}
 
-	print_dbg(MSG_WELCOME);
+int main (void)
+{
+	/* Insert system clock initialization code here (sysclk_init()). */
+	init_sys_clocks();
+	
+	/* Initialize RS232 debug text output. */
+	init_dbg_rs232(FPBA_HZ); /**/
+	
+	init_twi_tpa();
+	
+	init_qt_interrupt();
 	
 	// Enable LED0 and LED1
 	gpio_enable_gpio_pin(LED0_GPIO);
 	gpio_enable_gpio_pin(LED1_GPIO);
 	
-	//////////////
+	print_dbg(MSG_WELCOME);
 	
 	/* Insert application code here, after the board has been initialized. */
 	
 	//uint16_t pass = 25;
 	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
-	//xTaskCreate(myTask2, "taks2", 256, (void *) 0, mainLED_TASK_PRIORITY, &myTask2Handle);
-	//xTaskCreate(myIntTask, "intctask1", 256, (void *) 0, mainLED_TASK_PRIORITY, &myIntTaskHandle);
-	//xTaskCreate(myIntTaskTC0, "intctask2", 256, (void *) 0, mainLED_TASK_PRIORITY, &myIntTaskHandleTC);
-	//xTaskCreate(initSysClockTask, "tSysClock", 256, (void *) 0, mainLED_TASK_PRIORITY, &initClockHandle);
-	//xTaskCreate(initTWITPA, "tTWI_TPA", 256, (void *) 0, mainLED_TASK_PRIORITY, &initTWITPAHandle);
-	xTaskCreate(playAudioTask, "tPlayAudio", 256, (void *) 0, mainLED_TASK_PRIORITY, &playAudioHandle);
+	xTaskCreate(qtButtonTask,  "tQT",        256, (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
+	xTaskCreate(playAudioTask, "tPlayAudio", 256, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	
 	vTaskStartScheduler();
 	
