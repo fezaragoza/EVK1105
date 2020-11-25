@@ -1,9 +1,13 @@
 Archive member included because of file (symbol)
 
+c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+                              src/main.o (floor)
 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_mul.o)
                               src/FreeRTOS/Demo/Common/minimal/flop.o (__avr32_f64_mul)
 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_addsub.o)
                               src/FreeRTOS/Demo/Common/minimal/flop.o (__avr32_f64_sub)
+c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_to_s32.o)
+                              src/main.o (__avr32_f64_to_u32)
 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_s32_to_f64.o)
                               src/FreeRTOS/Demo/Common/minimal/flop.o (__avr32_u32_to_f64)
 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_cmp_lt.o)
@@ -86,17 +90,18 @@ c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/
 Allocating common symbols
 Common symbol       size              file
 
+reverseQueue        0x4               src/main.o
 intc_qt             0x1               src/main.o
 errno               0x4               c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
 xHighPriorityTask   0x4               src/FreeRTOS/Demo/Common/minimal/QPeek.o
 xMediumPriorityTask
                     0x4               src/FreeRTOS/Demo/Common/minimal/QPeek.o
-tick_count          0x6               src/main.o
 xHighestPriorityTask
                     0x4               src/FreeRTOS/Demo/Common/minimal/QPeek.o
 intc_tc             0x1               src/main.o
 samples_count       0x4               src/main.o
 xCreatedTask        0x4               src/FreeRTOS/Demo/Common/minimal/death.o
+forwardQueue        0x4               src/main.o
 samples             0x200             src/main.o
 xSuspendedTestQueue
                     0x4               src/FreeRTOS/Demo/Common/minimal/dynamic.o
@@ -1311,11 +1316,6 @@ Discarded input sections
  .text          0x00000000        0x0 src/FreeRTOS/Source/queue.o
  .data          0x00000000        0x0 src/FreeRTOS/Source/queue.o
  .bss           0x00000000        0x0 src/FreeRTOS/Source/queue.o
- .debug_abbrev  0x00000000      0x1ef src/FreeRTOS/Source/queue.o
- .debug_info    0x00000000      0xe80 src/FreeRTOS/Source/queue.o
- .debug_line    0x00000000      0xae6 src/FreeRTOS/Source/queue.o
- .debug_macinfo
-                0x00000000    0xf7487 src/FreeRTOS/Source/queue.o
  .text.uxQueueMessagesWaitingFromISR
                 0x00000000        0x4 src/FreeRTOS/Source/queue.o
  .text.xQueueIsQueueEmptyFromISR
@@ -1338,39 +1338,20 @@ Discarded input sections
                 0x00000000       0x50 src/FreeRTOS/Source/queue.o
  .text.xQueueGiveFromISR
                 0x00000000       0x50 src/FreeRTOS/Source/queue.o
- .text.prvUnlockQueue
-                0x00000000       0xa8 src/FreeRTOS/Source/queue.o
  .text.xQueuePeek
                 0x00000000      0x108 src/FreeRTOS/Source/queue.o
  .text.xQueueReceive
                 0x00000000      0x10c src/FreeRTOS/Source/queue.o
  .text.xQueueSemaphoreTake
                 0x00000000      0x15c src/FreeRTOS/Source/queue.o
- .text.prvCopyDataToQueue
-                0x00000000       0x88 src/FreeRTOS/Source/queue.o
  .text.xQueueGenericSendFromISR
                 0x00000000       0x64 src/FreeRTOS/Source/queue.o
- .text.xQueueGenericSend
-                0x00000000      0x11c src/FreeRTOS/Source/queue.o
  .text.xQueueTakeMutexRecursive
                 0x00000000       0x3c src/FreeRTOS/Source/queue.o
  .text.xQueueGiveMutexRecursive
                 0x00000000       0x38 src/FreeRTOS/Source/queue.o
- .text.xQueueGenericReset
-                0x00000000       0x78 src/FreeRTOS/Source/queue.o
- .text.xQueueGenericCreate
-                0x00000000       0x40 src/FreeRTOS/Source/queue.o
  .text.xQueueCreateMutex
                 0x00000000       0x30 src/FreeRTOS/Source/queue.o
- .debug_frame   0x00000000      0x2e8 src/FreeRTOS/Source/queue.o
- .debug_loc     0x00000000      0xbdf src/FreeRTOS/Source/queue.o
- .debug_pubnames
-                0x00000000      0x1e6 src/FreeRTOS/Source/queue.o
- .debug_aranges
-                0x00000000       0xd0 src/FreeRTOS/Source/queue.o
- .debug_ranges  0x00000000      0x110 src/FreeRTOS/Source/queue.o
- .debug_str     0x00000000      0x739 src/FreeRTOS/Source/queue.o
- .comment       0x00000000       0x31 src/FreeRTOS/Source/queue.o
  .text          0x00000000        0x0 src/FreeRTOS/Source/stream_buffer.o
  .data          0x00000000        0x0 src/FreeRTOS/Source/stream_buffer.o
  .bss           0x00000000        0x0 src/FreeRTOS/Source/stream_buffer.o
@@ -1441,10 +1422,6 @@ Discarded input sections
                 0x00000000        0xc src/FreeRTOS/Source/tasks.o
  .text.pcTaskGetName
                 0x00000000       0x10 src/FreeRTOS/Source/tasks.o
- .text.vTaskInternalSetTimeOutState
-                0x00000000       0x18 src/FreeRTOS/Source/tasks.o
- .text.vTaskMissedYield
-                0x00000000        0xc src/FreeRTOS/Source/tasks.o
  .text.xTaskGetCurrentTaskHandle
                 0x00000000        0xc src/FreeRTOS/Source/tasks.o
  .text.xTaskGetSchedulerState
@@ -1457,8 +1434,6 @@ Discarded input sections
                 0x00000000       0x44 src/FreeRTOS/Source/tasks.o
  .text.xTaskGenericNotifyStateClear
                 0x00000000       0x50 src/FreeRTOS/Source/tasks.o
- .text.xTaskCheckForTimeOut
-                0x00000000       0x6c src/FreeRTOS/Source/tasks.o
  .text.vTaskSetTimeOutState
                 0x00000000       0x30 src/FreeRTOS/Source/tasks.o
  .text.xTaskGetTickCount
@@ -1471,14 +1446,10 @@ Discarded input sections
                 0x00000000      0x100 src/FreeRTOS/Source/tasks.o
  .text.vTaskPriorityDisinheritAfterTimeout
                 0x00000000       0x7c src/FreeRTOS/Source/tasks.o
- .text.xTaskPriorityDisinherit
-                0x00000000       0x68 src/FreeRTOS/Source/tasks.o
  .text.xTaskPriorityInherit
                 0x00000000       0xa4 src/FreeRTOS/Source/tasks.o
  .text.vTaskRemoveFromUnorderedEventList
                 0x00000000       0x68 src/FreeRTOS/Source/tasks.o
- .text.xTaskRemoveFromEventList
-                0x00000000       0x8c src/FreeRTOS/Source/tasks.o
  .text.xTaskCatchUpTicks
                 0x00000000       0x28 src/FreeRTOS/Source/tasks.o
  .text.vTaskResume
@@ -1493,8 +1464,6 @@ Discarded input sections
                 0x00000000       0x30 src/FreeRTOS/Source/tasks.o
  .text.vTaskDelayUntil
                 0x00000000       0x60 src/FreeRTOS/Source/tasks.o
- .text.vTaskPlaceOnEventList
-                0x00000000       0x28 src/FreeRTOS/Source/tasks.o
  .text.vTaskEndScheduler
                 0x00000000       0x18 src/FreeRTOS/Source/tasks.o
  .text.vTaskDelete
@@ -1748,25 +1717,31 @@ Discarded input sections
                 0x00000000        0x2 src/main.o
  .text.myIntTaskTC0
                 0x00000000       0xa4 src/main.o
+ .data.pm       0x00000000        0x4 src/main.o
+ .rodata.tc0_interrupt.13431
+                0x00000000        0x4 src/main.o
  .bss.myIntTaskHandleTC
                 0x00000000        0x4 src/main.o
  .data.tc       0x00000000        0x4 src/main.o
- .rodata.tc0_interrupt.12921
-                0x00000000        0x4 src/main.o
- .data.pm       0x00000000        0x4 src/main.o
+ .rodata.f5     0x00000000       0x18 src/main.o
+ .rodata.f1     0x00000000       0x18 src/main.o
+ .rodata.f2     0x00000000       0x18 src/main.o
+ .rodata.f3     0x00000000       0x18 src/main.o
+ .rodata.f4     0x00000000       0x18 src/main.o
+ .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
  .text          0x00000000      0x1d4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_mul.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_mul.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_mul.o)
- .text          0x00000000      0x2b0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_addsub.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_addsub.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_addsub.o)
- .text          0x00000000       0xe8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_s32_to_f64.o)
+ .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_to_s32.o)
+ .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_to_s32.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_s32_to_f64.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_s32_to_f64.o)
- .text          0x00000000       0x68 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_cmp_lt.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_cmp_lt.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_cmp_lt.o)
- .text          0x00000000      0x318 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_div.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_div.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_div.o)
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
@@ -1775,7 +1750,6 @@ Discarded input sections
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .text          0x00000000      0x148 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-memcpy.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-memcpy.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-memcpy.o)
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-memset.o)
@@ -2528,7 +2502,7 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
 .plt
  *(.plt)
 
-.text           0x80002008     0x2a10
+.text           0x80002008     0x3ae0
  *(.text .stub .text.* .gnu.linkonce.t.*)
  .text.tpa6130_abdac_tx_pdca_int_handler
                 0x80002008       0x60 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
@@ -2764,186 +2738,236 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .text.pvPortMalloc
                 0x800031ec       0x28 src/FreeRTOS/Source/portable/MemMang/heap_3.o
                 0x800031ec                pvPortMalloc
+ .text.prvUnlockQueue
+                0x80003214       0xa8 src/FreeRTOS/Source/queue.o
+ .text.prvCopyDataToQueue
+                0x800032bc       0x88 src/FreeRTOS/Source/queue.o
+ .text.xQueueGenericSend
+                0x80003344      0x11c src/FreeRTOS/Source/queue.o
+                0x80003344                xQueueGenericSend
+ .text.xQueueGenericReset
+                0x80003460       0x78 src/FreeRTOS/Source/queue.o
+                0x80003460                xQueueGenericReset
+ .text.xQueueGenericCreate
+                0x800034d8       0x40 src/FreeRTOS/Source/queue.o
+                0x800034d8                xQueueGenericCreate
  .text.prvTaskIsTaskSuspended
-                0x80003214       0x20 src/FreeRTOS/Source/tasks.o
+                0x80003518       0x20 src/FreeRTOS/Source/tasks.o
  .text.vTaskSuspendAll
-                0x80003234       0x10 src/FreeRTOS/Source/tasks.o
-                0x80003234                vTaskSuspendAll
+                0x80003538       0x10 src/FreeRTOS/Source/tasks.o
+                0x80003538                vTaskSuspendAll
  .text.vTaskSwitchContext
-                0x80003244       0x74 src/FreeRTOS/Source/tasks.o
-                0x80003244                vTaskSwitchContext
+                0x80003548       0x74 src/FreeRTOS/Source/tasks.o
+                0x80003548                vTaskSwitchContext
+ .text.vTaskInternalSetTimeOutState
+                0x800035bc       0x18 src/FreeRTOS/Source/tasks.o
+                0x800035bc                vTaskInternalSetTimeOutState
+ .text.vTaskMissedYield
+                0x800035d4        0xc src/FreeRTOS/Source/tasks.o
+                0x800035d4                vTaskMissedYield
  .text.prvResetNextTaskUnblockTime
-                0x800032b8       0x28 src/FreeRTOS/Source/tasks.o
+                0x800035e0       0x28 src/FreeRTOS/Source/tasks.o
+ .text.xTaskCheckForTimeOut
+                0x80003608       0x6c src/FreeRTOS/Source/tasks.o
+                0x80003608                xTaskCheckForTimeOut
  .text.xTaskGenericNotify
-                0x800032e0       0xec src/FreeRTOS/Source/tasks.o
-                0x800032e0                xTaskGenericNotify
+                0x80003674       0xec src/FreeRTOS/Source/tasks.o
+                0x80003674                xTaskGenericNotify
+ .text.xTaskPriorityDisinherit
+                0x80003760       0x68 src/FreeRTOS/Source/tasks.o
+                0x80003760                xTaskPriorityDisinherit
+ .text.xTaskRemoveFromEventList
+                0x800037c8       0x8c src/FreeRTOS/Source/tasks.o
+                0x800037c8                xTaskRemoveFromEventList
  .text.xTaskIncrementTick
-                0x800033cc      0x108 src/FreeRTOS/Source/tasks.o
-                0x800033cc                xTaskIncrementTick
+                0x80003854      0x108 src/FreeRTOS/Source/tasks.o
+                0x80003854                xTaskIncrementTick
  .text.xTaskResumeAll
-                0x800034d4       0xe4 src/FreeRTOS/Source/tasks.o
-                0x800034d4                xTaskResumeAll
+                0x8000395c       0xe4 src/FreeRTOS/Source/tasks.o
+                0x8000395c                xTaskResumeAll
  .text.xTaskResumeFromISR
-                0x800035b8       0x80 src/FreeRTOS/Source/tasks.o
-                0x800035b8                xTaskResumeFromISR
+                0x80003a40       0x80 src/FreeRTOS/Source/tasks.o
+                0x80003a40                xTaskResumeFromISR
  .text.vTaskSuspend
-                0x80003638       0xb8 src/FreeRTOS/Source/tasks.o
-                0x80003638                vTaskSuspend
+                0x80003ac0       0xb8 src/FreeRTOS/Source/tasks.o
+                0x80003ac0                vTaskSuspend
  .text.prvAddCurrentTaskToDelayedList
-                0x800036f0       0x98 src/FreeRTOS/Source/tasks.o
+                0x80003b78       0x98 src/FreeRTOS/Source/tasks.o
  .text.ulTaskGenericNotifyTake
-                0x80003788       0x98 src/FreeRTOS/Source/tasks.o
-                0x80003788                ulTaskGenericNotifyTake
+                0x80003c10       0x98 src/FreeRTOS/Source/tasks.o
+                0x80003c10                ulTaskGenericNotifyTake
+ .text.vTaskPlaceOnEventList
+                0x80003ca8       0x28 src/FreeRTOS/Source/tasks.o
+                0x80003ca8                vTaskPlaceOnEventList
  .text.prvDeleteTCB
-                0x80003820       0x1c src/FreeRTOS/Source/tasks.o
+                0x80003cd0       0x1c src/FreeRTOS/Source/tasks.o
  .text.prvIdleTask
-                0x8000383c       0x68 src/FreeRTOS/Source/tasks.o
+                0x80003cec       0x68 src/FreeRTOS/Source/tasks.o
  .text.xTaskCreate
-                0x800038a4      0x1ec src/FreeRTOS/Source/tasks.o
-                0x800038a4                xTaskCreate
+                0x80003d54      0x1ec src/FreeRTOS/Source/tasks.o
+                0x80003d54                xTaskCreate
  .text.vTaskStartScheduler
-                0x80003a90       0x58 src/FreeRTOS/Source/tasks.o
-                0x80003a90                vTaskStartScheduler
+                0x80003f40       0x58 src/FreeRTOS/Source/tasks.o
+                0x80003f40                vTaskStartScheduler
  .text.gpio_enable_module_pin
-                0x80003ae8       0x52 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003ae8                gpio_enable_module_pin
- *fill*         0x80003b3a        0x2 d703d703
+                0x80003f98       0x52 src/ASF/avr32/drivers/gpio/gpio.o
+                0x80003f98                gpio_enable_module_pin
+ *fill*         0x80003fea        0x2 d703d703
  .text.gpio_enable_module
-                0x80003b3c       0x30 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003b3c                gpio_enable_module
+                0x80003fec       0x30 src/ASF/avr32/drivers/gpio/gpio.o
+                0x80003fec                gpio_enable_module
  .text.gpio_enable_gpio_pin
-                0x80003b6c       0x18 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003b6c                gpio_enable_gpio_pin
+                0x8000401c       0x18 src/ASF/avr32/drivers/gpio/gpio.o
+                0x8000401c                gpio_enable_gpio_pin
  .text.gpio_enable_gpio
-                0x80003b84       0x28 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003b84                gpio_enable_gpio
+                0x80004034       0x28 src/ASF/avr32/drivers/gpio/gpio.o
+                0x80004034                gpio_enable_gpio
  .text.gpio_set_gpio_pin
-                0x80003bac       0x1c src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003bac                gpio_set_gpio_pin
+                0x8000405c       0x1c src/ASF/avr32/drivers/gpio/gpio.o
+                0x8000405c                gpio_set_gpio_pin
  .text.gpio_clr_gpio_pin
-                0x80003bc8       0x1c src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003bc8                gpio_clr_gpio_pin
+                0x80004078       0x1c src/ASF/avr32/drivers/gpio/gpio.o
+                0x80004078                gpio_clr_gpio_pin
  .text.gpio_enable_pin_interrupt
-                0x80003be4       0x46 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003be4                gpio_enable_pin_interrupt
+                0x80004094       0x46 src/ASF/avr32/drivers/gpio/gpio.o
+                0x80004094                gpio_enable_pin_interrupt
  .text.gpio_get_pin_interrupt_flag
-                0x80003c2a       0x18 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003c2a                gpio_get_pin_interrupt_flag
+                0x800040da       0x18 src/ASF/avr32/drivers/gpio/gpio.o
+                0x800040da                gpio_get_pin_interrupt_flag
  .text.gpio_clear_pin_interrupt_flag
-                0x80003c42       0x16 src/ASF/avr32/drivers/gpio/gpio.o
-                0x80003c42                gpio_clear_pin_interrupt_flag
+                0x800040f2       0x16 src/ASF/avr32/drivers/gpio/gpio.o
+                0x800040f2                gpio_clear_pin_interrupt_flag
  .text._unhandled_interrupt
-                0x80003c58        0x2 src/ASF/avr32/drivers/intc/intc.o
- *fill*         0x80003c5a        0x2 d703d703
+                0x80004108        0x2 src/ASF/avr32/drivers/intc/intc.o
+ *fill*         0x8000410a        0x2 d703d703
  .text.INTC_register_interrupt
-                0x80003c5c       0x80 src/ASF/avr32/drivers/intc/intc.o
-                0x80003c5c                INTC_register_interrupt
+                0x8000410c       0x80 src/ASF/avr32/drivers/intc/intc.o
+                0x8000410c                INTC_register_interrupt
  .text.INTC_init_interrupts
-                0x80003cdc       0x54 src/ASF/avr32/drivers/intc/intc.o
-                0x80003cdc                INTC_init_interrupts
+                0x8000418c       0x54 src/ASF/avr32/drivers/intc/intc.o
+                0x8000418c                INTC_init_interrupts
  .text._get_interrupt_handler
-                0x80003d30       0x38 src/ASF/avr32/drivers/intc/intc.o
-                0x80003d30                _get_interrupt_handler
- .text._stext   0x80003d68       0x40 src/ASF/avr32/utils/startup/startup_uc3.o
+                0x800041e0       0x38 src/ASF/avr32/drivers/intc/intc.o
+                0x800041e0                _get_interrupt_handler
+ .text._stext   0x80004218       0x40 src/ASF/avr32/utils/startup/startup_uc3.o
                                  0x50 (size before relaxing)
-                0x80003d68                _stext
+                0x80004218                _stext
  .text.master_callback
-                0x80003da8        0x2 src/main.o
- *fill*         0x80003daa        0x2 d703d703
- .text.main     0x80003dac      0x24c src/main.o
-                0x80003dac                main
+                0x80004258        0x2 src/main.o
+ *fill*         0x8000425a        0x2 d703d703
+ .text.main     0x8000425c      0x24c src/main.o
+                0x8000425c                main
  .text.RT_ISR_gpio_qt_71_not_naked
-                0x80003ff8       0x74 src/main.o
+                0x800044a8       0x74 src/main.o
  .text.RT_ISR_gpio_qt_71
-                0x8000406c       0x78 src/main.o
+                0x8000451c       0x78 src/main.o
  .text.RT_ISR_gpio_qt_70_not_naked
-                0x800040e4       0x58 src/main.o
+                0x80004594       0x58 src/main.o
  .text.RT_ISR_gpio_qt_70
-                0x8000413c       0x78 src/main.o
+                0x800045ec       0x78 src/main.o
  .text.qtButtonTask
-                0x800041b4       0xbc src/main.o
-                0x800041b4                qtButtonTask
+                0x80004664      0x114 src/main.o
+                0x80004664                qtButtonTask
  .text.playAudioTask
-                0x80004270       0xe4 src/main.o
-                0x80004270                playAudioTask
- .text.free     0x80004354       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+                0x80004778      0x308 src/main.o
+                0x80004778                playAudioTask
+ .text.floor    0x80004a80      0x118 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+                                0x128 (size before relaxing)
+                0x80004a80                floor
+ .text          0x80004b98      0x2b0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_addsub.o)
+                0x80004b9c                __avr32_f64_sub
+                0x80004d38                __avr32_f64_add
+ .text          0x80004e48       0x2a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_to_s32.o)
+                0x80004e48                __avr32_f64_to_u32
+                0x80004e4c                __avr32_f64_to_s32
+ .text          0x80004e72       0xe8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_s32_to_f64.o)
+                0x80004e72                __avr32_u32_to_f64
+                0x80004e7a                __avr32_s32_to_f64
+ .text          0x80004f5a       0x68 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_cmp_lt.o)
+                0x80004f5a                __avr32_f64_cmp_lt
+ *fill*         0x80004fc2        0x2 d703d703
+ .text          0x80004fc4      0x318 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/ucr2\libgcc.a(_avr32_f64_div.o)
+                0x80004fc4                __avr32_f64_div
+ .text.free     0x800052dc       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
                                  0x18 (size before relaxing)
-                0x80004354                free
- .text.malloc   0x80004364       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+                0x800052dc                free
+ .text.malloc   0x800052ec       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
                                  0x18 (size before relaxing)
-                0x80004364                malloc
+                0x800052ec                malloc
  .text._malloc_r
-                0x80004374      0x428 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x800052fc      0x428 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
                                 0x450 (size before relaxing)
-                0x80004374                _malloc_r
- .text._sbrk_r  0x8000479c       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+                0x800052fc                _malloc_r
+ .text          0x80005724      0x148 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-memcpy.o)
+                0x80005724                memcpy
+ .text._sbrk_r  0x8000586c       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
                                  0x28 (size before relaxing)
-                0x8000479c                _sbrk_r
- .text._sbrk    0x800047bc       0x38 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+                0x8000586c                _sbrk_r
+ .text._sbrk    0x8000588c       0x38 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
                                  0x40 (size before relaxing)
-                0x800047bc                _sbrk
- .text.__errno  0x800047f4        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
-                0x800047f4                __errno
+                0x8000588c                _sbrk
+ .text.__errno  0x800058c4        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+                0x800058c4                __errno
  .text._malloc_trim_r
-                0x80004800       0x90 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+                0x800058d0       0x90 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
                                  0xa8 (size before relaxing)
-                0x80004800                _malloc_trim_r
- .text._free_r  0x80004890      0x188 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+                0x800058d0                _malloc_trim_r
+ .text._free_r  0x80005960      0x188 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
                                 0x1a0 (size before relaxing)
-                0x80004890                _free_r
+                0x80005960                _free_r
  *(.text.*personality*)
  *(.gnu.warning)
 
-.exception      0x80004c00      0x200
- .exception     0x80004c00      0x200 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/exception.o
-                0x80004c00                _evba
-                0x80004d04                _int0
-                0x80004d12                _int1
-                0x80004d20                _int2
-                0x80004d2e                _int3
+.exception      0x80005c00      0x200
+ .exception     0x80005c00      0x200 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/exception.o
+                0x80005c00                _evba
+                0x80005d04                _int0
+                0x80005d12                _int1
+                0x80005d20                _int2
+                0x80005d2e                _int3
 
 .fini
  *(.fini)
-                0x80004e00                PROVIDE (__etext, .)
-                0x80004e00                PROVIDE (_etext, .)
-                0x80004e00                PROVIDE (etext, .)
+                0x80005e00                PROVIDE (__etext, .)
+                0x80005e00                PROVIDE (_etext, .)
+                0x80005e00                PROVIDE (etext, .)
 
-.rodata         0x80004e00    0x30a28
+.rodata         0x80005e00    0x30a10
  *(.rodata .rodata.* .gnu.linkonce.r.*)
  .rodata.C.52.10877
-                0x80004e00       0x18 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
+                0x80005e00       0x18 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .rodata.TPA6130_ABDAC_GPIO_MAP
-                0x80004e18       0x20 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
+                0x80005e18       0x20 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .rodata.DBG_USART_GPIO_MAP.10878
-                0x80004e38       0x10 src/ASF/avr32/utils/debug/print_funcs.o
+                0x80005e38       0x10 src/ASF/avr32/utils/debug/print_funcs.o
  .rodata.str1.4
-                0x80004e48        0x5 src/FreeRTOS/Source/tasks.o
+                0x80005e48        0x5 src/FreeRTOS/Source/tasks.o
                                   0x8 (size before relaxing)
- *fill*         0x80004e4d        0x3 
+ *fill*         0x80005e4d        0x3 
  .rodata._int_handler_table
-                0x80004e50       0xa0 src/ASF/avr32/drivers/intc/intc.o
+                0x80005e50       0xa0 src/ASF/avr32/drivers/intc/intc.o
  .rodata.sound_table
-                0x80004ef0    0x30854 src/main.o
-                0x80004ef0                sound_table
- .rodata.C.64.13052
-                0x80035744       0x10 src/main.o
- .rodata.C.65.13053
-                0x80035754        0xc src/main.o
+                0x80005ef0    0x30854 src/main.o
+                0x80005ef0                sound_table
  .rodata.str1.4
-                0x80035760       0x63 src/main.o
-                                 0x64 (size before relaxing)
- *fill*         0x800357c3        0x1 
+                0x80036744       0x4b src/main.o
+                                 0x4c (size before relaxing)
+ *fill*         0x8003678f        0x1 
+ .rodata.C.70.13679
+                0x80036790       0x10 src/main.o
+ .rodata.C.71.13680
+                0x800367a0        0xc src/main.o
  .rodata.str1.4
-                0x800357c4        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+                0x800367ac        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
  .rodata.__sf_fake_stdin
-                0x800357c8       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
-                0x800357c8                __sf_fake_stdin
+                0x800367b0       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+                0x800367b0                __sf_fake_stdin
  .rodata.__sf_fake_stdout
-                0x800357e8       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
-                0x800357e8                __sf_fake_stdout
+                0x800367d0       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+                0x800367d0                __sf_fake_stdout
  .rodata.__sf_fake_stderr
-                0x80035808       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
-                0x80035808                __sf_fake_stderr
+                0x800367f0       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+                0x800367f0                __sf_fake_stderr
 
 .rodata1
  *(.rodata1)
@@ -2958,9 +2982,9 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  *(.gcc_except_table)
  *(.gcc_except_table.*)
 
-.lalign         0x80035828        0x0
-                0x80035828                . = ALIGN (0x8)
-                0x80035828                PROVIDE (_data_lma, .)
+.lalign         0x80036810        0x0
+                0x80036810                . = ALIGN (0x8)
+                0x80036810                PROVIDE (_data_lma, .)
                 0x00000004                . = ORIGIN (INTRAM)
 
 .dalign         0x00000004        0x4
@@ -3026,10 +3050,10 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
 .ramtext
  *(.ramtext .ramtext.*)
 
-.ddalign        0x00000008        0x0 load address 0x80035828
+.ddalign        0x00000008        0x0 load address 0x80036810
                 0x00000008                . = ALIGN (0x8)
 
-.data           0x00000008      0x50c load address 0x80035828
+.data           0x00000008      0x50c load address 0x80036810
  *(.data .data.* .gnu.linkonce.d.*)
  .data.tpa6130_shadow_regs
                 0x00000008        0x4 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
@@ -3055,14 +3079,14 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
 .data1
  *(.data1)
 
-.balign         0x00000514        0x4 load address 0x80035d34
+.balign         0x00000514        0x4 load address 0x80036d1c
                 0x00000518                . = ALIGN (0x8)
  *fill*         0x00000514        0x4 
                 0x00000518                PROVIDE (_edata, .)
                 0x00000518                PROVIDE (edata, .)
                 0x00000518                __bss_start = .
 
-.bss            0x00000518      0x4b8
+.bss            0x00000518      0x508
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
  .bss.tpa6130_output_param
@@ -3164,54 +3188,68 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
                 0x00000764        0x4 src/ASF/avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_5
                 0x00000768        0x4 src/ASF/avr32/drivers/intc/intc.o
- .bss.i.12930   0x0000076c        0x4 src/main.o
- .bss.notificationValue.12931
-                0x00000770        0x4 src/main.o
- .bss.audioHandle
-                0x00000774        0x4 src/main.o
-                0x00000774                audioHandle
- .bss.count.12929
-                0x00000778        0x4 src/main.o
+ .bss.o3.13447  0x0000076c        0xc src/main.o
+ .bss.samplesToMove.13594
+                0x00000778        0x2 src/main.o
+ *fill*         0x0000077a        0x2 
  .bss.qtHandle  0x0000077c        0x4 src/main.o
                 0x0000077c                qtHandle
- .bss.playAudio.12932
-                0x00000780        0x1 src/main.o
- .bss.notify.12933
-                0x00000781        0x1 src/main.o
- *fill*         0x00000782        0x2 
+ .bss.o2.13446  0x00000780        0xc src/main.o
+ .bss.count.13439
+                0x0000078c        0x4 src/main.o
+ .bss.sam.13450
+                0x00000790        0x4 src/main.o
+ .bss.i.13440   0x00000794        0x4 src/main.o
+ .bss.playAudio.13442
+                0x00000798        0x1 src/main.o
+ *fill*         0x00000799        0x3 
+ .bss.ototal.13451
+                0x0000079c        0x8 src/main.o
+ .bss.notify.13443
+                0x000007a4        0x1 src/main.o
+ *fill*         0x000007a5        0x3 
+ .bss.o4.13448  0x000007a8        0xc src/main.o
+ .bss.audioHandle
+                0x000007b4        0x4 src/main.o
+                0x000007b4                audioHandle
+ .bss.notificationValue.13441
+                0x000007b8        0x4 src/main.o
+ .bss.o5.13449  0x000007bc        0xc src/main.o
+ .bss.o1.13445  0x000007c8        0xc src/main.o
  .bss.__malloc_max_total_mem
-                0x00000784        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
-                0x00000784                __malloc_max_total_mem
+                0x000007d4        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x000007d4                __malloc_max_total_mem
  .bss.__malloc_max_sbrked_mem
-                0x00000788        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
-                0x00000788                __malloc_max_sbrked_mem
+                0x000007d8        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x000007d8                __malloc_max_sbrked_mem
  .bss.__malloc_top_pad
-                0x0000078c        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
-                0x0000078c                __malloc_top_pad
+                0x000007dc        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x000007dc                __malloc_top_pad
  .bss.__malloc_current_mallinfo
-                0x00000790       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
-                0x00000790                __malloc_current_mallinfo
+                0x000007e0       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x000007e0                __malloc_current_mallinfo
  .bss.cur_heap_pos.1869
-                0x000007b8        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+                0x00000808        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
  *(COMMON)
- COMMON         0x000007bc      0x210 src/main.o
-                0x000007bc                intc_qt
-                0x000007be                tick_count
-                0x000007c4                intc_tc
-                0x000007c8                samples_count
-                0x000007cc                samples
- COMMON         0x000009cc        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
-                0x000009cc                errno
-                0x000009d0                . = ALIGN (0x8)
-                0x000009d0                . = ALIGN (0x8)
-                0x000009d0                _end = .
-                0x000009d0                PROVIDE (end, .)
-                0x000009d0                __heap_start__ = ALIGN (0x8)
+ COMMON         0x0000080c      0x210 src/main.o
+                0x0000080c                reverseQueue
+                0x00000810                intc_qt
+                0x00000811                intc_tc
+                0x00000814                samples_count
+                0x00000818                forwardQueue
+                0x0000081c                samples
+ COMMON         0x00000a1c        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+                0x00000a1c                errno
+                0x00000a20                . = ALIGN (0x8)
+                0x00000a20                . = ALIGN (0x8)
+                0x00000a20                _end = .
+                0x00000a20                PROVIDE (end, .)
+                0x00000a20                __heap_start__ = ALIGN (0x8)
 
-.heap           0x000009d0     0xe630
+.heap           0x00000a20     0xe5e0
  *(.heap)
-                0x0000e630                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
- *fill*         0x000009d0     0xe630 
+                0x0000e5e0                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
+ *fill*         0x00000a20     0xe5e0 
                 0x0000f000                __heap_end__ = .
 
 .stab
@@ -3246,10 +3284,12 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .comment       0x00000000       0x31 src/FreeRTOS/Source/list.o
  .comment       0x00000000       0x31 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .comment       0x00000000       0x31 src/FreeRTOS/Source/portable/MemMang/heap_3.o
+ .comment       0x00000000       0x31 src/FreeRTOS/Source/queue.o
  .comment       0x00000000       0x31 src/FreeRTOS/Source/tasks.o
  .comment       0x00000000       0x31 src/ASF/avr32/drivers/gpio/gpio.o
  .comment       0x00000000       0x31 src/ASF/avr32/drivers/intc/intc.o
  .comment       0x00000000       0x31 src/main.o
+ .comment       0x00000000       0x31 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
  .comment       0x00000000       0x31 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
  .comment       0x00000000       0x31 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
  .comment       0x00000000       0x31 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
@@ -3272,7 +3312,7 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0xe28
+.debug_aranges  0x00000000      0xf18
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0xb8 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
@@ -3299,36 +3339,40 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_aranges
                 0x00000810       0x28 src/FreeRTOS/Source/portable/MemMang/heap_3.o
  .debug_aranges
-                0x00000838      0x198 src/FreeRTOS/Source/tasks.o
+                0x00000838       0xd0 src/FreeRTOS/Source/queue.o
  .debug_aranges
-                0x000009d0      0x100 src/ASF/avr32/drivers/gpio/gpio.o
+                0x00000908      0x198 src/FreeRTOS/Source/tasks.o
  .debug_aranges
-                0x00000ad0       0x38 src/ASF/avr32/drivers/intc/intc.o
+                0x00000aa0      0x100 src/ASF/avr32/drivers/gpio/gpio.o
  .debug_aranges
-                0x00000b08       0x28 src/ASF/avr32/utils/startup/startup_uc3.o
+                0x00000ba0       0x38 src/ASF/avr32/drivers/intc/intc.o
  .debug_aranges
-                0x00000b30       0x20 src/ASF/avr32/utils/startup/trampoline_uc3.o
+                0x00000bd8       0x28 src/ASF/avr32/utils/startup/startup_uc3.o
  .debug_aranges
-                0x00000b50       0x80 src/main.o
+                0x00000c00       0x20 src/ASF/avr32/utils/startup/trampoline_uc3.o
  .debug_aranges
-                0x00000bd0       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+                0x00000c20       0x80 src/main.o
  .debug_aranges
-                0x00000bf8       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x00000ca0       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
  .debug_aranges
-                0x00000c18       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+                0x00000cc0       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
  .debug_aranges
-                0x00000c38       0xf8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+                0x00000ce8       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
  .debug_aranges
-                0x00000d30       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+                0x00000d08       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
  .debug_aranges
-                0x00000d50       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+                0x00000d28       0xf8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
  .debug_aranges
-                0x00000d78       0x30 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+                0x00000e20       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
  .debug_aranges
-                0x00000da8       0x80 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+                0x00000e40       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_aranges
+                0x00000e68       0x30 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_aranges
+                0x00000e98       0x80 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
 .debug_pubnames
-                0x00000000     0x232f
+                0x00000000     0x2567
  *(.debug_pubnames)
  .debug_pubnames
                 0x00000000      0x1b5 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
@@ -3353,33 +3397,37 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_pubnames
                 0x00001540       0x31 src/FreeRTOS/Source/portable/MemMang/heap_3.o
  .debug_pubnames
-                0x00001571      0x46e src/FreeRTOS/Source/tasks.o
+                0x00001571      0x1e6 src/FreeRTOS/Source/queue.o
  .debug_pubnames
-                0x000019df      0x330 src/ASF/avr32/drivers/gpio/gpio.o
+                0x00001757      0x46e src/FreeRTOS/Source/tasks.o
  .debug_pubnames
-                0x00001d0f       0x62 src/ASF/avr32/drivers/intc/intc.o
+                0x00001bc5      0x330 src/ASF/avr32/drivers/gpio/gpio.o
  .debug_pubnames
-                0x00001d71      0x148 src/main.o
+                0x00001ef5       0x62 src/ASF/avr32/drivers/intc/intc.o
  .debug_pubnames
-                0x00001eb9       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+                0x00001f57      0x17e src/main.o
  .debug_pubnames
-                0x00001edf       0xce c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+                0x000020d5       0x1c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
  .debug_pubnames
-                0x00001fad       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+                0x000020f1       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
  .debug_pubnames
-                0x00001fcb      0x171 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+                0x00002117       0xce c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
  .debug_pubnames
-                0x0000213c       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+                0x000021e5       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
  .debug_pubnames
-                0x0000215a       0x31 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+                0x00002203      0x171 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
  .debug_pubnames
-                0x0000218b       0x39 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+                0x00002374       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
  .debug_pubnames
-                0x000021c4       0x52 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+                0x00002392       0x31 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
  .debug_pubnames
-                0x00002216      0x119 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+                0x000023c3       0x39 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+ .debug_pubnames
+                0x000023fc       0x52 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_pubnames
+                0x0000244e      0x119 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
-.debug_info     0x00000000    0x176c2
+.debug_info     0x00000000    0x18871
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000     0x11c7 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .debug_info    0x000011c7     0x12ce src/ASF/avr32/drivers/abdac/abdac.o
@@ -3393,23 +3441,25 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_info    0x0000ac5e      0x2d3 src/FreeRTOS/Source/list.o
  .debug_info    0x0000af31     0x1d8c src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .debug_info    0x0000ccbd       0xfc src/FreeRTOS/Source/portable/MemMang/heap_3.o
- .debug_info    0x0000cdb9     0x1598 src/FreeRTOS/Source/tasks.o
- .debug_info    0x0000e351      0xb1b src/ASF/avr32/drivers/gpio/gpio.o
- .debug_info    0x0000ee6c      0x5ae src/ASF/avr32/drivers/intc/intc.o
- .debug_info    0x0000f41a       0x97 src/ASF/avr32/utils/startup/startup_uc3.o
- .debug_info    0x0000f4b1       0x9e src/ASF/avr32/utils/startup/trampoline_uc3.o
- .debug_info    0x0000f54f     0x2743 src/main.o
- .debug_info    0x00011c92      0x8ea c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
- .debug_info    0x0001257c      0xc4e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .debug_info    0x000131ca      0x8de c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
- .debug_info    0x00013aa8      0x93a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
- .debug_info    0x000143e2      0x8a6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
- .debug_info    0x00014c88      0xb3d c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
- .debug_info    0x000157c5      0x960 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
- .debug_info    0x00016125      0x973 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
- .debug_info    0x00016a98      0xc2a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_info    0x0000cdb9      0xe80 src/FreeRTOS/Source/queue.o
+ .debug_info    0x0000dc39     0x1598 src/FreeRTOS/Source/tasks.o
+ .debug_info    0x0000f1d1      0xb1b src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_info    0x0000fcec      0x5ae src/ASF/avr32/drivers/intc/intc.o
+ .debug_info    0x0001029a       0x97 src/ASF/avr32/utils/startup/startup_uc3.o
+ .debug_info    0x00010331       0x9e src/ASF/avr32/utils/startup/trampoline_uc3.o
+ .debug_info    0x000103cf     0x28be src/main.o
+ .debug_info    0x00012c8d      0x1b4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .debug_info    0x00012e41      0x8ea c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_info    0x0001372b      0xc4e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_info    0x00014379      0x8de c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_info    0x00014c57      0x93a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_info    0x00015591      0x8a6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+ .debug_info    0x00015e37      0xb3d c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_info    0x00016974      0x960 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+ .debug_info    0x000172d4      0x973 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_info    0x00017c47      0xc2a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
-.debug_abbrev   0x00000000     0x3476
+.debug_abbrev   0x00000000     0x3774
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x2bb src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .debug_abbrev  0x000002bb      0x245 src/ASF/avr32/drivers/abdac/abdac.o
@@ -3423,23 +3473,25 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_abbrev  0x000015bc      0x101 src/FreeRTOS/Source/list.o
  .debug_abbrev  0x000016bd      0x316 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .debug_abbrev  0x000019d3       0xa4 src/FreeRTOS/Source/portable/MemMang/heap_3.o
- .debug_abbrev  0x00001a77      0x2a6 src/FreeRTOS/Source/tasks.o
- .debug_abbrev  0x00001d1d      0x28b src/ASF/avr32/drivers/gpio/gpio.o
- .debug_abbrev  0x00001fa8      0x1d4 src/ASF/avr32/drivers/intc/intc.o
- .debug_abbrev  0x0000217c       0x12 src/ASF/avr32/utils/startup/startup_uc3.o
- .debug_abbrev  0x0000218e       0x14 src/ASF/avr32/utils/startup/trampoline_uc3.o
- .debug_abbrev  0x000021a2      0x343 src/main.o
- .debug_abbrev  0x000024e5      0x178 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
- .debug_abbrev  0x0000265d      0x205 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .debug_abbrev  0x00002862      0x17f c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
- .debug_abbrev  0x000029e1      0x19a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
- .debug_abbrev  0x00002b7b      0x150 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
- .debug_abbrev  0x00002ccb      0x1d9 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
- .debug_abbrev  0x00002ea4      0x160 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
- .debug_abbrev  0x00003004      0x1e6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
- .debug_abbrev  0x000031ea      0x28c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_abbrev  0x00001a77      0x1ef src/FreeRTOS/Source/queue.o
+ .debug_abbrev  0x00001c66      0x2a6 src/FreeRTOS/Source/tasks.o
+ .debug_abbrev  0x00001f0c      0x28b src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_abbrev  0x00002197      0x1d4 src/ASF/avr32/drivers/intc/intc.o
+ .debug_abbrev  0x0000236b       0x12 src/ASF/avr32/utils/startup/startup_uc3.o
+ .debug_abbrev  0x0000237d       0x14 src/ASF/avr32/utils/startup/trampoline_uc3.o
+ .debug_abbrev  0x00002391      0x343 src/main.o
+ .debug_abbrev  0x000026d4      0x10f c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .debug_abbrev  0x000027e3      0x178 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_abbrev  0x0000295b      0x205 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_abbrev  0x00002b60      0x17f c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_abbrev  0x00002cdf      0x19a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_abbrev  0x00002e79      0x150 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+ .debug_abbrev  0x00002fc9      0x1d9 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_abbrev  0x000031a2      0x160 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+ .debug_abbrev  0x00003302      0x1e6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_abbrev  0x000034e8      0x28c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
-.debug_line     0x00000000     0xab00
+.debug_line     0x00000000     0xb8e8
  *(.debug_line)
  .debug_line    0x00000000      0x978 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .debug_line    0x00000978      0x70e src/ASF/avr32/drivers/abdac/abdac.o
@@ -3453,23 +3505,25 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_line    0x0000495b      0x7ec src/FreeRTOS/Source/list.o
  .debug_line    0x00005147      0x8e5 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .debug_line    0x00005a2c      0x7b9 src/FreeRTOS/Source/portable/MemMang/heap_3.o
- .debug_line    0x000061e5      0xd6e src/FreeRTOS/Source/tasks.o
- .debug_line    0x00006f53      0x8c7 src/ASF/avr32/drivers/gpio/gpio.o
- .debug_line    0x0000781a      0x695 src/ASF/avr32/drivers/intc/intc.o
- .debug_line    0x00007eaf       0xf1 src/ASF/avr32/utils/startup/startup_uc3.o
- .debug_line    0x00007fa0       0x66 src/ASF/avr32/utils/startup/trampoline_uc3.o
- .debug_line    0x00008006      0xbf3 src/main.o
- .debug_line    0x00008bf9      0x255 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
- .debug_line    0x00008e4e      0x571 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .debug_line    0x000093bf      0x258 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
- .debug_line    0x00009617      0x58e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
- .debug_line    0x00009ba5      0x1ce c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
- .debug_line    0x00009d73      0x34c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
- .debug_line    0x0000a0bf      0x1a8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
- .debug_line    0x0000a267      0x2ec c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
- .debug_line    0x0000a553      0x5ad c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_line    0x000061e5      0xae6 src/FreeRTOS/Source/queue.o
+ .debug_line    0x00006ccb      0xd6e src/FreeRTOS/Source/tasks.o
+ .debug_line    0x00007a39      0x8c7 src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_line    0x00008300      0x695 src/ASF/avr32/drivers/intc/intc.o
+ .debug_line    0x00008995       0xf1 src/ASF/avr32/utils/startup/startup_uc3.o
+ .debug_line    0x00008a86       0x66 src/ASF/avr32/utils/startup/trampoline_uc3.o
+ .debug_line    0x00008aec      0xc50 src/main.o
+ .debug_line    0x0000973c      0x2a5 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .debug_line    0x000099e1      0x255 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_line    0x00009c36      0x571 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_line    0x0000a1a7      0x258 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_line    0x0000a3ff      0x58e c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_line    0x0000a98d      0x1ce c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+ .debug_line    0x0000ab5b      0x34c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_line    0x0000aea7      0x1a8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+ .debug_line    0x0000b04f      0x2ec c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_line    0x0000b33b      0x5ad c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
-.debug_frame    0x00000000     0x2400
+.debug_frame    0x00000000     0x2734
  *(.debug_frame)
  .debug_frame   0x00000000      0x224 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .debug_frame   0x00000224       0x84 src/ASF/avr32/drivers/abdac/abdac.o
@@ -3482,71 +3536,77 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_frame   0x0000142c       0x68 src/FreeRTOS/Source/list.o
  .debug_frame   0x00001494      0x100 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .debug_frame   0x00001594       0x48 src/FreeRTOS/Source/portable/MemMang/heap_3.o
- .debug_frame   0x000015dc      0x530 src/FreeRTOS/Source/tasks.o
- .debug_frame   0x00001b0c      0x204 src/ASF/avr32/drivers/gpio/gpio.o
- .debug_frame   0x00001d10       0x64 src/ASF/avr32/drivers/intc/intc.o
- .debug_frame   0x00001d74      0x184 src/main.o
- .debug_frame   0x00001ef8       0x40 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
- .debug_frame   0x00001f38       0x40 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .debug_frame   0x00001f78       0x34 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
- .debug_frame   0x00001fac      0x220 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
- .debug_frame   0x000021cc       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
- .debug_frame   0x000021ec       0x58 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
- .debug_frame   0x00002244       0x80 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
- .debug_frame   0x000022c4      0x13c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_frame   0x000015dc      0x2e8 src/FreeRTOS/Source/queue.o
+ .debug_frame   0x000018c4      0x530 src/FreeRTOS/Source/tasks.o
+ .debug_frame   0x00001df4      0x204 src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_frame   0x00001ff8       0x64 src/ASF/avr32/drivers/intc/intc.o
+ .debug_frame   0x0000205c      0x190 src/main.o
+ .debug_frame   0x000021ec       0x40 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .debug_frame   0x0000222c       0x40 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_frame   0x0000226c       0x40 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_frame   0x000022ac       0x34 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x000022e0      0x220 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_frame   0x00002500       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+ .debug_frame   0x00002520       0x58 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_frame   0x00002578       0x80 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_frame   0x000025f8      0x13c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
-.debug_str      0x00000000     0x4e15
+.debug_str      0x00000000     0x5393
  *(.debug_str)
- .debug_str     0x00000000      0x662 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
-                                0x71d (size before relaxing)
- .debug_str     0x00000662      0x356 src/ASF/avr32/drivers/abdac/abdac.o
+ .debug_str     0x00000000      0x65c src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
+                                0x727 (size before relaxing)
+ .debug_str     0x0000065c      0x39c src/ASF/avr32/drivers/abdac/abdac.o
                                 0x5cd (size before relaxing)
- .debug_str     0x000009b8      0x34d src/ASF/avr32/drivers/pdca/pdca.o
+ .debug_str     0x000009f8      0x34d src/ASF/avr32/drivers/pdca/pdca.o
                                 0x497 (size before relaxing)
- .debug_str     0x00000d05      0x1bb src/ASF/avr32/drivers/twi/twi.o
+ .debug_str     0x00000d45      0x1bb src/ASF/avr32/drivers/twi/twi.o
                                 0x4f2 (size before relaxing)
- .debug_str     0x00000ec0      0x4db src/ASF/avr32/utils/debug/print_funcs.o
+ .debug_str     0x00000f00      0x4db src/ASF/avr32/utils/debug/print_funcs.o
                                 0x646 (size before relaxing)
- .debug_str     0x0000139b      0xa7e src/ASF/avr32/drivers/flashc/flashc.o
+ .debug_str     0x000013db      0xa7e src/ASF/avr32/drivers/flashc/flashc.o
                                 0xc46 (size before relaxing)
- .debug_str     0x00001e19      0x501 src/ASF/avr32/drivers/pm/pm.o
+ .debug_str     0x00001e59      0x501 src/ASF/avr32/drivers/pm/pm.o
                                 0x9a0 (size before relaxing)
- .debug_str     0x0000231a      0x399 src/ASF/avr32/drivers/usart/usart.o
+ .debug_str     0x0000235a      0x399 src/ASF/avr32/drivers/usart/usart.o
                                 0x907 (size before relaxing)
- .debug_str     0x000026b3      0x152 src/FreeRTOS/Source/list.o
+ .debug_str     0x000026f3      0x152 src/FreeRTOS/Source/list.o
                                 0x254 (size before relaxing)
- .debug_str     0x00002805      0x4d1 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
+ .debug_str     0x00002845      0x4d1 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
                                 0xa88 (size before relaxing)
- .debug_str     0x00002cd6       0x48 src/FreeRTOS/Source/portable/MemMang/heap_3.o
+ .debug_str     0x00002d16       0x48 src/FreeRTOS/Source/portable/MemMang/heap_3.o
                                 0x152 (size before relaxing)
- .debug_str     0x00002d1e      0xb09 src/FreeRTOS/Source/tasks.o
+ .debug_str     0x00002d5e      0x533 src/FreeRTOS/Source/queue.o
+                                0x739 (size before relaxing)
+ .debug_str     0x00003291      0xa6c src/FreeRTOS/Source/tasks.o
                                 0xd38 (size before relaxing)
- .debug_str     0x00003827      0x40e src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_str     0x00003cfd      0x40e src/ASF/avr32/drivers/gpio/gpio.o
                                 0x534 (size before relaxing)
- .debug_str     0x00003c35      0x37d src/ASF/avr32/drivers/intc/intc.o
+ .debug_str     0x0000410b      0x37d src/ASF/avr32/drivers/intc/intc.o
                                 0x488 (size before relaxing)
- .debug_str     0x00003fb2      0x4af src/main.o
-                                0xb5b (size before relaxing)
- .debug_str     0x00004461       0x7f c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_str     0x00004488      0x4a3 src/main.o
+                                0xbc5 (size before relaxing)
+ .debug_str     0x0000492b       0xb4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+                                0x168 (size before relaxing)
+ .debug_str     0x000049df       0x7f c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
                                 0x4c4 (size before relaxing)
- .debug_str     0x000044e0      0x23b c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_str     0x00004a5e      0x23b c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
                                 0x699 (size before relaxing)
- .debug_str     0x0000471b       0x83 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_str     0x00004c99       0x83 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
                                 0x4b4 (size before relaxing)
- .debug_str     0x0000479e      0x321 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_str     0x00004d1c      0x321 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
                                 0x43d (size before relaxing)
- .debug_str     0x00004abf       0x74 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+ .debug_str     0x0000503d       0x74 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
                                 0x4ab (size before relaxing)
- .debug_str     0x00004b33       0x3c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_str     0x000050b1       0x3c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
                                 0x5eb (size before relaxing)
- .debug_str     0x00004b6f       0xcb c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
+ .debug_str     0x000050ed       0xcb c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-impure.o)
                                 0x502 (size before relaxing)
- .debug_str     0x00004c3a       0xa6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_str     0x000051b8       0xa6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
                                 0x4e8 (size before relaxing)
- .debug_str     0x00004ce0      0x135 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_str     0x0000525e      0x135 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
                                 0x5dc (size before relaxing)
 
-.debug_loc      0x00000000     0x5dee
+.debug_loc      0x00000000     0x6bee
  *(.debug_loc)
  .debug_loc     0x00000000      0x51c src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .debug_loc     0x0000051c      0x18c src/ASF/avr32/drivers/abdac/abdac.o
@@ -3559,19 +3619,21 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_loc     0x00003489       0x79 src/FreeRTOS/Source/list.o
  .debug_loc     0x00003502      0x110 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .debug_loc     0x00003612       0x7a src/FreeRTOS/Source/portable/MemMang/heap_3.o
- .debug_loc     0x0000368c     0x12b7 src/FreeRTOS/Source/tasks.o
- .debug_loc     0x00004943      0x368 src/ASF/avr32/drivers/gpio/gpio.o
- .debug_loc     0x00004cab       0xd3 src/ASF/avr32/drivers/intc/intc.o
- .debug_loc     0x00004d7e      0x16f src/main.o
- .debug_loc     0x00004eed       0x64 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
- .debug_loc     0x00004f51      0x59a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .debug_loc     0x000054eb       0x63 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
- .debug_loc     0x0000554e      0x268 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
- .debug_loc     0x000057b6      0x32c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
- .debug_loc     0x00005ae2      0x10a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
- .debug_loc     0x00005bec      0x202 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_loc     0x0000368c      0xbdf src/FreeRTOS/Source/queue.o
+ .debug_loc     0x0000426b     0x12b7 src/FreeRTOS/Source/tasks.o
+ .debug_loc     0x00005522      0x368 src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_loc     0x0000588a       0xd3 src/ASF/avr32/drivers/intc/intc.o
+ .debug_loc     0x0000595d      0x17c src/main.o
+ .debug_loc     0x00005ad9      0x214 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .debug_loc     0x00005ced       0x64 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_loc     0x00005d51      0x59a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_loc     0x000062eb       0x63 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_loc     0x0000634e      0x268 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_loc     0x000065b6      0x32c c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_loc     0x000068e2      0x10a c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_loc     0x000069ec      0x202 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
 
-.debug_macinfo  0x00000000   0xe23600
+.debug_macinfo  0x00000000   0xf1bdd6
  *(.debug_macinfo)
  .debug_macinfo
                 0x00000000    0xf0aef src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
@@ -3596,13 +3658,15 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  .debug_macinfo
                 0x00960d87    0xf6a47 src/FreeRTOS/Source/portable/MemMang/heap_3.o
  .debug_macinfo
-                0x00a577ce    0xf7a3f src/FreeRTOS/Source/tasks.o
+                0x00a577ce    0xf7487 src/FreeRTOS/Source/queue.o
  .debug_macinfo
-                0x00b4f20d    0xed225 src/ASF/avr32/drivers/gpio/gpio.o
+                0x00b4ec55    0xf7a3f src/FreeRTOS/Source/tasks.o
  .debug_macinfo
-                0x00c3c432    0xed2d2 src/ASF/avr32/drivers/intc/intc.o
+                0x00c46694    0xed225 src/ASF/avr32/drivers/gpio/gpio.o
  .debug_macinfo
-                0x00d29704    0xf9efc src/main.o
+                0x00d338b9    0xed2d2 src/ASF/avr32/drivers/intc/intc.o
+ .debug_macinfo
+                0x00e20b8b    0xfb24b src/main.o
 
 .debug_weaknames
  *(.debug_weaknames)
@@ -3630,7 +3694,7 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain
  *(.note.GNU-stack)
 OUTPUT(FreeRTOS_T2.elf elf32-avr32)
 
-.debug_ranges   0x00000000      0xdf0
+.debug_ranges   0x00000000      0xf18
  .debug_ranges  0x00000000       0xb0 src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.o
  .debug_ranges  0x000000b0       0x48 src/ASF/avr32/drivers/abdac/abdac.o
  .debug_ranges  0x000000f8       0xa0 src/ASF/avr32/drivers/pdca/pdca.o
@@ -3642,16 +3706,18 @@ OUTPUT(FreeRTOS_T2.elf elf32-avr32)
  .debug_ranges  0x000006f8       0x38 src/FreeRTOS/Source/list.o
  .debug_ranges  0x00000730       0x70 src/FreeRTOS/Source/portable/GCC/AVR32_UC3/port.o
  .debug_ranges  0x000007a0       0x20 src/FreeRTOS/Source/portable/MemMang/heap_3.o
- .debug_ranges  0x000007c0      0x208 src/FreeRTOS/Source/tasks.o
- .debug_ranges  0x000009c8       0xf8 src/ASF/avr32/drivers/gpio/gpio.o
- .debug_ranges  0x00000ac0       0x48 src/ASF/avr32/drivers/intc/intc.o
- .debug_ranges  0x00000b08       0x20 src/ASF/avr32/utils/startup/startup_uc3.o
- .debug_ranges  0x00000b28       0x78 src/main.o
- .debug_ranges  0x00000ba0       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
- .debug_ranges  0x00000bc0       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
- .debug_ranges  0x00000bd8       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
- .debug_ranges  0x00000bf0       0xf0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
- .debug_ranges  0x00000ce0       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
- .debug_ranges  0x00000cf8       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
- .debug_ranges  0x00000d18       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
- .debug_ranges  0x00000d40       0xb0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)
+ .debug_ranges  0x000007c0      0x110 src/FreeRTOS/Source/queue.o
+ .debug_ranges  0x000008d0      0x208 src/FreeRTOS/Source/tasks.o
+ .debug_ranges  0x00000ad8       0xf8 src/ASF/avr32/drivers/gpio/gpio.o
+ .debug_ranges  0x00000bd0       0x48 src/ASF/avr32/drivers/intc/intc.o
+ .debug_ranges  0x00000c18       0x20 src/ASF/avr32/utils/startup/startup_uc3.o
+ .debug_ranges  0x00000c38       0x78 src/main.o
+ .debug_ranges  0x00000cb0       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libm.a(lib_a-s_floor.o)
+ .debug_ranges  0x00000cc8       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-malloc.o)
+ .debug_ranges  0x00000ce8       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-mallocr.o)
+ .debug_ranges  0x00000d00       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-sbrkr.o)
+ .debug_ranges  0x00000d18       0xf0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-syscalls.o)
+ .debug_ranges  0x00000e08       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-errno.o)
+ .debug_ranges  0x00000e20       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-freer.o)
+ .debug_ranges  0x00000e40       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-reent.o)
+ .debug_ranges  0x00000e68       0xb0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr32/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr2\libc.a(lib_a-findfp.o)

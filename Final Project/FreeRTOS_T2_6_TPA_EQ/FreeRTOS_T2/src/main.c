@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fastmath.h>
 
 /* Environment header files. */
 #include "power_clocks_lib.h"
@@ -47,6 +48,7 @@
 /* Scheduler header files. */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 
 /* Local includes */
 #include "lib/conf_interrupt.h"
@@ -104,9 +106,9 @@
 #define mainMEM_CHECK_SIZE_3      ( ( size_t ) 15 )
 //! @}
 
-/* TPA EXAMPLE */
+/*************** TPA ***************/
 //! Sample Count Value
-#define SOUND_SAMPLES                256
+#define SOUND_SAMPLES                512
 #define FPBA_HZ                 62092800 /**/
 #define TPA6130_TWI_MASTER_SPEED  100000
 
@@ -192,18 +194,25 @@ void adc_reload_callback(void)
 	// Nothing todo
 }
 
+/*************** PERSONAL ***************/
 /* Local Definitions */
 #define RC0_VALUE		46875 // 37500 // 100 ms
 
+/* Typedefs */
 typedef float float16_t;
 typedef double float32_t;
 
 typedef struct {
-	float32_t a0;
-	float32_t a1;
-	float32_t a2;
+	// Numerator
+	int32_t b0;
+	int32_t b1;
+	int32_t b2;
+	// Denominator
+	int32_t a0;
+	int32_t a1;
+	int32_t a2;
 	
-} bandpass_IIR_t;
+} bandpassIIR_t; // First order Bandpass struct
 
 /* Local Declarations */
 // Module's memory address
@@ -212,12 +221,30 @@ volatile avr32_pm_t *pm = &AVR32_PM;
 
 intc_qt_flags_t intc_qt;
 intc_tc_flags_t intc_tc;
-tc_ch_count_t tick_count;
+
+/* Filters */
+//const bandpassIIR_t f1 = {0.0277, 0.0, -0.0277, 1.0, -1.9383, 0.9446};
+//const bandpassIIR_t f2 = {0.0540, 0.0, -0.0540, 1.0, -1.8461, 0.8921};
+//const bandpassIIR_t f3 = {0.1255, 0.0, -0.1255, 1.0, -1.3373, 0.7491};
+//const bandpassIIR_t f4 = {0.1027, 0.0, -0.1027, 1.0, -0.3642, 0.7946};
+//const bandpassIIR_t f5 = {0.1472, 0.0, -0.1472, 1.0,  1.1266, 0.7055};
+	
+const bandpassIIR_t f1 = {3, 0, -3, 100, -194, 94};
+const bandpassIIR_t f2 = {5, 0, -5, 100, -185, 89};
+const bandpassIIR_t f3 = {13, 0, -13, 100, -133, 75};
+const bandpassIIR_t f4 = {10, 0, -10, 100, -36, 80};
+const bandpassIIR_t f5 = {15, 0, -15, 100,  113, 71};
+
+/*************** FREERTOS ***************/
 
 /* TaskHandles */
 TaskHandle_t qtHandle = NULL;
 TaskHandle_t myIntTaskHandleTC = NULL;
 TaskHandle_t audioHandle = NULL;
+
+/* QueueHandles */
+QueueHandle_t forwardQueue;
+QueueHandle_t reverseQueue;
 
 void myIntTaskTC0 (void *p);
 void myIntTaskTC0 (void *p)
@@ -268,6 +295,16 @@ portTASK_FUNCTION(playAudioTask, p )
 	static portBASE_TYPE notificationValue = 0;
 	static bool playAudio = false;
 	static bool notify	  = false;
+	static uint16_t samplesRx;
+	
+	
+	static int32_t o1[3] = {0, 0, 0};
+	static int32_t o2[3] = {0, 0, 0};
+	static int32_t o3[3] = {0, 0, 0};
+	static int32_t o4[3] = {0, 0, 0};
+	static int32_t o5[3] = {0, 0, 0};
+	static uint8_t sam[3]  = {0, 0, 0};
+	static float32_t ototal;
 
 	while(true)
 	{
@@ -277,14 +314,31 @@ portTASK_FUNCTION(playAudioTask, p )
 		{
 			//playAudio = !playAudio;
 			notify = !notify;
-			print_dbg("Notification received.");
+			//print_dbg("Notification received.");
 
 		}
+
 		
 		if ((pdca_get_transfer_status(TPA6130_ABDAC_PDCA_CHANNEL) & PDCA_TRANSFER_COMPLETE) && (notify == true))
 		{
 			playAudio = true;
 			//print_dbg("Running audio...\r\n");
+					
+			//if (forwardQueue != 0)
+			//{
+				//if (xQueueReceive( forwardQueue, &samplesRx, (TickType_t) 5 ))
+				//{
+					//i = ( (i + samplesRx) <= sizeof(sound_table) ) ? (i + samplesRx) : i;
+				//}
+			//}
+			
+			//if (reverseQueue != 0)
+			//{
+				//if (xQueueReceive( reverseQueue, &samplesRx, (TickType_t) 5 ))
+				//{
+					//i = (i > samplesRx) ? (i - samplesRx) : i;
+				//}
+			//}
 		}
 		
 		if (playAudio)
@@ -293,10 +347,42 @@ portTASK_FUNCTION(playAudioTask, p )
 			count = 0;
 			// Store sample from the sound_table array
 			while(count < (SOUND_SAMPLES)){
-				samples[count++] = ((uint8_t)sound_table[i]+0x80) << 8;
-				samples[count++] = ((uint8_t)sound_table[i]+0x80) << 8;
+				
+				sam[0] =  sound_table[i];
+				o1[0] = f1.b0 * sam[0] + f1.b1 * sam[1] + f1.b2 * sam[2] + f1.a1 * o1[1]  + f1.a2 * o1[2];
+				o2[0] = f2.b0 * sam[0] + f2.b1 * sam[1] + f1.b2 * sam[2] + f2.a1 * o2[1]  + f2.a2 * o2[2];
+				o3[0] = f3.b0 * sam[0] + f3.b1 * sam[1] + f3.b2 * sam[2] + f3.a1 * o3[1]  + f3.a2 * o3[2];
+				o4[0] = f4.b0 * sam[0] + f4.b1 * sam[1] + f4.b2 * sam[2] + f4.a1 * o4[1]  + f4.a2 * o4[2];
+				o5[0] = f5.b0 * sam[0] + f5.b1 * sam[1] + f5.b2 * sam[2] + f5.a1 * o5[1]  + f5.a2 * o5[2];
+				ototal = floor((2.0 * o1[0] + 1.0 * o2[0] + 1.0 * o3[0] + 2.0 * o4[0] + 1.0 * o5[0]) / 100);
+				//1.0 * o1[0] + 1.0 * o2[0] + 
+				
+				samples[count++] = ((uint8_t)ototal+0x80) << 8;
+				samples[count++] = ((uint8_t)ototal+0x80) << 8;
 				i++;
-				if (i >= sizeof(sound_table)) i = 0;
+				if (i >= sizeof(sound_table))
+				{ 
+					i = 0;
+					memset(sam, 0, sizeof(sam));
+					memset(o1, 0, sizeof(o1));
+					memset(o2, 0, sizeof(o2));
+					memset(o3, 0, sizeof(o3));
+					memset(o4, 0, sizeof(o4));
+					memset(o5, 0, sizeof(o5));
+				}
+				
+				sam[2] = sam[1];
+				sam[1] = sam[0];
+				o1[2] = o1[1];
+				o1[1] = o1[0];
+				o2[2] = o2[1];
+				o2[1] = o2[0];
+				o3[2] = o3[1];
+				o3[1] = o3[0];
+				o4[2] = o4[1];
+				o4[1] = o4[0];
+				o5[2] = o5[1];
+				o5[1] = o5[0];
 			}
 
 			gpio_set_gpio_pin(LED0_GPIO);
@@ -327,16 +413,24 @@ portTASK_FUNCTION( qtButtonTask, p )
 	gpio_set_gpio_pin(LED2_GPIO);
 	gpio_set_gpio_pin(LED3_GPIO);
 	
+	static uint16_t samplesToMove;
+	forwardQueue = xQueueCreate( 1 , sizeof(uint16_t));
+	reverseQueue = xQueueCreate( 1 , sizeof(uint16_t));
+	
 	while (1)
 	{
 		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
 		if (INTC_QT_FLAG._left) {
 			INTC_QT_FLAG._left = false;
 			//gpio_tgl_gpio_pin(LED0_GPIO);
+			samplesToMove = 4096;
+			xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
 		}
 		else if (INTC_QT_FLAG._right) {
 			INTC_QT_FLAG._right = false;
 			//gpio_tgl_gpio_pin(LED1_GPIO);
+			samplesToMove = 2048;
+			xQueueSend( forwardQueue, &samplesToMove, (TickType_t) 0 );
 		}
 		else if (INTC_QT_FLAG._up) {
 			INTC_QT_FLAG._up = false;
@@ -354,6 +448,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 	}
 }
 
+// ISR
 ISR_FREERTOS(RT_ISR_gpio_qt_70, 70, 0)
 {
 	// UP, DOWN
@@ -411,7 +506,8 @@ ISR_FREERTOS(RT_ISR_gpio_qt_71, 70, 0)
 	//return (checkIfYieldRequired ? 1 : 0);
 //}
 
-/*! \brief Initializes the MCU system clocks and TWI-TPA for audio
+
+/*! \brief Static function definitions
  */
 static void init_sys_clocks(void)
 {
@@ -503,13 +599,13 @@ static void init_twi_tpa(void)
 	tpa6130_init();
 	
 	tpa6130_dac_start(DEFAULT_DAC_SAMPLE_RATE_HZ,
-	DEFAULT_DAC_NUM_CHANNELS,
-	DEFAULT_DAC_BITS_PER_SAMPLE,
-	DEFAULT_DAC_SWAP_CHANNELS,
-	master_callback,
-	AUDIO_DAC_OUT_OF_SAMPLE_CB
-	| AUDIO_DAC_RELOAD_CB,
-	FPBA_HZ); /**/
+						DEFAULT_DAC_NUM_CHANNELS,
+						DEFAULT_DAC_BITS_PER_SAMPLE,
+						DEFAULT_DAC_SWAP_CHANNELS,
+						master_callback,
+						AUDIO_DAC_OUT_OF_SAMPLE_CB
+						| AUDIO_DAC_RELOAD_CB,
+						FPBA_HZ); /**/
 
 	tpa6130_set_volume(0x20); // 2F
 	tpa6130_get_volume();
@@ -559,7 +655,7 @@ int main (void)
 	//uint16_t pass = 25;
 	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
 	xTaskCreate(qtButtonTask,  "tQT",        256, (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
-	xTaskCreate(playAudioTask, "tPlayAudio", 256, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
+	xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	
 	vTaskStartScheduler();
 	

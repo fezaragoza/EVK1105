@@ -82,6 +82,9 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/stdio.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/fastmath.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/math.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/fastmath.h \
  ../src/config/conf_tpa6130.h ../src/FreeRTOS/Source/include/FreeRTOS.h \
  ../src/config/FreeRTOSConfig.h ../src/FreeRTOS/Source/include/projdefs.h \
  ../src/FreeRTOS/Source/include/portable.h \
@@ -89,7 +92,9 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  ../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h \
  ../src/FreeRTOS/Source/include/mpu_wrappers.h \
  ../src/FreeRTOS/Source/include/task.h \
- ../src/FreeRTOS/Source/include/list.h ../src/lib/conf_interrupt.h \
+ ../src/FreeRTOS/Source/include/list.h \
+ ../src/FreeRTOS/Source/include/queue.h \
+ ../src/FreeRTOS/Source/include/task.h ../src/lib/conf_interrupt.h \
  ../src/ASF/avr32/boards/evk1105/evk1105.h ../src/lib/conf_qt.h \
  ../src/lib/conf_tc.h ../src/lib/conf_tc.h ../src/lib/sound.h
 
@@ -269,6 +274,12 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h:
 
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/fastmath.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/math.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/fastmath.h:
+
 ../src/config/conf_tpa6130.h:
 
 ../src/FreeRTOS/Source/include/FreeRTOS.h:
@@ -288,6 +299,10 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 ../src/FreeRTOS/Source/include/task.h:
 
 ../src/FreeRTOS/Source/include/list.h:
+
+../src/FreeRTOS/Source/include/queue.h:
+
+../src/FreeRTOS/Source/include/task.h:
 
 ../src/lib/conf_interrupt.h:
 
