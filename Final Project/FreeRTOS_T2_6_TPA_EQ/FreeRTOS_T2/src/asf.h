@@ -55,18 +55,39 @@
 // From module: ABDAC - Audio Bitstream DAC
 #include <abdac.h>
 
+// From module: ADC - Analog to Digital Converter
+#include <adc.h>
+
 // From module: Audio software components
 #include <audio.h>
+
+// From module: CPU Cycle Counter
+#include <cycle_counter.h>
 
 // From module: Compiler abstraction layer and code utilities
 #include <compiler.h>
 #include <status_codes.h>
 
+// From module: DSP - Digital signal processing library
+#include <dsp.h>
+
 // From module: Debug macros and functions
 #include <debug.h>
 
+// From module: EBI Static Memory Controller (SMC)
+#include <smc.h>
+
 // From module: EVK1105
 #include <led.h>
+
+// From module: FAT file system
+#include <fat.h>
+#include <file.h>
+#include <fs_com.h>
+#include <navigation.h>
+
+// From module: FAT file system with POSIX API support
+#include <fsaccess.h>
 
 // From module: FLASHC - Flash Controller
 #include <flashc.h>
@@ -83,6 +104,9 @@
 // From module: Interrupt management - UC3 implementation
 #include <interrupt.h>
 
+// From module: Memory Control Access Interface
+#include <ctrl_access.h>
+
 // From module: PDCA - Peripheral DMA Controller
 #include <pdca.h>
 
@@ -90,8 +114,18 @@
 #include <power_clocks_lib.h>
 #include <sleep.h>
 
+// From module: PWM - UC3 A/B implementation
+#include <pwm.h>
+
 // From module: Part identification macros
 #include <parts.h>
+
+// From module: SD/MMC card access using SPI
+#include <sd_mmc_spi.h>
+#include <sd_mmc_spi_mem.h>
+
+// From module: SPI - Serial Peripheral Interface
+#include <spi.h>
 
 // From module: SSC - Synchronous Serial Controller (I2S)
 #include <ssc_i2s.h>

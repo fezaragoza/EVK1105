@@ -55,33 +55,53 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/common/utils/interrupt.h \
  ../src/ASF/common/utils/interrupt/interrupt_avr32.h \
  ../src/ASF/avr32/utils/preprocessor/tpaste.h \
- ../src/ASF/avr32/drivers/intc/intc.h \
+ ../src/ASF/avr32/drivers/intc/intc.h ../src/ASF/avr32/drivers/adc/adc.h \
  ../src/ASF/avr32/components/audio/audio.h \
+ ../src/ASF/avr32/drivers/cpu/cycle_counter/cycle_counter.h \
  ../src/ASF/avr32/utils/status_codes.h \
+ ../src/ASF/avr32/utils/libs/dsplib/include/dsp.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/string.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h \
+ ../src/ASF/avr32/utils/libs/dsplib/include/dsp.h \
  ../src/ASF/avr32/utils/debug/debug.h \
  ../src/ASF/avr32/utils/preprocessor/stringz.h \
- ../src/ASF/avr32/boards/evk1105/led.h \
- ../src/ASF/avr32/drivers/flashc/flashc.h \
- ../src/ASF/avr32/drivers/gpio/gpio.h ../src/ASF/common/boards/board.h \
+ ../src/ASF/avr32/drivers/ebi/smc/smc.h ../src/config/conf_ebi.h \
+ ../src/ASF/common/boards/board.h \
  ../src/ASF/avr32/boards/evk1105/evk1105.h \
  ../src/ASF/avr32/boards/evk1105/led.h \
- ../src/ASF/avr32/drivers/pdca/pdca.h \
- ../src/ASF/avr32/drivers/pm/power_clocks_lib.h \
- ../src/ASF/avr32/drivers/pm/pm.h ../src/ASF/avr32/drivers/pm/sleep.h \
- ../src/ASF/avr32/drivers/ssc/i2s/ssc_i2s.h \
- ../src/ASF/avr32/drivers/tc/tc.h \
- ../src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.h \
- ../src/ASF/avr32/drivers/twi/twi.h ../src/config/conf_twi.h \
- ../src/ASF/avr32/drivers/usart/usart.h \
- ../src/ASF/avr32/utils/debug/print_funcs.h \
+ ../src/ASF/avr32/boards/evk1105/led.h \
+ ../src/ASF/avr32/services/fs/fat/fat.h \
+ ../src/ASF/avr32/services/fs/fat/fs_com.h ../src/config/conf_explorer.h \
+ ../src/ASF/avr32/services/fs/fat/file.h \
+ ../src/ASF/avr32/services/fs/fat/fat.h \
+ ../src/ASF/avr32/services/fs/fat/fs_com.h \
+ ../src/ASF/avr32/services/fs/fat/navigation.h \
+ ../src/ASF/avr32/services/fs/fat/fsaccess.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/stdio.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/include/stdarg.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/types.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/types.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/features.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/stdio.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/string.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h \
+ ../src/ASF/avr32/services/fs/fat/file.h \
+ ../src/ASF/avr32/services/fs/fat/navigation.h \
+ ../src/ASF/common/services/storage/ctrl_access/ctrl_access.h \
+ ../src/config/conf_access.h \
+ ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h \
+ ../src/ASF/avr32/drivers/flashc/flashc.h \
+ ../src/ASF/avr32/drivers/gpio/gpio.h \
+ ../src/ASF/avr32/drivers/pdca/pdca.h \
+ ../src/ASF/avr32/drivers/pm/power_clocks_lib.h \
+ ../src/ASF/avr32/drivers/pm/pm.h ../src/ASF/avr32/drivers/pm/sleep.h \
+ ../src/ASF/avr32/drivers/pwm/pwm.h \
+ ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.h \
+ ../src/ASF/avr32/drivers/spi/spi.h \
+ ../src/ASF/avr32/drivers/ssc/i2s/ssc_i2s.h \
+ ../src/ASF/avr32/drivers/tc/tc.h \
+ ../src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.h \
+ ../src/ASF/avr32/drivers/twi/twi.h ../src/config/conf_twi.h \
+ ../src/ASF/avr32/drivers/usart/usart.h \
+ ../src/ASF/avr32/utils/debug/print_funcs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/fastmath.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/math.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/fastmath.h \
@@ -216,25 +236,79 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 ../src/ASF/avr32/drivers/intc/intc.h:
 
+../src/ASF/avr32/drivers/adc/adc.h:
+
 ../src/ASF/avr32/components/audio/audio.h:
 
+../src/ASF/avr32/drivers/cpu/cycle_counter/cycle_counter.h:
+
 ../src/ASF/avr32/utils/status_codes.h:
+
+../src/ASF/avr32/utils/libs/dsplib/include/dsp.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/string.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h:
+
+../src/ASF/avr32/utils/libs/dsplib/include/dsp.h:
 
 ../src/ASF/avr32/utils/debug/debug.h:
 
 ../src/ASF/avr32/utils/preprocessor/stringz.h:
 
-../src/ASF/avr32/boards/evk1105/led.h:
+../src/ASF/avr32/drivers/ebi/smc/smc.h:
 
-../src/ASF/avr32/drivers/flashc/flashc.h:
-
-../src/ASF/avr32/drivers/gpio/gpio.h:
+../src/config/conf_ebi.h:
 
 ../src/ASF/common/boards/board.h:
 
 ../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/ASF/avr32/boards/evk1105/led.h:
+
+../src/ASF/avr32/boards/evk1105/led.h:
+
+../src/ASF/avr32/services/fs/fat/fat.h:
+
+../src/ASF/avr32/services/fs/fat/fs_com.h:
+
+../src/config/conf_explorer.h:
+
+../src/ASF/avr32/services/fs/fat/file.h:
+
+../src/ASF/avr32/services/fs/fat/fat.h:
+
+../src/ASF/avr32/services/fs/fat/fs_com.h:
+
+../src/ASF/avr32/services/fs/fat/navigation.h:
+
+../src/ASF/avr32/services/fs/fat/fsaccess.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/stdio.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/include/stdarg.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/types.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/types.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/features.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/stdio.h:
+
+../src/ASF/avr32/services/fs/fat/file.h:
+
+../src/ASF/avr32/services/fs/fat/navigation.h:
+
+../src/ASF/common/services/storage/ctrl_access/ctrl_access.h:
+
+../src/config/conf_access.h:
+
+../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h:
+
+../src/ASF/avr32/drivers/flashc/flashc.h:
+
+../src/ASF/avr32/drivers/gpio/gpio.h:
 
 ../src/ASF/avr32/drivers/pdca/pdca.h:
 
@@ -243,6 +317,12 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 ../src/ASF/avr32/drivers/pm/pm.h:
 
 ../src/ASF/avr32/drivers/pm/sleep.h:
+
+../src/ASF/avr32/drivers/pwm/pwm.h:
+
+../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.h:
+
+../src/ASF/avr32/drivers/spi/spi.h:
 
 ../src/ASF/avr32/drivers/ssc/i2s/ssc_i2s.h:
 
@@ -257,22 +337,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 ../src/ASF/avr32/drivers/usart/usart.h:
 
 ../src/ASF/avr32/utils/debug/print_funcs.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/stdio.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/include/stdarg.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/types.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/types.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/features.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/stdio.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/string.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/sys/string.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/fastmath.h:
 
