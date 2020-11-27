@@ -123,34 +123,6 @@ void adc_reload_callback(void);
 int16_t samples[SOUND_SAMPLES];
 uint32_t samples_count;
 
-#define SAMPLE_OFFSET   0x80
-#define SAMPLE_RATE     46875
-#define SAMPLE_COUNT    (sizeof(sound_data))
-
-static const int8_t sound_data[] =
-{
-	0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x17, 0x1B, 0x1F, 0x23,
-	0x27, 0x2B, 0x2F, 0x32, 0x36, 0x3A, 0x3D, 0x41, 0x44, 0x47,
-	0x4B, 0x4E, 0x51, 0x54, 0x57, 0x5A, 0x5D, 0x60, 0x62, 0x65,
-	0x67, 0x69, 0x6C, 0x6E, 0x70, 0x72, 0x73, 0x75, 0x77, 0x78,
-	0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7E, 0x7F, 0x7F, 0x7F,
-	0x7F, 0x7F, 0x7F, 0x7F, 0x7E, 0x7E, 0x7D, 0x7C, 0x7B, 0x7A,
-	0x79, 0x78, 0x77, 0x75, 0x73, 0x72, 0x70, 0x6E, 0x6C, 0x69,
-	0x67, 0x65, 0x62, 0x60, 0x5D, 0x5A, 0x57, 0x54, 0x51, 0x4E,
-	0x4B, 0x47, 0x44, 0x41, 0x3D, 0x3A, 0x36, 0x32, 0x2F, 0x2B,
-	0x27, 0x23, 0x1F, 0x1B, 0x17, 0x14, 0x10, 0x0C, 0x08, 0x04,
-	0x00, 0xFC, 0xF8, 0xF4, 0xF0, 0xEC, 0xE9, 0xE5, 0xE1, 0xDD,
-	0xD9, 0xD5, 0xD1, 0xCE, 0xCA, 0xC6, 0xC3, 0xBF, 0xBC, 0xB9,
-	0xB5, 0xB2, 0xAF, 0xAC, 0xA9, 0xA6, 0xA3, 0xA0, 0x9E, 0x9B,
-	0x99, 0x97, 0x94, 0x92, 0x90, 0x8E, 0x8D, 0x8B, 0x89, 0x88,
-	0x87, 0x86, 0x85, 0x84, 0x83, 0x82, 0x82, 0x81, 0x81, 0x81,
-	0x80, 0x81, 0x81, 0x81, 0x82, 0x82, 0x83, 0x84, 0x85, 0x86,
-	0x87, 0x88, 0x89, 0x8B, 0x8D, 0x8E, 0x90, 0x92, 0x94, 0x97,
-	0x99, 0x9B, 0x9E, 0xA0, 0xA3, 0xA6, 0xA9, 0xAC, 0xAF, 0xB2,
-	0xB5, 0xB9, 0xBC, 0xBF, 0xC3, 0xC6, 0xCA, 0xCE, 0xD1, 0xD5,
-	0xD9, 0xDD, 0xE1, 0xE5, 0xE9, 0xEC, 0xF0, 0xF4, 0xF8, 0xFC
-};
-
 //! Welcome message to display.
 #define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to Final Project ---------- \r\n"
 
@@ -242,7 +214,7 @@ typedef struct
 } sdram_udata_t;
 
 volatile unsigned long *sdram = SDRAM;
-
+unsigned long sdram_last = 0;
 /*************** PERSONAL ***************/
 /* Local Definitions */
 #define RC0_VALUE		46875 // 37500 // 100 ms
@@ -277,6 +249,7 @@ state_t state = MAIN;
 static void init_fs(void);
 static void rep_menu(bool);
 static void menu_gui(bool);
+static unsigned long a2ul(const char*);
 /*************** FREERTOS ***************/
 
 /* TaskHandles */
@@ -520,85 +493,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 portTASK_FUNCTION_PROTO( fsTask, p );
 portTASK_FUNCTION( fsTask, p )
 {
-	
-	//uint8_t temp = 0;
-	//print_dbg("\r Buscando Archivos: ");
-	//nav_filelist_reset();
-	//while (nav_filelist_set(0, FS_FIND_NEXT))					// While an item can be found
-	//{
-		//temp++;
-	//}
-	//print_dbg_ulong(temp);
-	//print_dbg("\tArchivos Encontrados");
 
-	nav_filelist_reset();
-	nav_filelist_goto( 0 );
-	uint8_t files = 0;
-	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
-	for(size_t i = 0; i < sd.number_of_files; i++)
-	{
-		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
-		nav_file_getname(sd.name_of_files[i], 30);
-		print_dbg(sd.name_of_files[i]);
-		print_dbg("\r\n");
-		files++;
-		vTaskDelay(pdMS_TO_TICKS(100));
-	}
-	if (files == sd.number_of_files)
-	{
-		print_dbg("Number of files coincide.\r\n");
-	}
-	
-	nav_filelist_reset();
-	nav_filterlist_setfilter("h");
-	nav_filterlist_root();
-	nav_filterlist_goto( 0 );
-	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
-	{
-		print_dbg("\r\n Archivo Encontrado, Contenido:\r");
-		file_open(FOPEN_MODE_R);
-		while (!file_eof())							//Hasta encontrar el fin del archivo
-		{
-			print_dbg_char(file_getc());				// Display next char from file.
-			vTaskDelay(pdMS_TO_TICKS(100));
-		}
-		// Close the file.
-		file_close();
-		print_dbg("\r\n");
-	}
-
-	//print_dbg("\r\nImprimir archivo número 3 \r");
-	//nav_filelist_reset();
-	//nav_filelist_goto( 3 );							//Imprimir antes el archivo
-	//print_dbg("\r\n Archivo 3, Contenido:\r");
-	//file_open(FOPEN_MODE_R);
-	//while (!file_eof())								//Hasta encontrar el fin del archivo
-	//{
-		//print_dbg_char(file_getc());				// Display next char from file.
-	//}
-	//file_close();									// Close the file.
-	
-	//temp='H';										//guarda dato
-	////Escribir a un archivo
-	//nav_filelist_goto( 5 );							// ubicarse en archivo específico  de 0 a N-1
-	//file_open(FOPEN_MODE_APPEND);
-	//file_putc(temp);
-	//file_close();
-
-
-	//nav_filelist_goto( 5 );							// Imprimir antes
-	//print_dbg("\r\n Archivo 5, Contenido:\r");
-	//file_open(FOPEN_MODE_R);
-	//while (!file_eof())								//Hasta encontrar el fin del archivo
-	//{
-	//print_dbg_char(file_getc());				// Display next char from file.
-	//}
-	//file_close();									// Close the file.
-
-	//Disable_global_interrupt
-	
-	print_dbg("DONE");
-	nav_exit();										// Cerramos sistemas de archivos
 
 	while (1)
 	{
@@ -1137,7 +1032,7 @@ static void menu_gui(bool init)
 		et024006_DrawHorizLine(160,120,160,GREEN);
 		//if(center==1){
 			//et024006_DrawFilledRect(190, 20, 260, 90, BLACK);
-			//et024006_PrintString("Let´s go outside", (const unsigned char*) &FONT8x8,190, 20, WHITE, -1);
+			//et024006_PrintString("Letï¿½s go outside", (const unsigned char*) &FONT8x8,190, 20, WHITE, -1);
 			//et024006_PrintString("Far caspian", (const unsigned char*) &FONT8x8, 190, 40, WHITE, -1);
 			//et024006_PrintString("between days", (const unsigned char*) &FONT8x8, 190, 60, WHITE, -1);
 			//et024006_PrintString("2018", (const unsigned char*) &FONT8x8, 190, 80, WHITE, -1);
@@ -1171,6 +1066,103 @@ static void init_sdram(void)
 	print_dbg("SDRAM initialized\r\n");
 }
 
+static unsigned long a2ul(const char *s)
+{
+	//unsigned long x = 0;
+	//while(isdigit(*s))
+	//{
+		//x *= 10;
+		//x += *s++ - '0';
+	//}
+	//return x;
+	
+	unsigned long result = 0;
+	const char *c = s;
+
+	while ('0' <= *c && *c <= '9') {
+		result = result * 10 + (*(c++) - '0');
+	}
+	return result;
+}
+
+static void get_files(void)
+{
+	
+	nav_filelist_reset();
+	nav_filelist_goto( 0 );
+	uint8_t files = 0;
+	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
+	for(size_t i = 0; i < sd.number_of_files; i++)
+	{
+		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
+		nav_file_getname(sd.name_of_files[i], 30);
+		print_dbg(sd.name_of_files[i]);
+		print_dbg("\r\n");
+		files++;
+		//vTaskDelay(pdMS_TO_TICKS(100));
+	}
+	if (files == sd.number_of_files)
+	{
+		print_dbg("Number of files coincide.\r\n");
+	}
+	
+	
+	uint8_t audio_files_collected = 0;
+	uint32_t size_in_bytes = 0;
+	bool size_ready = false;
+	nav_filelist_reset();
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 );
+	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
+	{
+		print_dbg("\r\n Archivo Encontrado\r");
+		file_open(FOPEN_MODE_R);
+		while (!file_eof())							//Hasta encontrar el fin del archivo
+		{
+			char current_char = file_getc();
+			// Search for size fist, by looking for '[' and ']'
+			print_dbg_char(current_char);
+			if (current_char == '[')
+			{
+				char size_of_song[9] = "";
+				current_char = file_getc();
+				//char* size_of_song = "";
+				print_dbg_char(current_char);
+				while( current_char != ']' ){
+					strncat(size_of_song, &current_char, 1);
+					print_dbg(size_of_song);
+					print_dbg_char('\t');
+					
+					current_char = file_getc();
+					print_dbg_char(current_char);
+					
+					print_dbg("\r\n");
+				}
+				//sscanf(size_of_song, "%lu", &size_in_bytes);
+				size_in_bytes = a2ul(size_of_song);
+				print_dbg("HERE\r\n");
+				print_dbg(size_of_song);
+				print_dbg_ulong(size_in_bytes);
+				break;
+			}
+			
+			//print_dbg_char(file_getc());				// Display next char from file.
+			//vTaskDelay(pdMS_TO_TICKS(200));
+			cpu_delay_ms(200, PBA_HZ);
+		}
+		// Close the file.
+		file_close();
+		print_dbg("\r\n");
+		
+		
+	}
+
+	
+	print_dbg("DONE");
+	nav_exit();										// Cerramos sistemas de archivos
+}
+
 int main (void)
 {
 	/* Insert system clock initialization code here (sysclk_init()). */
@@ -1198,6 +1190,8 @@ int main (void)
 	gpio_enable_gpio_pin(LED1_GPIO);
 
 	print_dbg(MSG_WELCOME);
+	
+	get_files();
 
 	/* Insert application code here, after the board has been initialized. */
 
@@ -1205,7 +1199,7 @@ int main (void)
 	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
 	//xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
 	//xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
-	xTaskCreate(fsTask,		   "tFS",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
+	xTaskCreate(fsTask,		   "tFS",		 1024,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
 	//xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
 	//xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY, &sdramHandle);
 	
