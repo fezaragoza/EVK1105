@@ -152,7 +152,7 @@ static const int8_t sound_data[] =
 };
 
 //! Welcome message to display.
-#define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to TPA6130 example ---------- \r\n"
+#define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to Final Project ---------- \r\n"
 
 static void master_callback(uint32_t arg)
 {
@@ -201,7 +201,18 @@ void adc_reload_callback(void)
 unsigned int Filessize[10];
 static char str_buff[MAX_FILE_PATH_LENGTH];
 static char filenames[4][MAX_FILE_PATH_LENGTH];
+
 static bool first_ls;
+typedef struct
+{
+	uint8_t   lun;
+	char      drive_name;
+	uint8_t   devices_available; // Same value as lun.
+	uint8_t   drive_number;
+	uint8_t   number_of_files;
+	FS_STRING name_of_files[10];
+}sd_fat_data_t;
+static sd_fat_data_t sd;
 
 /**************   SDRAM   ***************/
 #define LED_SDRAM_WRITE     LED0
@@ -509,77 +520,84 @@ portTASK_FUNCTION( qtButtonTask, p )
 portTASK_FUNCTION_PROTO( fsTask, p );
 portTASK_FUNCTION( fsTask, p )
 {
-	uint8_t temp;
-	uint8_t test;
-	char mensaje[] = {""};
-		
-	if (ctrl_access_init())
+	
+	//uint8_t temp = 0;
+	//print_dbg("\r Buscando Archivos: ");
+	//nav_filelist_reset();
+	//while (nav_filelist_set(0, FS_FIND_NEXT))					// While an item can be found
+	//{
+		//temp++;
+	//}
+	//print_dbg_ulong(temp);
+	//print_dbg("\tArchivos Encontrados");
+
+	nav_filelist_reset();
+	nav_filelist_goto( 0 );
+	uint8_t files = 0;
+	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
+	for(size_t i = 0; i < sd.number_of_files; i++)
 	{
-		print_dbg("Access granted");
+		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
+		nav_file_getname(sd.name_of_files[i], 30);
+		print_dbg(sd.name_of_files[i]);
+		print_dbg("\r\n");
+		files++;
+		vTaskDelay(pdMS_TO_TICKS(100));
 	}
-
-	temp = get_nb_lun();													//Leer LUN Actual
-	print_dbg("\r\n LUN actual\t");
-	print_dbg_ulong(temp);
-
-	print_dbg("\r\n Revisar la unidad\t");
-	temp = nav_drive_getname();											//Leer identificador de la unidad
-	print_dbg_char_hex(temp);print_dbg("\t");print_dbg_char(temp);		//imprime identificador de la unidad @return   'A','B',...  'X', in case of no drive selected
-	print_dbg(": ");
-
-	test = nav_drive_nb();
-	print_dbg("\r\n Drive nb:");
-	print_dbg_ulong(test);
-
-	nav_drive_set(nav_drive_nb() - 1);
-
-	init_fs();
-	nav_filelist_reset();
-
-	test = nav_drive_get();
-	print_dbg("\r\n Drive get:");
-	print_dbg_ulong(test);
-
-	test = nav_filelist_nb(FS_FILE);
-	print_dbg("\r\n Files in Drive:");
-	print_dbg_ulong(test);
-
-	temp = 0;
-	print_dbg("\r Buscando Archivos: ");
-	nav_filelist_reset();
-	while (nav_filelist_set(0, FS_FIND_NEXT))					// While an item can be found
+	if (files == sd.number_of_files)
 	{
-		temp++;
+		print_dbg("Number of files coincide.\r\n");
 	}
-	print_dbg_ulong(temp);
-	print_dbg("\tArchivos Encontrados");
-
+	
 	nav_filelist_reset();
-	while (nav_filelist_set(0, FS_FIND_NEXT))					//
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 );
+	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
 	{
 		print_dbg("\r\n Archivo Encontrado, Contenido:\r");
 		file_open(FOPEN_MODE_R);
 		while (!file_eof())							//Hasta encontrar el fin del archivo
 		{
 			print_dbg_char(file_getc());				// Display next char from file.
+			vTaskDelay(pdMS_TO_TICKS(100));
 		}
 		// Close the file.
 		file_close();
 		print_dbg("\r\n");
-		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 
-	print_dbg("\r\nImprimir archivo número 3 \r");
-	nav_filelist_reset();
-	nav_filelist_goto( 3 );							//Imprimir antes el archivo
-	print_dbg("\r\n Archivo 3, Contenido:\r");
-	file_open(FOPEN_MODE_R);
-	while (!file_eof())								//Hasta encontrar el fin del archivo
-	{
-		print_dbg_char(file_getc());				// Display next char from file.
-	}
-	file_close();									// Close the file.
+	//print_dbg("\r\nImprimir archivo número 3 \r");
+	//nav_filelist_reset();
+	//nav_filelist_goto( 3 );							//Imprimir antes el archivo
+	//print_dbg("\r\n Archivo 3, Contenido:\r");
+	//file_open(FOPEN_MODE_R);
+	//while (!file_eof())								//Hasta encontrar el fin del archivo
+	//{
+		//print_dbg_char(file_getc());				// Display next char from file.
+	//}
+	//file_close();									// Close the file.
+	
+	//temp='H';										//guarda dato
+	////Escribir a un archivo
+	//nav_filelist_goto( 5 );							// ubicarse en archivo específico  de 0 a N-1
+	//file_open(FOPEN_MODE_APPEND);
+	//file_putc(temp);
+	//file_close();
 
+
+	//nav_filelist_goto( 5 );							// Imprimir antes
+	//print_dbg("\r\n Archivo 5, Contenido:\r");
+	//file_open(FOPEN_MODE_R);
+	//while (!file_eof())								//Hasta encontrar el fin del archivo
+	//{
+	//print_dbg_char(file_getc());				// Display next char from file.
+	//}
+	//file_close();									// Close the file.
+
+	//Disable_global_interrupt
+	
+	print_dbg("DONE");
 	nav_exit();										// Cerramos sistemas de archivos
 
 	while (1)
@@ -914,6 +932,13 @@ static void init_fs(void)
 {
 	/*Inicialiazamos los archivos de la SD manejada por SPI, para lograr que funcionara tuvo que habilitarla mediante el
 	conf_access.h y conf_explorer.h, debido a que por default viene habilitada la memoria incluida en la EVK*/
+	
+#ifdef FREERTOS_USED
+	if (ctrl_access_init())
+	{
+		print_dbg("Access to SD granted.\r\n");
+	}
+#endif
 
 	first_ls = true;
 	if (nav_drive_get() >= nav_drive_nb() || first_ls)
@@ -922,7 +947,8 @@ static void init_fs(void)
 		// Reset navigators .
 		nav_reset();
 		// Use the last drive available as default.
-		nav_drive_set(nav_drive_nb() - 1);
+		nav_drive_set(nav_drive_nb() - 1); // Or sd.drive_number
+		//nav_drive_set(nav_drive_nb() - 1);
 		// Mount it.
 		nav_partition_mount();
 	}
@@ -933,6 +959,14 @@ static void init_fs(void)
 		// Sort items by files
 		nav_filelist_first(FS_FILE);
 	}
+	nav_filelist_reset();
+	// Get data
+	sd.lun				 = get_nb_lun();				// Read actual LUN
+	sd.drive_name		 = nav_drive_getname();			// Read drive assigned letter
+	sd.devices_available = nav_drive_nb();				// Read available devices. Equal to LUN
+	sd.drive_number		 = nav_drive_get();				// Returns nav_drive_nb()-1
+	sd.number_of_files	 = nav_filelist_nb(FS_FILE);	// Get the number of available files
+	print_dbg_ulong(sd.number_of_files);
 }
 
 static void rep_menu(bool init)
@@ -1155,7 +1189,7 @@ int main (void)
 
 	init_qt_interrupt();
 
-	//init_fs();
+	init_fs();
 	
 	init_sdram();
 
@@ -1169,10 +1203,10 @@ int main (void)
 
 	//uint16_t pass = 25;
 	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
-	xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
-	xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
+	//xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
+	//xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	xTaskCreate(fsTask,		   "tFS",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
-	xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
+	//xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
 	//xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY, &sdramHandle);
 	
 	vTaskStartScheduler();
