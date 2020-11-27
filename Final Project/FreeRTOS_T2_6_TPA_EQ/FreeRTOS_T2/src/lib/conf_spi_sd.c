@@ -98,7 +98,7 @@ void check_sd_card(void)
 	sd_mmc_spi_get_capacity();
 	print_dbg("Capacity = ");
 	print_dbg_ulong(capacity >> 20);
-	print_dbg(" MBytes");
+	print_dbg(" MBytes\r\n");
 }
 
 void wait(void)

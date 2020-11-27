@@ -59,10 +59,22 @@ src/ASF/common/services/storage/ctrl_access/ctrl_access.d \
  ../src/ASF/common/utils/interrupt/interrupt_avr32.h \
  ../src/ASF/avr32/utils/preprocessor/tpaste.h \
  ../src/ASF/avr32/drivers/intc/intc.h \
- ../src/ASF/common/services/storage/ctrl_access/ctrl_access.h \
- ../src/config/conf_access.h ../src/ASF/common/boards/board.h \
+ ../src/FreeRTOS/Source/include/FreeRTOS.h ../src/config/FreeRTOSConfig.h \
+ ../src/ASF/common/boards/board.h \
  ../src/ASF/avr32/boards/evk1105/evk1105.h \
- ../src/ASF/avr32/boards/evk1105/led.h \
+ ../src/ASF/avr32/boards/evk1105/led.h ../src/lib/conf_utils.h \
+ ../src/ASF/avr32/boards/evk1105/evk1105.h \
+ ../src/FreeRTOS/Source/include/projdefs.h \
+ ../src/FreeRTOS/Source/include/portable.h \
+ ../src/FreeRTOS/Source/include/deprecated_definitions.h \
+ ../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h \
+ ../src/FreeRTOS/Source/include/mpu_wrappers.h \
+ ../src/FreeRTOS/Source/include/semphr.h \
+ ../src/FreeRTOS/Source/include/queue.h \
+ ../src/FreeRTOS/Source/include/task.h \
+ ../src/FreeRTOS/Source/include/list.h \
+ ../src/ASF/common/services/storage/ctrl_access/ctrl_access.h \
+ ../src/config/conf_access.h \
  ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h \
  ../src/ASF/common/services/storage/ctrl_access/ctrl_access.h \
  ../src/ASF/avr32/services/fs/fat/fat.h \
@@ -182,15 +194,41 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 ../src/ASF/avr32/drivers/intc/intc.h:
 
-../src/ASF/common/services/storage/ctrl_access/ctrl_access.h:
+../src/FreeRTOS/Source/include/FreeRTOS.h:
 
-../src/config/conf_access.h:
+../src/config/FreeRTOSConfig.h:
 
 ../src/ASF/common/boards/board.h:
 
 ../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/ASF/avr32/boards/evk1105/led.h:
+
+../src/lib/conf_utils.h:
+
+../src/ASF/avr32/boards/evk1105/evk1105.h:
+
+../src/FreeRTOS/Source/include/projdefs.h:
+
+../src/FreeRTOS/Source/include/portable.h:
+
+../src/FreeRTOS/Source/include/deprecated_definitions.h:
+
+../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h:
+
+../src/FreeRTOS/Source/include/mpu_wrappers.h:
+
+../src/FreeRTOS/Source/include/semphr.h:
+
+../src/FreeRTOS/Source/include/queue.h:
+
+../src/FreeRTOS/Source/include/task.h:
+
+../src/FreeRTOS/Source/include/list.h:
+
+../src/ASF/common/services/storage/ctrl_access/ctrl_access.h:
+
+../src/config/conf_access.h:
 
 ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h:
 

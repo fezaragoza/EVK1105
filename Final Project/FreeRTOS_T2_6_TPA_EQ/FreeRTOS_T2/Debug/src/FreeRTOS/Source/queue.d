@@ -62,7 +62,8 @@ src/FreeRTOS/Source/queue.d src/FreeRTOS/Source/queue.o \
  ../src/ASF/avr32/utils/preprocessor/tpaste.h \
  ../src/ASF/avr32/drivers/intc/intc.h \
  ../src/ASF/avr32/boards/evk1105/evk1105.h \
- ../src/ASF/avr32/boards/evk1105/led.h \
+ ../src/ASF/avr32/boards/evk1105/led.h ../src/lib/conf_utils.h \
+ ../src/ASF/avr32/boards/evk1105/evk1105.h \
  ../src/FreeRTOS/Source/include/projdefs.h \
  ../src/FreeRTOS/Source/include/portable.h \
  ../src/FreeRTOS/Source/include/deprecated_definitions.h \
@@ -200,6 +201,10 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 ../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/ASF/avr32/boards/evk1105/led.h:
+
+../src/lib/conf_utils.h:
+
+../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/FreeRTOS/Source/include/projdefs.h:
 

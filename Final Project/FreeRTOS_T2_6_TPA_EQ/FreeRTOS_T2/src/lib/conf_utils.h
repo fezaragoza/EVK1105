@@ -3,7 +3,7 @@
  *
  * Created: 9/28/2020 15:16:46
  *  Author: Fernando Zaragoza
- */ 
+ */
 
 
 #ifndef CONF_UTILS_H_
@@ -18,7 +18,7 @@
 #define	STARTUP_OSC0 OSC0_STARTUP
 #define STARTUP_OSC1 AVR32_PM_OSCCTRL1_STARTUP_4096_RCOSC // 36 ms. Aprox equiv. time using RCOSC = 115 kHz
 
-#define PBA_HZ FOSC0
+#define PBA_HZ 62092800
 
 #define CPUDIV 1
 #define CPUSEL 0

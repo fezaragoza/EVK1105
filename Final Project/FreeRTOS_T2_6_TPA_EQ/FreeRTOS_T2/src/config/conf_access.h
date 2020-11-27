@@ -47,9 +47,6 @@
 #include "compiler.h"
 #include "board.h"
 
-//#define SD_MMC_MCI_ENABLE
-//#define SD_MMC_SPI_ENABLE
-//#define SD_MMC_ENABLE
 /*! \name Activation of Logical Unit Numbers
  */
 //! @{
@@ -96,6 +93,17 @@
 #else
 #define LUN_USB              DISABLE  //!< Disable Host Mass-Storage Memory.
 #endif
+
+//
+//#define LUN_0 DISABLE
+//#define LUN_1 DISABLE
+//#define LUN_2 DISABLE
+//#define LUN_3 DISABLE
+//#define LUN_4 ENABLE
+//#define LUN_5 DISABLE
+//#define LUN_6 DISABLE
+//#define LUN_7 DISABLE
+//#define LUN_USB DISABLE
 
 //! @}
 
@@ -232,10 +240,37 @@
  * \warning Be careful not to waste time in order not to disturb the functions.
  */
 //! @{
-#define memory_start_read_action(nb_sectors)
-#define memory_stop_read_action()
-#define memory_start_write_action(nb_sectors)
-#define memory_stop_write_action()
+/*! \name Actions Associated with Memory Accesses
+ *
+ * Write here the action to associate with each memory access.
+ *
+ * \warning Be careful not to waste time in order not to disturb the functions.
+ */
+//! @{
+#if BOARD == EVK1100
+  #define READ_LED                              LED_BI0_GREEN
+  #define WRITE_LED                             LED_BI0_RED
+#elif BOARD == EVK1101
+  #define READ_LED                              LED_MONO0_GREEN
+  #define WRITE_LED                             LED_MONO1_GREEN
+#elif BOARD == EVK1104
+  #define READ_LED                              LED0
+  #define WRITE_LED                             LED1
+#elif BOARD == EVK1105
+  #define READ_LED                              LED0
+  #define WRITE_LED                             LED1
+#elif BOARD == UC3C_EK
+  #define READ_LED                              LED0
+  #define WRITE_LED                             LED1
+#elif BOARD == UC3L_EK
+  #define READ_LED                              LED0
+  #define WRITE_LED                             LED1
+#endif
+
+#define memory_start_read_action(nb_sectors)	LED_On(READ_LED)
+#define memory_stop_read_action()				LED_Off(READ_LED)
+#define memory_start_write_action(nb_sectors)	LED_On(WRITE_LED)
+#define memory_stop_write_action()				LED_Off(WRITE_LED)
 //! @}
 
 /*! \name Activation of Interface Features
@@ -254,7 +289,7 @@
 #endif
 
 #define ACCESS_STREAM        true //!< Streaming MEM <-> MEM interface.
-#define ACCESS_STREAM_RECORD true //!< Streaming MEM <-> MEM interface in record mode.
+#define ACCESS_STREAM_RECORD false //!< Streaming MEM <-> MEM interface in record mode.
 #define ACCESS_MEM_TO_MEM    true //!< MEM <-> MEM interface.
 #define ACCESS_CODEC         false //!< Codec interface.
 //! @}

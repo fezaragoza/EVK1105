@@ -68,7 +68,7 @@
 #endif
 
 #define SIZE_OF_SPLIT_COPY    ((1*1024*1024L)/512L)    // 1MB - Unit sector (max = 0xFFFF)
-
+//#define ID_STREAM_ERR 1
 
 //_____ D E C L A R A T I O N S ____________________________________________
 

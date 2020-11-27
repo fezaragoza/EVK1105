@@ -10,6 +10,8 @@ src\ASF\avr32\components\memory\sd_mmc\sd_mmc_spi\sd_mmc_spi_mem.c
 
 src\ASF\avr32\drivers\adc\adc.c
 
+src\ASF\avr32\drivers\ebi\sdramc\sdramc.c
+
 src\ASF\avr32\drivers\ebi\smc\smc.c
 
 src\ASF\avr32\drivers\pwm\pwm.c
@@ -26,93 +28,33 @@ src\ASF\avr32\services\fs\fat\fsaccess.c
 
 src\ASF\avr32\services\fs\fat\navigation.c
 
+src\ASF\avr32\services\fs\fat\nav_filterlist.c
+
+src\ASF\common\services\clock\uc3a0_a1\sysclk.c
+
 src\ASF\common\services\storage\ctrl_access\ctrl_access.c
 
-src\ASF\thirdparty\ijg\jcapistd.c
+src\img\adelantar.c
 
-src\ASF\thirdparty\ijg\jccoefct.c
+src\img\adelantarverde.c
 
-src\ASF\thirdparty\ijg\jccolor.c
+src\img\atrasarblanco.c
 
-src\ASF\thirdparty\ijg\jcdctmgr.c
+src\img\atrasarverde.c
 
-src\ASF\thirdparty\ijg\jchuff.c
+src\img\fercaspian.c
 
-src\ASF\thirdparty\ijg\jcinit.c
+src\img\play.c
 
-src\ASF\thirdparty\ijg\jcmainct.c
+src\img\playverde.c
 
-src\ASF\thirdparty\ijg\jcmarker.c
+src\img\letdown.c
 
-src\ASF\thirdparty\ijg\jcmaster.c
+src\img\takeonme.c
 
-src\ASF\thirdparty\ijg\jcomapi.c
+src\img\we_are_the_champions.c
 
-src\ASF\thirdparty\ijg\jcparam.c
-
-src\ASF\thirdparty\ijg\jcphuff.c
-
-src\ASF\thirdparty\ijg\jcprepct.c
-
-src\ASF\thirdparty\ijg\jcsample.c
-
-src\ASF\thirdparty\ijg\jctrans.c
-
-src\ASF\thirdparty\ijg\jdapimin.c
-
-src\ASF\thirdparty\ijg\jdapistd.c
-
-src\ASF\thirdparty\ijg\jdcoefct.c
-
-src\ASF\thirdparty\ijg\jdcolor.c
-
-src\ASF\thirdparty\ijg\jddctmgr.c
-
-src\ASF\thirdparty\ijg\jdhuff.c
-
-src\ASF\thirdparty\ijg\jdinput.c
-
-src\ASF\thirdparty\ijg\jdmainct.c
-
-src\ASF\thirdparty\ijg\jdmarker.c
-
-src\ASF\thirdparty\ijg\jdmaster.c
-
-src\ASF\thirdparty\ijg\jdmerge.c
-
-src\ASF\thirdparty\ijg\jdphuff.c
-
-src\ASF\thirdparty\ijg\jdpostct.c
-
-src\ASF\thirdparty\ijg\jdsample.c
-
-src\ASF\thirdparty\ijg\jdtrans.c
-
-src\ASF\thirdparty\ijg\jerror.c
-
-src\ASF\thirdparty\ijg\jfdctflt.c
-
-src\ASF\thirdparty\ijg\jfdctfst.c
-
-src\ASF\thirdparty\ijg\jfdctint.c
-
-src\ASF\thirdparty\ijg\jidctflt.c
-
-src\ASF\thirdparty\ijg\jidctfst.c
-
-src\ASF\thirdparty\ijg\jidctint.c
-
-src\ASF\thirdparty\ijg\jidctred.c
-
-src\ASF\thirdparty\ijg\jmemmgr.c
-
-src\ASF\thirdparty\ijg\jmemnobs.c
-
-src\ASF\thirdparty\ijg\jquant1.c
-
-src\ASF\thirdparty\ijg\jquant2.c
-
-src\ASF\thirdparty\ijg\jutils.c
+src\lib\conf_spi_sd.c
 
 src\ASF\avr32\components\audio\amp\tpa6130a2\tpa6130.c
 

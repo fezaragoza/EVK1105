@@ -57,7 +57,7 @@
 /*! \name Audio ABDAC Sampling Configuration
  */
 //! @{
-#define DEFAULT_DAC_SAMPLE_RATE_HZ    (11025)
+#define DEFAULT_DAC_SAMPLE_RATE_HZ    11025 //(11025)
 #define DEFAULT_DAC_NUM_CHANNELS      2           //!< Number of channels: 2 in stereo mode
 #define DEFAULT_DAC_BITS_PER_SAMPLE   16          //!< Bits per sample: 16
 #define DEFAULT_DAC_SWAP_CHANNELS     false       //!< Swap of channel

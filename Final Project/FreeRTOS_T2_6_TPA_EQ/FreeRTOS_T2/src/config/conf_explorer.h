@@ -75,7 +75,7 @@
 //!  - \c FSFEATURE_WRITE:          nav_file_copy(), nav_file_paste(), nav_file_del(), file_create(), file_open(MODE_WRITE), file_write(), file_putc().
 //!  - \c FSFEATURE_WRITE_COMPLET:  FSFEATURE_WRITE functions and nav_drive_format(), nav_dir_make(), nav_file_rename(), nav_file_dateset(), nav_file_attributset().
 //!  - \c FSFEATURE_ALL:            All functions.
-#define FS_LEVEL_FEATURES     (FSFEATURE_ALL)
+#define FS_LEVEL_FEATURES     (FSFEATURE_READ | FSFEATURE_WRITE_COMPLET)
 //#warning "FAT Level of Features set to None by default: edit the conf_explorer.h file and modify the FS_LEVEL_FEATURES define value according to the application."
 
 //! Number of caches used to store a cluster list of files (interesting in case of many `open file').

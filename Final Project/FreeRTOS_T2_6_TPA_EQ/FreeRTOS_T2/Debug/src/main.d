@@ -65,10 +65,21 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/avr32/utils/libs/dsplib/include/dsp.h \
  ../src/ASF/avr32/utils/debug/debug.h \
  ../src/ASF/avr32/utils/preprocessor/stringz.h \
- ../src/ASF/avr32/drivers/ebi/smc/smc.h ../src/config/conf_ebi.h \
+ ../src/ASF/common/services/delay/delay.h \
+ ../src/ASF/common/services/clock/sysclk.h ../src/config/conf_clock.h \
+ ../src/ASF/common/services/clock/uc3a0_a1/sysclk.h \
  ../src/ASF/common/boards/board.h \
  ../src/ASF/avr32/boards/evk1105/evk1105.h \
  ../src/ASF/avr32/boards/evk1105/led.h \
+ ../src/ASF/common/services/clock/osc.h \
+ ../src/ASF/common/services/clock/uc3a0_a1/osc.h \
+ ../src/ASF/common/services/clock/pll.h \
+ ../src/ASF/common/services/clock/uc3a0_a1/pll.h \
+ ../src/ASF/common/services/clock/genclk.h \
+ ../src/ASF/common/services/clock/uc3a0_a1/genclk.h \
+ ../src/ASF/avr32/drivers/ebi/sdramc/sdramc.h \
+ ../src/ASF/avr32/components/memory/sdram/mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h \
+ ../src/ASF/avr32/drivers/ebi/smc/smc.h ../src/config/conf_ebi.h \
  ../src/ASF/avr32/boards/evk1105/led.h \
  ../src/ASF/avr32/services/fs/fat/fat.h \
  ../src/ASF/avr32/services/fs/fat/fs_com.h ../src/config/conf_explorer.h \
@@ -88,6 +99,7 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/common/services/storage/ctrl_access/ctrl_access.h \
  ../src/config/conf_access.h \
  ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h \
+ ../src/ASF/avr32/services/fs/fat/nav_filterlist.h \
  ../src/ASF/avr32/drivers/flashc/flashc.h \
  ../src/ASF/avr32/drivers/gpio/gpio.h \
  ../src/ASF/avr32/drivers/pdca/pdca.h \
@@ -96,6 +108,17 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/avr32/drivers/pwm/pwm.h \
  ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.h \
  ../src/ASF/avr32/drivers/spi/spi.h \
+ ../src/FreeRTOS/Source/include/FreeRTOS.h ../src/config/FreeRTOSConfig.h \
+ ../src/lib/conf_utils.h ../src/ASF/avr32/boards/evk1105/evk1105.h \
+ ../src/FreeRTOS/Source/include/projdefs.h \
+ ../src/FreeRTOS/Source/include/portable.h \
+ ../src/FreeRTOS/Source/include/deprecated_definitions.h \
+ ../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h \
+ ../src/FreeRTOS/Source/include/mpu_wrappers.h \
+ ../src/FreeRTOS/Source/include/semphr.h \
+ ../src/FreeRTOS/Source/include/queue.h \
+ ../src/FreeRTOS/Source/include/task.h \
+ ../src/FreeRTOS/Source/include/list.h \
  ../src/ASF/avr32/drivers/ssc/i2s/ssc_i2s.h \
  ../src/ASF/avr32/drivers/tc/tc.h \
  ../src/ASF/avr32/components/audio/amp/tpa6130a2/tpa6130.h \
@@ -105,18 +128,14 @@ src/main.d src/main.o src/main.o: ../src/main.c ../src/asf.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/fastmath.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/math.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/fastmath.h \
- ../src/config/conf_tpa6130.h ../src/FreeRTOS/Source/include/FreeRTOS.h \
- ../src/config/FreeRTOSConfig.h ../src/FreeRTOS/Source/include/projdefs.h \
- ../src/FreeRTOS/Source/include/portable.h \
- ../src/FreeRTOS/Source/include/deprecated_definitions.h \
- ../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h \
- ../src/FreeRTOS/Source/include/mpu_wrappers.h \
- ../src/FreeRTOS/Source/include/task.h \
- ../src/FreeRTOS/Source/include/list.h \
- ../src/FreeRTOS/Source/include/queue.h \
- ../src/FreeRTOS/Source/include/task.h ../src/lib/conf_interrupt.h \
- ../src/ASF/avr32/boards/evk1105/evk1105.h ../src/lib/conf_qt.h \
- ../src/lib/conf_tc.h ../src/lib/conf_tc.h ../src/lib/sound.h
+ ../src/ASF/avr32/components/display/et024006dhu/et024006dhu.h \
+ ../src/config/conf_tpa6130.h ../src/FreeRTOS/Source/include/task.h \
+ ../src/FreeRTOS/Source/include/queue.h ../src/lib/conf_utils.h \
+ ../src/lib/conf_interrupt.h ../src/lib/conf_qt.h ../src/lib/conf_tc.h \
+ ../src/lib/conf_tc.h ../src/lib/conf_spi_sd.h \
+ ../src/config/conf_sd_mmc_spi.h ../src/config/conf_access.h \
+ ../src/lib/conf_interrupt.h ../src/lib/conf_utils.h ../src/img/image.h \
+ ../src/lib/letdown.h
 
 ../src/asf.h:
 
@@ -256,15 +275,39 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 ../src/ASF/avr32/utils/preprocessor/stringz.h:
 
-../src/ASF/avr32/drivers/ebi/smc/smc.h:
+../src/ASF/common/services/delay/delay.h:
 
-../src/config/conf_ebi.h:
+../src/ASF/common/services/clock/sysclk.h:
+
+../src/config/conf_clock.h:
+
+../src/ASF/common/services/clock/uc3a0_a1/sysclk.h:
 
 ../src/ASF/common/boards/board.h:
 
 ../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/ASF/avr32/boards/evk1105/led.h:
+
+../src/ASF/common/services/clock/osc.h:
+
+../src/ASF/common/services/clock/uc3a0_a1/osc.h:
+
+../src/ASF/common/services/clock/pll.h:
+
+../src/ASF/common/services/clock/uc3a0_a1/pll.h:
+
+../src/ASF/common/services/clock/genclk.h:
+
+../src/ASF/common/services/clock/uc3a0_a1/genclk.h:
+
+../src/ASF/avr32/drivers/ebi/sdramc/sdramc.h:
+
+../src/ASF/avr32/components/memory/sdram/mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h:
+
+../src/ASF/avr32/drivers/ebi/smc/smc.h:
+
+../src/config/conf_ebi.h:
 
 ../src/ASF/avr32/boards/evk1105/led.h:
 
@@ -306,6 +349,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h:
 
+../src/ASF/avr32/services/fs/fat/nav_filterlist.h:
+
 ../src/ASF/avr32/drivers/flashc/flashc.h:
 
 ../src/ASF/avr32/drivers/gpio/gpio.h:
@@ -323,6 +368,32 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 ../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.h:
 
 ../src/ASF/avr32/drivers/spi/spi.h:
+
+../src/FreeRTOS/Source/include/FreeRTOS.h:
+
+../src/config/FreeRTOSConfig.h:
+
+../src/lib/conf_utils.h:
+
+../src/ASF/avr32/boards/evk1105/evk1105.h:
+
+../src/FreeRTOS/Source/include/projdefs.h:
+
+../src/FreeRTOS/Source/include/portable.h:
+
+../src/FreeRTOS/Source/include/deprecated_definitions.h:
+
+../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h:
+
+../src/FreeRTOS/Source/include/mpu_wrappers.h:
+
+../src/FreeRTOS/Source/include/semphr.h:
+
+../src/FreeRTOS/Source/include/queue.h:
+
+../src/FreeRTOS/Source/include/task.h:
+
+../src/FreeRTOS/Source/include/list.h:
 
 ../src/ASF/avr32/drivers/ssc/i2s/ssc_i2s.h:
 
@@ -344,33 +415,17 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\../lib/gcc/avr32/4.4.7/../../../../avr32/include/machine/fastmath.h:
 
+../src/ASF/avr32/components/display/et024006dhu/et024006dhu.h:
+
 ../src/config/conf_tpa6130.h:
 
-../src/FreeRTOS/Source/include/FreeRTOS.h:
-
-../src/config/FreeRTOSConfig.h:
-
-../src/FreeRTOS/Source/include/projdefs.h:
-
-../src/FreeRTOS/Source/include/portable.h:
-
-../src/FreeRTOS/Source/include/deprecated_definitions.h:
-
-../src/FreeRTOS/Source/portable/GCC/AVR32_UC3/portmacro.h:
-
-../src/FreeRTOS/Source/include/mpu_wrappers.h:
-
 ../src/FreeRTOS/Source/include/task.h:
-
-../src/FreeRTOS/Source/include/list.h:
 
 ../src/FreeRTOS/Source/include/queue.h:
 
-../src/FreeRTOS/Source/include/task.h:
+../src/lib/conf_utils.h:
 
 ../src/lib/conf_interrupt.h:
-
-../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/lib/conf_qt.h:
 
@@ -378,4 +433,16 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 
 ../src/lib/conf_tc.h:
 
-../src/lib/sound.h:
+../src/lib/conf_spi_sd.h:
+
+../src/config/conf_sd_mmc_spi.h:
+
+../src/config/conf_access.h:
+
+../src/lib/conf_interrupt.h:
+
+../src/lib/conf_utils.h:
+
+../src/img/image.h:
+
+../src/lib/letdown.h:

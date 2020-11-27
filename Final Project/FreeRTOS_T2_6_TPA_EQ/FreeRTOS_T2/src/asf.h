@@ -74,6 +74,12 @@
 // From module: Debug macros and functions
 #include <debug.h>
 
+// From module: Delay routines
+#include <delay.h>
+
+// From module: EBI SDRAM Controller
+#include <sdramc.h>
+
 // From module: EBI Static Memory Controller (SMC)
 #include <smc.h>
 
@@ -88,6 +94,9 @@
 
 // From module: FAT file system with POSIX API support
 #include <fsaccess.h>
+
+// From module: FAT file system with navigation filtered in list
+#include <nav_filterlist.h>
 
 // From module: FLASHC - Flash Controller
 #include <flashc.h>
@@ -129,6 +138,9 @@
 
 // From module: SSC - Synchronous Serial Controller (I2S)
 #include <ssc_i2s.h>
+
+// From module: System Clock Control - UC3 A implementation
+#include <sysclk.h>
 
 // From module: TC - Timer/Counter
 #include <tc.h>

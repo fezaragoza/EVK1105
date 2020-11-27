@@ -64,6 +64,7 @@ src/ASF/thirdparty/demo/serial/serial.d \
  ../src/ASF/avr32/drivers/gpio/gpio.h \
  ../src/ASF/avr32/drivers/usart/usart.h \
  ../src/FreeRTOS/Source/include/FreeRTOS.h ../src/config/FreeRTOSConfig.h \
+ ../src/lib/conf_utils.h ../src/ASF/avr32/boards/evk1105/evk1105.h \
  ../src/FreeRTOS/Source/include/projdefs.h \
  ../src/FreeRTOS/Source/include/portable.h \
  ../src/FreeRTOS/Source/include/deprecated_definitions.h \
@@ -202,6 +203,10 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bi
 ../src/FreeRTOS/Source/include/FreeRTOS.h:
 
 ../src/config/FreeRTOSConfig.h:
+
+../src/lib/conf_utils.h:
+
+../src/ASF/avr32/boards/evk1105/evk1105.h:
 
 ../src/FreeRTOS/Source/include/projdefs.h:
 
