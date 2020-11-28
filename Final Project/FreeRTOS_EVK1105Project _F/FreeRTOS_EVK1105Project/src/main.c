@@ -266,7 +266,8 @@ typedef struct
 } sdram_udata_t;
 
 //volatile unsigned long *sdram = SDRAM;
-unsigned long sdram_last = 0;
+unsigned long sdram_ptr = 0;
+unsigned long sdram_size = 0;
 /*************** PERSONAL ***************/
 /* Local Definitions */
 #define RC0_VALUE		46875 // 37500 // 100 ms
@@ -689,84 +690,15 @@ portTASK_FUNCTION_PROTO( sdramTask, p );
 portTASK_FUNCTION( sdramTask, p )
 {
 	volatile unsigned long *sdram = SDRAM;
-	
-	//sdram_udata_t exram;
-	//unsigned long sdram_size, progress_inc, i, j, noErrors = 0;
-	unsigned long sdram_size = 0;
-	uint32_t samples_collected = 0; // For SDRAM, sample times 4 will give the real number of song samples
-	unsigned long sample = 0;
+	UBaseType_t sample = 0;
 	
 	// Calculate SDRAM size in words (32 bits).
 	sdram_size = SDRAM_SIZE >> 2;
 	print_dbg("\x0CSDRAM size: ");
 	print_dbg_ulong(SDRAM_SIZE >> 20);
 	print_dbg(" MB\r\n");
-
-	//// Determine the increment of SDRAM word address requiring an update of the
-	//// printed progression status.
-	//progress_inc = (sdram_size + 50) / 100;
-	//
-	//// Fill the SDRAM with the test pattern.
-	//for (i = 0, j = 0; i < sdram_size; i++)
-	//{
-		//if (i == j * progress_inc)
-		//{
-			//LED_Toggle(LED_SDRAM_WRITE);
-			////print_dbg("\rFilling SDRAM with test pattern: ");
-			////print_dbg_ulong(j++);
-			////print_dbg_char('%');
-			////print_dbg("\rByte number: ");
-			////print_dbg_ulong(i);
-		//}
-		//sdram[i] = i;	
-	//}
-	//LED_Off(LED_SDRAM_WRITE);
-	//print_dbg("\rSDRAM filled with test pattern       \r\n");
-	//
-	//// Recover the test pattern from the SDRAM and verify it.
-	//for (i = 0, j = 0; i < sdram_size; i++)
-	//{
-		//if (i == j * progress_inc)
-		//{
-			//LED_Toggle(LED_SDRAM_READ);
-			////print_dbg("\rRecovering test pattern from SDRAM: ");
-			////print_dbg_ulong(j++);
-			////print_dbg_char('%');
-		//}
-		//exram.word = sdram[i];
-		////if ( (exram.byte[0] != MASK_B0(i)) || (exram.byte[1] != MASK_B1(i)) || (exram.byte[2] != MASK_B2(i)) || (exram.byte[3] != MASK_B3(i)) )
-		//if ( (exram.b0 != MASK_B0(i)) || (exram.b1 != MASK_B1(i)) || (exram.b2 != MASK_B2(i)) || (exram.b3 != MASK_B3(i)) )
-		//{
-			//noErrors++;
-		//}
-	//}
-	//LED_Off(LED_SDRAM_READ);
-	////print_dbg("\rSDRAM tested: ");
-	////print_dbg_ulong(noErrors);
-	////print_dbg(" corrupted word(s)       \r\n");
-	//if (noErrors)
-	//{
-		//LED_Off(LED_SDRAM_ERRORS);
-		//print_dbg("More than one error check.");
-		//while (1)
-		//{
-			//LED_Toggle(LED_SDRAM_ERRORS);
-			////cpu_delay_ms(200, PBA_HZ);   // Fast blink means errors.
-			//vTaskDelay(pdMS_TO_TICKS(200));
-		//}
-	//}
-	//else
-	//{
-		//LED_Off(LED_SDRAM_OK);
-		//print_dbg("No error.");
-		//while (1)
-		//{
-		//LED_Toggle(LED_SDRAM_OK);
-		////cpu_delay_ms(1000, PBA_HZ);  // Slow blink means OK.
-		//vTaskDelay(pdMS_TO_TICKS(1000));
-	//
-		//}
-	//}
+	print_dbg_ulong(sdram_size);
+	print_dbg("\r\n");
 
 	print_dbg("Suspending task");
 	xTaskNotifyGive(fsHandle);
@@ -781,12 +713,12 @@ portTASK_FUNCTION( sdramTask, p )
 				print_dbg("SDRAM QUEUE Received\r\n");
 				print_dbg_ulong(sample);
 				print_dbg("\r\n");
-				sdram[samples_collected++] = sample;
-				print_dbg_ulong(samples_collected);
-				if (samples_collected > 15)
+				sdram[sdram_ptr++] = sample;
+				print_dbg_ulong(sdram_ptr);
+				if (sdram_ptr > 15)
 				{
 					vTaskSuspend(fsHandle);
-					for (uint8_t i = 0; i < samples_collected; i++)
+					for (uint8_t i = 0; i < sdram_ptr; i++)
 					{
 						print_dbg_ulong(sdram[i]);
 						print_dbg("\r\n");
