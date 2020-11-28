@@ -226,7 +226,13 @@ unsigned int Filessize[10];
 static char str_buff[MAX_FILE_PATH_LENGTH];
 static char filenames[4][MAX_FILE_PATH_LENGTH];
 
-static bool first_ls;
+typedef struct
+{
+	UBaseType_t size_in_bytes;
+	UBaseType_t init_ptr;
+	UBaseType_t end_ptr;
+} audio_data_t;
+
 typedef struct
 {
 	uint8_t   lun;
@@ -234,9 +240,15 @@ typedef struct
 	uint8_t   devices_available; // Same value as lun.
 	uint8_t   drive_number;
 	uint8_t   number_of_files;
-	FS_STRING name_of_files[10];
+	uint8_t	  number_of_audio_files;
+	FS_STRING name_of_files[20];
+	FS_STRING name_of_audio_files[10];
+	audio_data_t audio_data[10];
 }sd_fat_data_t;
+
 static sd_fat_data_t sd;
+static bool first_ls;
+
 
 /**************   SDRAM   ***************/
 #define LED_SDRAM_WRITE     LED0
@@ -551,6 +563,7 @@ portTASK_FUNCTION( fsTask, p )
 {
 	sdramQueue = xQueueCreate( 1 , sizeof(unsigned long));
 	
+	/****		Get all files data	 ****/
 	nav_filelist_reset();
 	nav_filelist_goto( 0 );
 	uint8_t files = 0;
@@ -563,40 +576,63 @@ portTASK_FUNCTION( fsTask, p )
 		print_dbg(sd.name_of_files[i]);
 		print_dbg("\r\n");
 		files++;
-		//vTaskDelay(pdMS_TO_TICKS(100));
+		vTaskDelay(pdMS_TO_TICKS(100));
 	}
 	if (files == sd.number_of_files)
 	{
 		print_dbg("Number of files coincide.\r\n");
 	}
 
-	uint8_t audio_files_collected = 0;
-	/* Data for one audio file */
-	UBaseType_t size_in_bytes = 0;
-	UBaseType_t init_ptr = 0;
-	UBaseType_t end_ptr = 0;
-
-	/* Local declarations */
-	sdram_udata_t data_sd;
-	portBASE_TYPE notificationValue = 0;
-	uint8_t word_complete = 0;
+	nav_filelist_reset();
+	sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
+	
+	nav_filelist_reset();
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	print_dbg("Audio Files: \r\n");
+	files = 0;
+	for(size_t i = 0; i < sd.number_of_audio_files; i++)
+	{
+		nav_filterlist_next();
+		nav_file_getname(sd.name_of_audio_files[i], 30);
+		print_dbg(sd.name_of_audio_files[i]);
+		print_dbg("\r\n");
+		files++;
+		vTaskDelay(pdMS_TO_TICKS(100));
+	}
+	if (files == sd.number_of_audio_files)
+	{
+		print_dbg("Number of files coincide.\r\n");
+	}
 
 	nav_filelist_reset();
 	nav_filterlist_setfilter("h");
 	nav_filterlist_root();
-	nav_filterlist_goto( 0 );
-	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
+	nav_filterlist_goto( 0 ); // System volume information
+	
+	for(size_t i = 0; i < sd.number_of_audio_files; i++) // Loop through all 
 	{
-		//print_dbg("\r\n Archivo Encontrado\r");
-		/*
-		*	First check file name, to save to their corresponding index 
-		*/
-		init_ptr = sdram_ptr;
+		//nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
+		nav_filterlist_next();
+		nav_file_getname(sd.name_of_audio_files[i], 30);
+		print_dbg(sd.name_of_audio_files[i]);
+		print_dbg("\r\n");
+		files++;
+		vTaskDelay(pdMS_TO_TICKS(2000));
+		
+		sd.audio_data[i].init_ptr = sdram_ptr; /* Audio data */
+		
+		/* Local declarations */
+		sdram_udata_t data_sd;
+		portBASE_TYPE notificationValue = 0;
+		uint8_t word_complete = 0;
+		
 		file_open(FOPEN_MODE_R);
+		
 		while (!file_eof())	
 		{
 			char current_char = file_getc();
-			//print_dbg_char(current_char);
 			// Search for size fist, by looking for '[' and ']'
 			if (current_char == '[')
 			{
@@ -606,23 +642,25 @@ portTASK_FUNCTION( fsTask, p )
 					strncat(size_of_song, &current_char, 1);
 					current_char = file_getc();
 				}
-				size_in_bytes = a2ul(size_of_song);
+				sd.audio_data[i].size_in_bytes = a2ul(size_of_song); /* Audio data */
 				print_dbg("\r\nSize of song in bytes:");
-				print_dbg_ulong(size_in_bytes);
+				print_dbg_ulong(sd.audio_data[i].size_in_bytes);
 				print_dbg("\r\n");
 			}
+			// Search for the start of the next hex number
 			else if (current_char == '0')
 			{
 				char hex_byte[] = "";
 				strncat(hex_byte, &current_char, 1);
-				for (uint8_t i = 0; i < 3; i++)
+				
+				for (uint8_t i = 0; i < 3; i++)				// Append next for 3 characters to get the byt in the form of 0x00
 				{
 					current_char = file_getc();
 					strncat(hex_byte, &current_char, 1);
 				}
+				
 				uint8_t data_byte = x2u8(hex_byte);
-				// SDRAM data type
-				data_sd.byte[word_complete] = data_byte;
+				data_sd.byte[word_complete] = data_byte;	// SDRAM data type
 				word_complete++;
 			
 				if (word_complete == 4)
@@ -644,20 +682,35 @@ portTASK_FUNCTION( fsTask, p )
 			//print_dbg_char(file_getc());				// Display next char from file.
 			//vTaskDelay(pdMS_TO_TICKS(100));
 		}
-		end_ptr = sdram_ptr;
+		
+		// Send the remaining data that didn't fill a word
+		if (word_complete != 0)
+		{
+			while(!(notificationValue > 0))
+			{
+				notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
+			}
+			word_complete = 0;
+			xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
+			vTaskResume(sdramHandle);
+			memset(&data_sd, 0, sizeof(data_sd));
+		}
+		
+		vTaskDelay(pdMS_TO_TICKS(10));
+		sd.audio_data[i].end_ptr = sdram_ptr; /* Audio data */
 		
 		// Close the file.
 		file_close();
-		print_dbg("DONE WITH FIRST FILE, SAMPLES IN BYTES: ");
-		print_dbg_ulong((end_ptr-init_ptr)*4);
+		print_dbg("DONE WITH FILE, SAMPLES IN BYTES: ");
+		print_dbg_ulong((sd.audio_data[i].end_ptr - sd.audio_data[i].init_ptr) * 4);
 		print_dbg("\r\n");
 		//cpu_delay_ms(5000, PBA_HZ);
 	}
 
-
 	print_dbg("DONE");
 	nav_exit();										// Cerramos sistemas de archivos
 
+	
 	while (1)
 	{
 
@@ -1188,108 +1241,6 @@ static void init_sdram(void)
 	print_dbg("\r\nSDRAM initialized\r\n");
 }
 
-static void get_files(void)
-{
-	
-	nav_filelist_reset();
-	nav_filelist_goto( 0 );
-	uint8_t files = 0;
-	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
-	for(size_t i = 0; i < sd.number_of_files; i++)
-	{
-		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
-		nav_file_getname(sd.name_of_files[i], 30);
-		print_dbg(sd.name_of_files[i]);
-		print_dbg("\r\n");
-		files++;
-		//vTaskDelay(pdMS_TO_TICKS(100));
-	}
-	if (files == sd.number_of_files)
-	{
-		print_dbg("Number of files coincide.\r\n");
-	}
-	
-	
-	uint8_t audio_files_collected = 0;
-	uint32_t size_in_bytes = 0;
-	uint8_t word_complete = 0;
-	uint32_t samples_collected = 0; // For SDRAM, sample times 4 will give the real number of song samples
-	uint32_t init_pos = 0;
-	uint32_t end_pos = 0;
-	sdram_udata_t data_sd;
-	
-	nav_filelist_reset();
-	nav_filterlist_setfilter("h");
-	nav_filterlist_root();
-	nav_filterlist_goto( 0 );
-	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
-	{
-		print_dbg("\r\n Archivo Encontrado\r");
-		file_open(FOPEN_MODE_R);
-		while (!file_eof())							//Hasta encontrar el fin del archivo
-		{
-			char current_char = file_getc();
-			print_dbg_char(current_char);
-			// Search for size fist, by looking for '[' and ']'
-			if (current_char == '[')
-			{
-				char size_of_song[9] = "";
-				current_char = file_getc();
-				while( current_char != ']' ){
-					strncat(size_of_song, &current_char, 1);
-					current_char = file_getc();
-				}
-				size_in_bytes = a2ul(size_of_song);
-				print_dbg("\r\nSize of song in bytes:");
-				print_dbg_ulong(size_in_bytes);
-				print_dbg("\r\n");
-			}
-			else if (current_char == '0')
-			{
-				char hex_byte[] = "";
-				strncat(hex_byte, &current_char, 1);
-				for (uint8_t i = 0; i < 3; i++)
-				{
-					current_char = file_getc();
-					strncat(hex_byte, &current_char, 1);
-				}
-				//uint8_t data_byte = strtol(hex_byte, NULL, 0);
-				//uint8_t data_byte;
-				//sscanf(hex_byte, "%x", &data_byte);
-				uint8_t data_byte = x2u8(hex_byte);
-				// SDRAM
-				data_sd.byte[word_complete] = data_byte;
-				word_complete++;
-				
-				if (word_complete == 4)
-				{
-					print_dbg("Here\r\n");
-					word_complete = 0;
-					//sdram[0] = data_sd.word;
-					samples_collected++;
-					memset(&data_sd, 0, sizeof(data_sd));
-					print_dbg("Saved\r\n");
-				}
-			}
-			
-			//print_dbg_char(file_getc());				// Display next char from file.
-			//vTaskDelay(pdMS_TO_TICKS(200));
-		}
-		end_pos = samples_collected;
-		// Close the file.
-		file_close();
-		print_dbg("DONE WITH FIRST FILE, SAMPLES: ");
-		print_dbg_ulong(samples_collected);
-		print_dbg("\r\n");
-		cpu_delay_ms(5000, PBA_HZ);
-		
-	}
-
-	
-	print_dbg("DONE");
-	nav_exit();										// Cerramos sistemas de archivos
-}
-
 static unsigned long a2ul(const char *s)
 {
 	//unsigned long x = 0;
@@ -1356,8 +1307,8 @@ int main (void)
 
 	//uint16_t pass = 25;
 	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
-	//xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
-	//xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
+	////xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
+	////xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	xTaskCreate(fsTask,		   "tFS",		 1024,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
 	//xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
 	xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY + 1, &sdramHandle);
