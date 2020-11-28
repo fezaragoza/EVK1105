@@ -208,12 +208,12 @@ typedef struct
 			uint32_t b2 : 8;
 			uint32_t b3 : 8; // lsb
 		};
-		uint8_t byte[4];
+		uint8_t byte[4]; // 0 - msb
 		unsigned long word;
 	};
 } sdram_udata_t;
 
-volatile unsigned long *sdram = SDRAM;
+//volatile unsigned long *sdram = SDRAM;
 unsigned long sdram_last = 0;
 /*************** PERSONAL ***************/
 /* Local Definitions */
@@ -246,10 +246,12 @@ intc_qt_flags_t intc_qt;
 intc_tc_flags_t intc_tc;
 state_t state = MAIN;
 /* Prototype */
+static void init_sdram(void);
 static void init_fs(void);
 static void rep_menu(bool);
 static void menu_gui(bool);
 static unsigned long a2ul(const char*);
+static uint8_t x2u8(const char*);
 /*************** FREERTOS ***************/
 
 /* TaskHandles */
@@ -267,6 +269,7 @@ QueueHandle_t repLrQueue;
 QueueHandle_t repUdQueue;
 QueueHandle_t mainLrQueue;
 QueueHandle_t mainUdQueue;
+QueueHandle_t sdramQueue;
 
 void myIntTaskTC0 (void *p);
 void myIntTaskTC0 (void *p)
@@ -493,7 +496,111 @@ portTASK_FUNCTION( qtButtonTask, p )
 portTASK_FUNCTION_PROTO( fsTask, p );
 portTASK_FUNCTION( fsTask, p )
 {
+	sdramQueue = xQueueCreate( 1 , sizeof(unsigned long));
+	
+	nav_filelist_reset();
+	nav_filelist_goto( 0 );
+	uint8_t files = 0;
+	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
+	for(size_t i = 0; i < sd.number_of_files; i++)
+	{
+		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
+		nav_file_getname(sd.name_of_files[i], 30);
+		print_dbg(sd.name_of_files[i]);
+		print_dbg("\r\n");
+		files++;
+		//vTaskDelay(pdMS_TO_TICKS(100));
+	}
+	if (files == sd.number_of_files)
+	{
+		print_dbg("Number of files coincide.\r\n");
+	}
 
+
+	uint8_t audio_files_collected = 0;
+	uint32_t size_in_bytes = 0;
+	uint8_t word_complete = 0;
+
+	sdram_udata_t data_sd;
+	portBASE_TYPE notificationValue = 0;
+
+	nav_filelist_reset();
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 );
+	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
+	{
+		print_dbg("\r\n Archivo Encontrado\r");
+		file_open(FOPEN_MODE_R);
+		while (!file_eof())							//Hasta encontrar el fin del archivo
+		{
+			char current_char = file_getc();
+			print_dbg_char(current_char);
+			// Search for size fist, by looking for '[' and ']'
+			if (current_char == '[')
+			{
+				char size_of_song[9] = "";
+				current_char = file_getc();
+				while( current_char != ']' ){
+					strncat(size_of_song, &current_char, 1);
+					current_char = file_getc();
+				}
+				size_in_bytes = a2ul(size_of_song);
+				print_dbg("\r\nSize of song in bytes:");
+				print_dbg_ulong(size_in_bytes);
+				print_dbg("\r\n");
+			}
+			else if (current_char == '0')
+			{
+				char hex_byte[] = "";
+				strncat(hex_byte, &current_char, 1);
+				for (uint8_t i = 0; i < 3; i++)
+				{
+					current_char = file_getc();
+					strncat(hex_byte, &current_char, 1);
+				}
+				//uint8_t data_byte = strtol(hex_byte, NULL, 0);
+				//uint8_t data_byte;
+				//sscanf(hex_byte, "%x", &data_byte);
+				uint8_t data_byte = x2u8(hex_byte);
+				// SDRAM
+				data_sd.byte[word_complete] = data_byte;
+				word_complete++;
+			
+				if (word_complete == 4)
+				{
+					while(!(notificationValue > 0))
+					{
+						notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
+					}
+					print_dbg("Here\r\n");
+					word_complete = 0;
+					
+					xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
+					vTaskResume(sdramHandle);
+					//vTaskDelay(pdMS_TO_TICKS(100));
+					
+					memset(&data_sd, 0, sizeof(data_sd));
+					print_dbg("Saved\r\n");
+				}
+			}
+		
+			//print_dbg_char(file_getc());				// Display next char from file.
+			vTaskDelay(pdMS_TO_TICKS(100));
+		}
+		//end_pos = samples_collected;
+		// Close the file.
+		file_close();
+		print_dbg("DONE WITH FIRST FILE, SAMPLES: ");
+		//print_dbg_ulong(samples_collected);
+		print_dbg("\r\n");
+		//cpu_delay_ms(5000, PBA_HZ);
+	
+	}
+
+
+	print_dbg("DONE");
+	nav_exit();										// Cerramos sistemas de archivos
 
 	while (1)
 	{
@@ -529,8 +636,13 @@ portTASK_FUNCTION( etTask, p )
 portTASK_FUNCTION_PROTO( sdramTask, p );
 portTASK_FUNCTION( sdramTask, p )
 {
-	sdram_udata_t exram;
-	unsigned long sdram_size, progress_inc, i, j, noErrors = 0;
+	volatile unsigned long *sdram = SDRAM;
+	
+	//sdram_udata_t exram;
+	//unsigned long sdram_size, progress_inc, i, j, noErrors = 0;
+	unsigned long sdram_size = 0;
+	uint32_t samples_collected = 0; // For SDRAM, sample times 4 will give the real number of song samples
+	unsigned long sample = 0;
 	
 	// Calculate SDRAM size in words (32 bits).
 	sdram_size = SDRAM_SIZE >> 2;
@@ -538,71 +650,111 @@ portTASK_FUNCTION( sdramTask, p )
 	print_dbg_ulong(SDRAM_SIZE >> 20);
 	print_dbg(" MB\r\n");
 
-	// Determine the increment of SDRAM word address requiring an update of the
-	// printed progression status.
-	progress_inc = (sdram_size + 50) / 100;
+	//// Determine the increment of SDRAM word address requiring an update of the
+	//// printed progression status.
+	//progress_inc = (sdram_size + 50) / 100;
+	//
+	//// Fill the SDRAM with the test pattern.
+	//for (i = 0, j = 0; i < sdram_size; i++)
+	//{
+		//if (i == j * progress_inc)
+		//{
+			//LED_Toggle(LED_SDRAM_WRITE);
+			////print_dbg("\rFilling SDRAM with test pattern: ");
+			////print_dbg_ulong(j++);
+			////print_dbg_char('%');
+			////print_dbg("\rByte number: ");
+			////print_dbg_ulong(i);
+		//}
+		//sdram[i] = i;	
+	//}
+	//LED_Off(LED_SDRAM_WRITE);
+	//print_dbg("\rSDRAM filled with test pattern       \r\n");
+	//
+	//// Recover the test pattern from the SDRAM and verify it.
+	//for (i = 0, j = 0; i < sdram_size; i++)
+	//{
+		//if (i == j * progress_inc)
+		//{
+			//LED_Toggle(LED_SDRAM_READ);
+			////print_dbg("\rRecovering test pattern from SDRAM: ");
+			////print_dbg_ulong(j++);
+			////print_dbg_char('%');
+		//}
+		//exram.word = sdram[i];
+		////if ( (exram.byte[0] != MASK_B0(i)) || (exram.byte[1] != MASK_B1(i)) || (exram.byte[2] != MASK_B2(i)) || (exram.byte[3] != MASK_B3(i)) )
+		//if ( (exram.b0 != MASK_B0(i)) || (exram.b1 != MASK_B1(i)) || (exram.b2 != MASK_B2(i)) || (exram.b3 != MASK_B3(i)) )
+		//{
+			//noErrors++;
+		//}
+	//}
+	//LED_Off(LED_SDRAM_READ);
+	////print_dbg("\rSDRAM tested: ");
+	////print_dbg_ulong(noErrors);
+	////print_dbg(" corrupted word(s)       \r\n");
+	//if (noErrors)
+	//{
+		//LED_Off(LED_SDRAM_ERRORS);
+		//print_dbg("More than one error check.");
+		//while (1)
+		//{
+			//LED_Toggle(LED_SDRAM_ERRORS);
+			////cpu_delay_ms(200, PBA_HZ);   // Fast blink means errors.
+			//vTaskDelay(pdMS_TO_TICKS(200));
+		//}
+	//}
+	//else
+	//{
+		//LED_Off(LED_SDRAM_OK);
+		//print_dbg("No error.");
+		//while (1)
+		//{
+		//LED_Toggle(LED_SDRAM_OK);
+		////cpu_delay_ms(1000, PBA_HZ);  // Slow blink means OK.
+		//vTaskDelay(pdMS_TO_TICKS(1000));
+	//
+		//}
+	//}
 
-	// Fill the SDRAM with the test pattern.
-	for (i = 0, j = 0; i < sdram_size; i++)
-	{
-		if (i == j * progress_inc)
-		{
-			LED_Toggle(LED_SDRAM_WRITE);
-			print_dbg("\rFilling SDRAM with test pattern: ");
-			print_dbg_ulong(j++);
-			print_dbg_char('%');
-			print_dbg("\rByte number: ");
-			print_dbg_ulong(i);
-		}
-		sdram[i] = i;
-	}
-	LED_Off(LED_SDRAM_WRITE);
-	print_dbg("\rSDRAM filled with test pattern       \r\n");
 
-	// Recover the test pattern from the SDRAM and verify it.
-	for (i = 0, j = 0; i < sdram_size; i++)
+	print_dbg("Suspending task");
+	xTaskNotifyGive(fsHandle);
+	vTaskSuspend(NULL);
+	
+	while(1)
 	{
-		if (i == j * progress_inc)
+		if (sdramQueue != 0)
 		{
-			LED_Toggle(LED_SDRAM_READ);
-			print_dbg("\rRecovering test pattern from SDRAM: ");
-			print_dbg_ulong(j++);
-			print_dbg_char('%');
+			if (xQueueReceive( sdramQueue, &sample, (TickType_t) 2 ))
+			{
+				print_dbg("SDRAM QUEUE Received\r\n");
+				print_dbg_ulong(sample);
+				print_dbg("\r\n");
+				sdram[samples_collected++] = sample;
+				print_dbg_ulong(samples_collected);
+				if (samples_collected > 15)
+				{
+					vTaskSuspend(fsHandle);
+					for (uint8_t i = 0; i < samples_collected; i++)
+					{
+						print_dbg_ulong(sdram[i]);
+						print_dbg("\r\n");
+						vTaskDelay(pdMS_TO_TICKS(1000));
+					}
+					vTaskSuspend(NULL);
+				}
+				else
+				{
+					xTaskNotifyGive(fsHandle);
+					vTaskSuspend(NULL);
+				}
+				
+			}
 		}
-		exram.word = sdram[i];
-		//if ( (exram.byte[0] != MASK_B0(i)) || (exram.byte[1] != MASK_B1(i)) || (exram.byte[2] != MASK_B2(i)) || (exram.byte[3] != MASK_B3(i)) )
-		if ( (exram.b0 != MASK_B0(i)) || (exram.b1 != MASK_B1(i)) || (exram.b2 != MASK_B2(i)) || (exram.b3 != MASK_B3(i)) )
-		{
-			noErrors++;
-		}
+		
 	}
-	LED_Off(LED_SDRAM_READ);
-	print_dbg("\rSDRAM tested: ");
-	print_dbg_ulong(noErrors);
-	print_dbg(" corrupted word(s)       \r\n");
-	if (noErrors)
-	{
-		LED_Off(LED_SDRAM_ERRORS);
-		print_dbg("More than one error check.");
-		while (1)
-		{
-			LED_Toggle(LED_SDRAM_ERRORS);
-			//cpu_delay_ms(200, PBA_HZ);   // Fast blink means errors.
-			vTaskDelay(pdMS_TO_TICKS(200));
-		}
-	}
-	else
-	{
-		LED_Off(LED_SDRAM_OK);
-		print_dbg("No error.");
-		while (1)
-		{
-			LED_Toggle(LED_SDRAM_OK);
-			//cpu_delay_ms(1000, PBA_HZ);  // Slow blink means OK.
-			vTaskDelay(pdMS_TO_TICKS(1000));
-			
-		}
-	}
+
+	
 }
 
 // ISR
@@ -1063,26 +1215,7 @@ static void init_sdram(void)
 {
 	// Initialize the external SDRAM chip.
 	sdramc_init(PBA_HZ);
-	print_dbg("SDRAM initialized\r\n");
-}
-
-static unsigned long a2ul(const char *s)
-{
-	//unsigned long x = 0;
-	//while(isdigit(*s))
-	//{
-		//x *= 10;
-		//x += *s++ - '0';
-	//}
-	//return x;
-	
-	unsigned long result = 0;
-	const char *c = s;
-
-	while ('0' <= *c && *c <= '9') {
-		result = result * 10 + (*(c++) - '0');
-	}
-	return result;
+	print_dbg("\r\nSDRAM initialized\r\n");
 }
 
 static void get_files(void)
@@ -1109,7 +1242,12 @@ static void get_files(void)
 	
 	uint8_t audio_files_collected = 0;
 	uint32_t size_in_bytes = 0;
-	bool size_ready = false;
+	uint8_t word_complete = 0;
+	uint32_t samples_collected = 0; // For SDRAM, sample times 4 will give the real number of song samples
+	uint32_t init_pos = 0;
+	uint32_t end_pos = 0;
+	sdram_udata_t data_sd;
+	
 	nav_filelist_reset();
 	nav_filterlist_setfilter("h");
 	nav_filterlist_root();
@@ -1121,46 +1259,97 @@ static void get_files(void)
 		while (!file_eof())							//Hasta encontrar el fin del archivo
 		{
 			char current_char = file_getc();
-			// Search for size fist, by looking for '[' and ']'
 			print_dbg_char(current_char);
+			// Search for size fist, by looking for '[' and ']'
 			if (current_char == '[')
 			{
 				char size_of_song[9] = "";
 				current_char = file_getc();
-				//char* size_of_song = "";
-				print_dbg_char(current_char);
 				while( current_char != ']' ){
 					strncat(size_of_song, &current_char, 1);
-					print_dbg(size_of_song);
-					print_dbg_char('\t');
-					
 					current_char = file_getc();
-					print_dbg_char(current_char);
-					
-					print_dbg("\r\n");
 				}
-				//sscanf(size_of_song, "%lu", &size_in_bytes);
 				size_in_bytes = a2ul(size_of_song);
-				print_dbg("HERE\r\n");
-				print_dbg(size_of_song);
+				print_dbg("\r\nSize of song in bytes:");
 				print_dbg_ulong(size_in_bytes);
-				break;
+				print_dbg("\r\n");
+			}
+			else if (current_char == '0')
+			{
+				char hex_byte[] = "";
+				strncat(hex_byte, &current_char, 1);
+				for (uint8_t i = 0; i < 3; i++)
+				{
+					current_char = file_getc();
+					strncat(hex_byte, &current_char, 1);
+				}
+				//uint8_t data_byte = strtol(hex_byte, NULL, 0);
+				//uint8_t data_byte;
+				//sscanf(hex_byte, "%x", &data_byte);
+				uint8_t data_byte = x2u8(hex_byte);
+				// SDRAM
+				data_sd.byte[word_complete] = data_byte;
+				word_complete++;
+				
+				if (word_complete == 4)
+				{
+					print_dbg("Here\r\n");
+					word_complete = 0;
+					//sdram[0] = data_sd.word;
+					samples_collected++;
+					memset(&data_sd, 0, sizeof(data_sd));
+					print_dbg("Saved\r\n");
+				}
 			}
 			
 			//print_dbg_char(file_getc());				// Display next char from file.
 			//vTaskDelay(pdMS_TO_TICKS(200));
-			cpu_delay_ms(200, PBA_HZ);
 		}
+		end_pos = samples_collected;
 		// Close the file.
 		file_close();
+		print_dbg("DONE WITH FIRST FILE, SAMPLES: ");
+		print_dbg_ulong(samples_collected);
 		print_dbg("\r\n");
-		
+		cpu_delay_ms(5000, PBA_HZ);
 		
 	}
 
 	
 	print_dbg("DONE");
 	nav_exit();										// Cerramos sistemas de archivos
+}
+
+static unsigned long a2ul(const char *s)
+{
+	//unsigned long x = 0;
+	//while(isdigit(*s))
+	//{
+	//x *= 10;
+	//x += *s++ - '0';
+	//}
+	//return x;
+	
+	unsigned long result = 0;
+	const char *c = s;
+
+	while ('0' <= *c && *c <= '9') {
+		result = result * 10 + (*(c++) - '0');
+	}
+	return result;
+}
+
+static uint8_t x2u8(const char *str)
+{
+	uint8_t res = 0; // uint64_t
+	char c;
+
+	while ((c = *str++)) {
+		char v = ((c & 0xF) + (c >> 6)) | ((c >> 3) & 0x8);
+		res = ((res << 4) | (uint8_t) v);
+	}
+
+	return res;
 }
 
 int main (void)
@@ -1191,7 +1380,7 @@ int main (void)
 
 	print_dbg(MSG_WELCOME);
 	
-	get_files();
+	//get_files();
 
 	/* Insert application code here, after the board has been initialized. */
 
@@ -1201,7 +1390,7 @@ int main (void)
 	//xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	xTaskCreate(fsTask,		   "tFS",		 1024,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
 	//xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
-	//xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY, &sdramHandle);
+	xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY + 1, &sdramHandle);
 	
 	vTaskStartScheduler();
 
