@@ -95,6 +95,12 @@
 // From module: FAT file system with navigation filtered in list
 #include <nav_filterlist.h>
 
+// From module: FAT file system with text file support
+#include <reader_txt.h>
+
+// From module: FAT file system with unicode support
+#include <unicode.h>
+
 // From module: FLASHC - Flash Controller
 #include <flashc.h>
 
@@ -140,33 +146,33 @@
 #include <parts.h>
 
 // From module: RTOS - FreeRTOS examples helper files
-//#include <AltBlckQ.h>
-//#include <AltBlock.h>
-//#include <AltPollQ.h>
-//#include <AltQTest.h>
-//#include <BlockQ.h>
-//#include <GenQTest.h>
-//#include <IntQueue.h>
-//#include <PollQ.h>
-//#include <QPeek.h>
-//#include <blocktim.h>
-//#include <comtest.h>
-//#include <comtest2.h>
-//#include <countsem.h>
-//#include <crflash.h>
-//#include <crhook.h>
-//#include <death.h>
-//#include <dynamic.h>
-//#include <fileIO.h>
-//#include <flash.h>
-//#include <flop.h>
-//#include <integer.h>
-//#include <mevents.h>
-//#include <partest.h>
-//#include <print.h>
-//#include <recmutex.h>
-//#include <semtest.h>
-//#include <serial.h>
+#include <AltBlckQ.h>
+#include <AltBlock.h>
+#include <AltPollQ.h>
+#include <AltQTest.h>
+#include <BlockQ.h>
+#include <GenQTest.h>
+#include <IntQueue.h>
+#include <PollQ.h>
+#include <QPeek.h>
+#include <blocktim.h>
+#include <comtest.h>
+#include <comtest2.h>
+#include <countsem.h>
+#include <crflash.h>
+#include <crhook.h>
+#include <death.h>
+#include <dynamic.h>
+#include <fileIO.h>
+#include <flash.h>
+#include <flop.h>
+#include <integer.h>
+#include <mevents.h>
+#include <partest.h>
+#include <print.h>
+#include <recmutex.h>
+#include <semtest.h>
+#include <serial.h>
 
 // From module: SD/MMC card access using SPI
 #include <sd_mmc_spi.h>

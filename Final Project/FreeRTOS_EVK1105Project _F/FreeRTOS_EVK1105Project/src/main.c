@@ -266,8 +266,8 @@ typedef struct
 } sdram_udata_t;
 
 //volatile unsigned long *sdram = SDRAM;
-unsigned long sdram_ptr = 0;
-unsigned long sdram_size = 0;
+unsigned long sdram_ptr = 0;  // Next location - word
+unsigned long sdram_size = 0; // Number of words
 /*************** PERSONAL ***************/
 /* Local Definitions */
 #define RC0_VALUE		46875 // 37500 // 100 ms
@@ -554,6 +554,7 @@ portTASK_FUNCTION( fsTask, p )
 	nav_filelist_reset();
 	nav_filelist_goto( 0 );
 	uint8_t files = 0;
+	print_dbg("Files: \r\n");
 	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
 	for(size_t i = 0; i < sd.number_of_files; i++)
 	{
@@ -569,13 +570,16 @@ portTASK_FUNCTION( fsTask, p )
 		print_dbg("Number of files coincide.\r\n");
 	}
 
-
 	uint8_t audio_files_collected = 0;
-	uint32_t size_in_bytes = 0;
-	uint8_t word_complete = 0;
+	/* Data for one audio file */
+	UBaseType_t size_in_bytes = 0;
+	UBaseType_t init_ptr = 0;
+	UBaseType_t end_ptr = 0;
 
+	/* Local declarations */
 	sdram_udata_t data_sd;
 	portBASE_TYPE notificationValue = 0;
+	uint8_t word_complete = 0;
 
 	nav_filelist_reset();
 	nav_filterlist_setfilter("h");
@@ -583,12 +587,16 @@ portTASK_FUNCTION( fsTask, p )
 	nav_filterlist_goto( 0 );
 	while (nav_filelist_set( sd.drive_number, FS_FIND_NEXT ))					//nav_filterlist_next()
 	{
-		print_dbg("\r\n Archivo Encontrado\r");
+		//print_dbg("\r\n Archivo Encontrado\r");
+		/*
+		*	First check file name, to save to their corresponding index 
+		*/
+		init_ptr = sdram_ptr;
 		file_open(FOPEN_MODE_R);
-		while (!file_eof())							//Hasta encontrar el fin del archivo
+		while (!file_eof())	
 		{
 			char current_char = file_getc();
-			print_dbg_char(current_char);
+			//print_dbg_char(current_char);
 			// Search for size fist, by looking for '[' and ']'
 			if (current_char == '[')
 			{
@@ -612,11 +620,8 @@ portTASK_FUNCTION( fsTask, p )
 					current_char = file_getc();
 					strncat(hex_byte, &current_char, 1);
 				}
-				//uint8_t data_byte = strtol(hex_byte, NULL, 0);
-				//uint8_t data_byte;
-				//sscanf(hex_byte, "%x", &data_byte);
 				uint8_t data_byte = x2u8(hex_byte);
-				// SDRAM
+				// SDRAM data type
 				data_sd.byte[word_complete] = data_byte;
 				word_complete++;
 			
@@ -626,29 +631,27 @@ portTASK_FUNCTION( fsTask, p )
 					{
 						notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
 					}
-					print_dbg("Here\r\n");
+					//print_dbg("Here\r\n");
 					word_complete = 0;
-					
 					xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
 					vTaskResume(sdramHandle);
-					//vTaskDelay(pdMS_TO_TICKS(100));
-					
 					memset(&data_sd, 0, sizeof(data_sd));
-					print_dbg("Saved\r\n");
+					//vTaskDelay(pdMS_TO_TICKS(100));
+					//print_dbg("Saved\r\n");
 				}
 			}
 		
 			//print_dbg_char(file_getc());				// Display next char from file.
-			vTaskDelay(pdMS_TO_TICKS(100));
+			//vTaskDelay(pdMS_TO_TICKS(100));
 		}
-		//end_pos = samples_collected;
+		end_ptr = sdram_ptr;
+		
 		// Close the file.
 		file_close();
-		print_dbg("DONE WITH FIRST FILE, SAMPLES: ");
-		//print_dbg_ulong(samples_collected);
+		print_dbg("DONE WITH FIRST FILE, SAMPLES IN BYTES: ");
+		print_dbg_ulong((end_ptr-init_ptr)*4);
 		print_dbg("\r\n");
 		//cpu_delay_ms(5000, PBA_HZ);
-	
 	}
 
 
@@ -694,13 +697,11 @@ portTASK_FUNCTION( sdramTask, p )
 	
 	// Calculate SDRAM size in words (32 bits).
 	sdram_size = SDRAM_SIZE >> 2;
-	print_dbg("\x0CSDRAM size: ");
-	print_dbg_ulong(SDRAM_SIZE >> 20);
-	print_dbg(" MB\r\n");
-	print_dbg_ulong(sdram_size);
+	print_dbg("\x0CSDRAM size in bytes: ");
+	print_dbg_ulong(sdram_size*4);
 	print_dbg("\r\n");
 
-	print_dbg("Suspending task");
+	//print_dbg("Suspending task");
 	xTaskNotifyGive(fsHandle);
 	vTaskSuspend(NULL);
 	
@@ -710,27 +711,13 @@ portTASK_FUNCTION( sdramTask, p )
 		{
 			if (xQueueReceive( sdramQueue, &sample, (TickType_t) 2 ))
 			{
-				print_dbg("SDRAM QUEUE Received\r\n");
-				print_dbg_ulong(sample);
-				print_dbg("\r\n");
+				//print_dbg("SDRAM QUEUE Received\r\n");
+				//print_dbg_ulong(sample);
+				//print_dbg("\r\n");
 				sdram[sdram_ptr++] = sample;
-				print_dbg_ulong(sdram_ptr);
-				if (sdram_ptr > 15)
-				{
-					vTaskSuspend(fsHandle);
-					for (uint8_t i = 0; i < sdram_ptr; i++)
-					{
-						print_dbg_ulong(sdram[i]);
-						print_dbg("\r\n");
-						vTaskDelay(pdMS_TO_TICKS(1000));
-					}
-					vTaskSuspend(NULL);
-				}
-				else
-				{
-					xTaskNotifyGive(fsHandle);
-					vTaskSuspend(NULL);
-				}
+				//print_dbg_ulong(sdram_ptr);
+				xTaskNotifyGive(fsHandle);
+				vTaskSuspend(NULL);
 				
 			}
 		}
