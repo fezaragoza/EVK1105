@@ -28,6 +28,8 @@ src\ASF\avr32\drivers\ssc\i2s\ssc_i2s.c
 
 src\ASF\avr32\drivers\twi\twi.c
 
+src\ASF\avr32\services\audio\wav\wavdecode.c
+
 src\ASF\avr32\services\fs\fat\fat.c
 
 src\ASF\avr32\services\fs\fat\fat_unusual.c
@@ -39,6 +41,10 @@ src\ASF\avr32\services\fs\fat\fsaccess.c
 src\ASF\avr32\services\fs\fat\navigation.c
 
 src\ASF\avr32\services\fs\fat\nav_filterlist.c
+
+src\ASF\avr32\services\fs\fat\reader_txt.c
+
+src\ASF\avr32\services\fs\fat\unicode.c
 
 src\ASF\avr32\utils\debug\debug.c
 
