@@ -164,17 +164,30 @@
 
 /*************** TPA ***************/
 //! Sample Count Value
-#define SOUND_SAMPLES                512
+#define SOUND_SAMPLES             512
 #define TPA6130_TWI_MASTER_SPEED  100000
+#define MAX_NUMBER_OF_SONGS		  10
+#define SIZE_OF_STRING			  20
 
 void dac_reload_callback(void);
 void dac_overrun_callback(void);
 void adc_underrun_callback(void);
 void adc_reload_callback(void);
 
+typedef struct  
+{
+	char name[20];
+	char artist[20];
+	char album[20];
+	char year[20];
+	char duration[20];
+}song_info_t;
+
 int16_t samples[SOUND_SAMPLES];
 uint32_t samples_count;
 static uint8_t selected_song = 0;
+static song_info_t song_info[MAX_NUMBER_OF_SONGS];
+//static char song_data[10][5][20]; // Songs, parameters, data
 
 //! Welcome message to display.
 #define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to Final Project ---------- \r\n"
@@ -235,15 +248,15 @@ typedef struct
 
 typedef struct
 {
-	uint8_t   lun;
-	char      drive_name;
-	uint8_t   devices_available; // Same value as lun.
-	uint8_t   drive_number;
-	uint8_t   number_of_files;
-	uint8_t	  number_of_audio_files;
-	FS_STRING name_of_files[20];
-	FS_STRING name_of_audio_files[10];
-	audio_data_t audio_data[10];
+	uint8_t		 lun;
+	char		 drive_name;
+	uint8_t		 devices_available;						// Same value as lun.
+	uint8_t		 drive_number;
+	uint8_t		 number_of_files;
+	uint8_t		 number_of_audio_files;
+	FS_STRING	 name_of_files[25];						// Strings of each name inside SD card.		
+	FS_STRING    name_of_audio_files[MAX_NUMBER_OF_SONGS]; // Strings of each name of the audio songs.
+	audio_data_t audio_data[MAX_NUMBER_OF_SONGS];		// Audio data with pointer reference per song.
 }sd_fat_data_t;
 
 static sd_fat_data_t sd;
@@ -601,13 +614,71 @@ portTASK_FUNCTION( fsTask, p )
 	{
 		print_dbg("Number of files coincide.\r\n");
 	}
+	
+	/***	Retrieve Info data	****/
+	nav_filelist_reset();
+	nav_filterlist_setfilter("txt");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	//song_info_t info;
+	char info[20];
+	FS_STRING name;
+	for (size_t i = 0; i < (sd.number_of_files / 2); i++)
+	{
+		nav_filterlist_next();
+		nav_file_getname(name, 30);
+		print_dbg(name);
+		print_dbg("\r\n");
+		
+		//file_open(FOPEN_MODE_R);
+		reader_txt_open( true );
+		
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].name, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].artist, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].album, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].year, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].duration, info);
+		//print_dbg(info[4]);
+		
+		//for(size_t j = 0; j < 5; j++)
+		//{
+			//reader_txt_get_line(false, info[j], 20);
+			//print_dbg(info[j]);
+		//}
+		// Close the file.
+		reader_txt_close();
+		
+		print_dbg(song_info[i].name);
+		print_dbg(song_info[i].artist);
+		print_dbg(song_info[i].album);
+		print_dbg(song_info[i].year);
+		print_dbg(song_info[i].duration);
+		
+		print_dbg("\r\n");
+		
+		//print_dbg(info);
+		//print_dbg(info.name);
+		//print_dbg(info.artist);
+		//print_dbg(info.album);
+		//print_dbg(info.year);
+		//print_dbg(info.dur);
+		
+		vTaskDelay(pdMS_TO_TICKS(2000));
+	}
+	
+	/***	Retrieve Audio info	****/
 
 	nav_filelist_reset();
 	nav_filterlist_setfilter("h");
 	nav_filterlist_root();
 	nav_filterlist_goto( 0 ); // System volume information
 	//sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
-	sd.number_of_audio_files = 3;
+	sd.number_of_audio_files = (sd.number_of_files / 2);
 	print_dbg_ulong(sd.number_of_audio_files);
 	
 	nav_filelist_reset();
@@ -646,8 +717,7 @@ portTASK_FUNCTION( fsTask, p )
 		nav_file_getname(sd.name_of_audio_files[i], 30);
 		print_dbg(sd.name_of_audio_files[i]);
 		print_dbg("\r\n");
-		files++;
-		vTaskDelay(pdMS_TO_TICKS(2000));
+		//vTaskDelay(pdMS_TO_TICKS(2000));
 		
 		sd.audio_data[i].init_ptr = sdram_ptr; /* Audio data */
 		
@@ -655,6 +725,8 @@ portTASK_FUNCTION( fsTask, p )
 		sdram_udata_t data_sd;
 		portBASE_TYPE notificationValue = 0;
 		uint8_t word_complete = 0;
+		
+		nav_checkdisk_disable();   // To optimize speed
 		
 		file_open(FOPEN_MODE_R);
 		
@@ -729,6 +801,7 @@ portTASK_FUNCTION( fsTask, p )
 		print_dbg_ulong((sd.audio_data[i].end_ptr - sd.audio_data[i].init_ptr) * 4);
 		print_dbg("\r\n");
 		//cpu_delay_ms(5000, PBA_HZ);
+		nav_checkdisk_enable();   // To optimize speed
 	}
 
 	print_dbg("DONE");
