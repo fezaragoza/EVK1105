@@ -34,6 +34,7 @@
     <option id="avr32.components.audio.amp.tpa6130a2" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.components.display.et024006dhu" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.components.memory.sdram.mt48lc16m16a2tg7e" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="avr32.components.memory.sd_mmc.sd_mmc_spi" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.drivers.adc" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.drivers.ebi.smc" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.drivers.flashc" value="Add" config="" content-id="Atmel.ASF" />
@@ -45,6 +46,7 @@
     <option id="avr32.drivers.spi" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.drivers.tc" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.drivers.usart" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="avr32.services.audio.wav" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.services.fs.fat" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.services.fs.fat.nav_filterlist" value="Add" config="" content-id="Atmel.ASF" />
     <option id="avr32.services.fs.fat.os" value="Add" config="" content-id="Atmel.ASF" />
@@ -52,7 +54,7 @@
     <option id="avr32.utils.print_funcs" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.delay" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="avr32.components.memory.sd_mmc.sd_mmc_spi" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="avr32.services.fs.fat.reader_txt" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.freertos.demo.common.minimal" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.freertos.uc3_example" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.os.freertos" value="Add" config="" content-id="Atmel.ASF" />
@@ -251,6 +253,12 @@
     <file path="src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.h" framework="" version="3.49.1" source="avr32\components\memory\sd_mmc\sd_mmc_spi\sd_mmc_spi_mem.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.h" framework="" version="3.49.1" source="avr32\components\memory\sd_mmc\sd_mmc_spi\sd_mmc_spi.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/Config/conf_sd_mmc_spi.h" framework="" version="3.49.1" source="avr32\components\memory\sd_mmc\sd_mmc_spi\module_config\conf_sd_mmc_spi.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/avr32/services/audio/wav/wavdecode.c" framework="" version="3.49.1" source="avr32\services\audio\wav\wavdecode.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/avr32/services/audio/wav/wavdecode.h" framework="" version="3.49.1" source="avr32\services\audio\wav\wavdecode.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/avr32/services/fs/fat/reader_txt.c" framework="" version="3.49.1" source="avr32\services\fs\fat\reader_txt.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/avr32/services/fs/fat/reader_txt.h" framework="" version="3.49.1" source="avr32\services\fs\fat\reader_txt.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/avr32/services/fs/fat/unicode.c" framework="" version="3.49.1" source="avr32\services\fs\fat\unicode.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/avr32/services/fs/fat/unicode.h" framework="" version="3.49.1" source="avr32\services\fs\fat\unicode.h" changed="False" content-id="Atmel.ASF" />
   </files>
   <documentation help="" />
   <offline-documentation help="" />
@@ -320,6 +328,7 @@
       <Value>../src/ASF/common/services/clock</Value>
       <Value>../src/ASF/common/services/delay</Value>
       <Value>../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi</Value>
+      <Value>../src/ASF/avr32/services/audio/wav</Value>
     </ListValues>
   </avr32gcc.compiler.directories.IncludePaths>
   <avr32gcc.compiler.optimization.level>Optimize for size (-Os)</avr32gcc.compiler.optimization.level>
@@ -380,6 +389,7 @@
       <Value>../src/ASF/common/services/clock</Value>
       <Value>../src/ASF/common/services/delay</Value>
       <Value>../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi</Value>
+      <Value>../src/ASF/avr32/services/audio/wav</Value>
     </ListValues>
   </avr32gcc.assembler.general.IncludePaths>
   <avr32gcc.preprocessingassembler.general.AssemblerFlags>-mrelax -DBOARD=EVK1105 -D__FREERTOS__ -DACCESS_MEM_TO_RAM_ENABLED -DSD_MMC_SPI_ENABLE</avr32gcc.preprocessingassembler.general.AssemblerFlags>
@@ -425,6 +435,7 @@
       <Value>../src/ASF/common/services/clock</Value>
       <Value>../src/ASF/common/services/delay</Value>
       <Value>../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi</Value>
+      <Value>../src/ASF/avr32/services/audio/wav</Value>
     </ListValues>
   </avr32gcc.preprocessingassembler.general.IncludePaths>
 </Avr32Gcc>
@@ -494,6 +505,7 @@
       <Value>../src/ASF/common/services/clock</Value>
       <Value>../src/ASF/common/services/delay</Value>
       <Value>../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi</Value>
+      <Value>../src/ASF/avr32/services/audio/wav</Value>
     </ListValues>
   </avr32gcc.compiler.directories.IncludePaths>
   <avr32gcc.compiler.optimization.level>Optimize (-O1)</avr32gcc.compiler.optimization.level>
@@ -555,6 +567,7 @@
       <Value>../src/ASF/common/services/clock</Value>
       <Value>../src/ASF/common/services/delay</Value>
       <Value>../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi</Value>
+      <Value>../src/ASF/avr32/services/audio/wav</Value>
     </ListValues>
   </avr32gcc.assembler.general.IncludePaths>
   <avr32gcc.assembler.debugging.DebugLevel>Default (-g)</avr32gcc.assembler.debugging.DebugLevel>
@@ -601,6 +614,7 @@
       <Value>../src/ASF/common/services/clock</Value>
       <Value>../src/ASF/common/services/delay</Value>
       <Value>../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi</Value>
+      <Value>../src/ASF/avr32/services/audio/wav</Value>
     </ListValues>
   </avr32gcc.preprocessingassembler.general.IncludePaths>
   <avr32gcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</avr32gcc.preprocessingassembler.debugging.DebugLevel>
@@ -645,6 +659,8 @@
     <Folder Include="src\ASF\avr32\drivers\twi\" />
     <Folder Include="src\ASF\avr32\drivers\usart\" />
     <Folder Include="src\ASF\avr32\services\" />
+    <Folder Include="src\ASF\avr32\services\audio\" />
+    <Folder Include="src\ASF\avr32\services\audio\wav\" />
     <Folder Include="src\ASF\avr32\services\fs\" />
     <Folder Include="src\ASF\avr32\services\fs\fat\" />
     <Folder Include="src\ASF\avr32\utils\" />
@@ -774,6 +790,12 @@
     <None Include="src\ASF\avr32\drivers\twi\twi.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\ASF\avr32\services\audio\wav\wavdecode.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\avr32\services\audio\wav\wavdecode.h">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="src\ASF\avr32\services\fs\fat\fat.c">
       <SubType>compile</SubType>
     </Compile>
@@ -808,6 +830,18 @@
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\ASF\avr32\services\fs\fat\nav_filterlist.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\avr32\services\fs\fat\reader_txt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\avr32\services\fs\fat\reader_txt.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\avr32\services\fs\fat\unicode.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\avr32\services\fs\fat\unicode.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\ASF\avr32\utils\debug\debug.c">
