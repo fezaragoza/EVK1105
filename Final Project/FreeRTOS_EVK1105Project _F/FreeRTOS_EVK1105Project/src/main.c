@@ -109,10 +109,12 @@
 #include "img/image.h"
 #include "lib/letdown.h"
 
-/*! \name Priority definitions for most of the tasks in the demo application.
- * Some tasks just use the idle priority.
- */
-//! @{
+/*-----------------------------------------------------------*/
+/*--------------------------FREERTOS-------------------------*/
+/*-----------------------------------------------------------*/
+
+/****DEFINES****/
+
 #define mainLED_TASK_PRIORITY     ( tskIDLE_PRIORITY + 1 )
 #define mainCOM_TEST_PRIORITY     ( tskIDLE_PRIORITY + 2 )
 #define mainQUEUE_POLL_PRIORITY   ( tskIDLE_PRIORITY + 2 )
@@ -120,61 +122,63 @@
 #define mainBLOCK_Q_PRIORITY      ( tskIDLE_PRIORITY + 3 )
 #define mainCHECK_TASK_PRIORITY   ( tskIDLE_PRIORITY + 4 )
 #define mainCREATOR_TASK_PRIORITY ( tskIDLE_PRIORITY + 3 )
-//! @}
 
-//! Baud rate used by the serial port tasks.
 #define mainCOM_TEST_BAUD_RATE    ( ( unsigned portLONG ) 57600 )
 
-//! LED used by the serial port tasks.  This is toggled on each character Tx,
-//! and mainCOM_TEST_LED + 1 is toggled on each character Rx.
 #define mainCOM_TEST_LED          ( 3 )
 
-//! LED that is toggled by the check task.  The check task periodically checks
-//! that all the other tasks are operating without error.  If no errors are found
-//! the LED is toggled.  If an error is found at any time the LED toggles faster.
 #define mainCHECK_TASK_LED        ( 6 )
 
-//! LED that is set upon error.
 #define mainERROR_LED             ( 7 )
 
-//! The period between executions of the check task.
 #define mainCHECK_PERIOD          ( ( portTickType ) 1000 / portTICK_RATE_MS  )
 
-//! If an error is detected in a task, the vErrorChecks task will enter in an
-//! infinite loop flashing the LED at this rate.
 #define mainERROR_FLASH_RATE      ( (portTickType) 500 / portTICK_RATE_MS )
 
-/*! \name Constants used by the vMemCheckTask() task.
- */
-//! @{
 #define mainCOUNT_INITIAL_VALUE   ( ( unsigned portLONG ) 0 )
 #define mainNO_TASK               ( 0 )
-//! @}
 
-/*! \name The size of the memory blocks allocated by the vMemCheckTask() task.
- */
-//! @{
 #define mainMEM_CHECK_SIZE_1      ( ( size_t ) 51 )
 #define mainMEM_CHECK_SIZE_2      ( ( size_t ) 52 )
 #define mainMEM_CHECK_SIZE_3      ( ( size_t ) 15 )
-//! @}
+
+/****PROTOTYPES****/
 
 
 /*-----------------------------------------------------------*/
+/*							DEFINES							 */
+/*-----------------------------------------------------------*/
 
 /*************** TPA ***************/
-//! Sample Count Value
-#define SOUND_SAMPLES             512
+#define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to Final Project ---------- \r\n"	//! Welcome message to display.
+#define SOUND_SAMPLES             512													//! Sample Count Value
 #define TPA6130_TWI_MASTER_SPEED  100000
 #define MAX_NUMBER_OF_SONGS		  10
 #define SIZE_OF_STRING			  20
 
-void dac_reload_callback(void);
-void dac_overrun_callback(void);
-void adc_underrun_callback(void);
-void adc_reload_callback(void);
+/*************  SDRAM  **************/
+#define LED_SDRAM_WRITE     LED0
+#define LED_SDRAM_READ      LED1
+#define LED_SDRAM_ERRORS    (LED0 | LED1 | LED2 | LED3)
+#define LED_SDRAM_OK        (LED0 | LED1 | LED2 | LED3)
 
-typedef struct  
+#define MASK_B0(x) (uint8_t)( ((0xFF << 24) & x) >> 24 )
+#define MASK_B1(x) (uint8_t)( ((0xFF << 16) & x) >> 16 )
+#define MASK_B2(x) (uint8_t)( ((0xFF << 8)  & x) >> 8 )
+#define MASK_B3(x) (uint8_t)( ((0xFF << 0)  & x) >> 0 )
+
+/*************** MAIN ***************/
+/* Local Definitions */
+#define RC0_VALUE		46875 // 37500 // 100 ms
+
+/*-----------------------------------------------------------*/
+/*							TYPEDEFS						 */
+/*-----------------------------------------------------------*/
+
+/*************** TPA ***************/
+
+/************  SD-FAT  *************/
+typedef struct
 {
 	char name[20];
 	char artist[20];
@@ -183,15 +187,132 @@ typedef struct
 	char duration[20];
 }song_info_t;
 
-int16_t samples[SOUND_SAMPLES];
-uint32_t samples_count;
-static uint8_t selected_song = 0;
+typedef struct
+{
+	UBaseType_t size_in_bytes;
+	UBaseType_t init_ptr;
+	UBaseType_t end_ptr;
+} audio_data_t;
+
+typedef struct
+{
+	uint8_t		 lun;
+	char		 drive_name;
+	uint8_t		 devices_available;							// Same value as lun.
+	uint8_t		 drive_number;
+	uint8_t		 number_of_files;
+	uint8_t		 number_of_audio_files;
+	FS_STRING	 name_of_files[25];							// Strings of each name inside SD card.
+	FS_STRING    name_of_audio_files[MAX_NUMBER_OF_SONGS];	// Strings of each name of the audio songs.
+	audio_data_t audio_data[MAX_NUMBER_OF_SONGS];			// Audio data with pointer reference per song.
+}sd_fat_data_t;
+
+/************  SDRAM  *************/
+typedef struct
+{
+	union
+	{
+		struct
+		{
+			uint32_t b0 : 8; // msb
+			uint32_t b1 : 8;
+			uint32_t b2 : 8;
+			uint32_t b3 : 8; // lsb
+		};
+		uint8_t byte[4]; // 0 - msb
+		unsigned long word;
+	};
+} sdram_udata_t;
+
+/*************** MAIN ***************/
+typedef enum
+{
+	MAIN,
+	REPRODUCIR,
+	LYRICS,
+	EQ
+}state_t;
+
+typedef struct
+{
+	uint8_t lr;
+	uint8_t ud;
+}menu_keys_t;
+
+typedef float float16_t;
+typedef double float32_t;
+
+/*-----------------------------------------------------------*/
+/*							PROTOTYPES						 */
+/*-----------------------------------------------------------*/
+
+/*************** TPA ***************/
+void dac_reload_callback(void);
+void dac_overrun_callback(void);
+void adc_underrun_callback(void);
+void adc_reload_callback(void);
+
+/*************** MAIN ***************/
+static void init_sdram(void);
+static void init_fs(void);
+static void rep_menu(bool);
+static void menu_gui(bool);
+static unsigned long a2ul(const char*);
+static uint8_t x2u8(const char*);
+
+/*-----------------------------------------------------------*/
+/*						  DECLARATIONS						 */
+/*-----------------------------------------------------------*/
+
+/***************   TPA    ***************/
+static int16_t     samples[SOUND_SAMPLES];
+static uint8_t     selected_song = 0;
 static song_info_t song_info[MAX_NUMBER_OF_SONGS];
 //static char song_data[10][5][20]; // Songs, parameters, data
 
-//! Welcome message to display.
-#define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to Final Project ---------- \r\n"
+/***************    FAT   *****************/
+static char str_buff[MAX_FILE_PATH_LENGTH];
+static char filenames[4][MAX_FILE_PATH_LENGTH];
+static sd_fat_data_t sd;
+static bool first_ls;
 
+/***************  SDRAM  *****************/
+//volatile unsigned long *sdram = SDRAM;
+unsigned long sdram_ptr  = 0;	// Next location - word
+unsigned long sdram_size = 0;	// Number of words
+
+/***************   MAIN   ***************/
+// Module's memory address
+volatile avr32_tc_t *tc = &AVR32_TC;
+volatile avr32_pm_t *pm = &AVR32_PM;
+
+intc_qt_flags_t intc_qt;
+intc_tc_flags_t intc_tc;
+static state_t state = MAIN;
+
+/*************** FREERTOS ***************/
+
+/* TaskHandles */
+TaskHandle_t myIntTaskHandleTC = NULL;
+TaskHandle_t qtHandle = NULL;
+TaskHandle_t audioHandle = NULL;
+TaskHandle_t fsHandle = NULL;
+TaskHandle_t etHandle = NULL;
+TaskHandle_t sdramHandle = NULL;
+
+/* QueueHandles */
+QueueHandle_t forwardQueue;
+QueueHandle_t reverseQueue;
+QueueHandle_t repLrQueue;
+QueueHandle_t repUdQueue;
+QueueHandle_t mainLrQueue;
+QueueHandle_t mainUdQueue;
+QueueHandle_t sdramQueue;
+
+/*-----------------------------------------------------------*/
+/*						  FUNCTION DEFS						 */
+/*-----------------------------------------------------------*/
+/***************   TPA    ***************/
 static void master_callback(uint32_t arg)
 {
 	if( arg == AUDIO_DAC_OUT_OF_SAMPLE_CB )
@@ -235,119 +356,7 @@ void adc_reload_callback(void)
 	// Nothing todo
 }
 
-/***************    FAT   *****************/
-static char str_buff[MAX_FILE_PATH_LENGTH];
-static char filenames[4][MAX_FILE_PATH_LENGTH];
-
-typedef struct
-{
-	UBaseType_t size_in_bytes;
-	UBaseType_t init_ptr;
-	UBaseType_t end_ptr;
-} audio_data_t;
-
-typedef struct
-{
-	uint8_t		 lun;
-	char		 drive_name;
-	uint8_t		 devices_available;						// Same value as lun.
-	uint8_t		 drive_number;
-	uint8_t		 number_of_files;
-	uint8_t		 number_of_audio_files;
-	FS_STRING	 name_of_files[25];						// Strings of each name inside SD card.		
-	FS_STRING    name_of_audio_files[MAX_NUMBER_OF_SONGS]; // Strings of each name of the audio songs.
-	audio_data_t audio_data[MAX_NUMBER_OF_SONGS];		// Audio data with pointer reference per song.
-}sd_fat_data_t;
-
-static sd_fat_data_t sd;
-static bool first_ls;
-
-/**************   SDRAM   ***************/
-#define LED_SDRAM_WRITE     LED0
-#define LED_SDRAM_READ      LED1
-#define LED_SDRAM_ERRORS    (LED0 | LED1 | LED2 | LED3)
-#define LED_SDRAM_OK        (LED0 | LED1 | LED2 | LED3)
-
-#define MASK_B0(x) (uint8_t)( ((0xFF << 24) & x) >> 24 )
-#define MASK_B1(x) (uint8_t)( ((0xFF << 16) & x) >> 16 )
-#define MASK_B2(x) (uint8_t)( ((0xFF << 8)  & x) >> 8 )
-#define MASK_B3(x) (uint8_t)( ((0xFF << 0)  & x) >> 0 )
-
-typedef struct
-{
-	union
-	{
-		struct
-		{
-			uint32_t b0 : 8; // msb
-			uint32_t b1 : 8;
-			uint32_t b2 : 8;
-			uint32_t b3 : 8; // lsb
-		};
-		uint8_t byte[4]; // 0 - msb
-		unsigned long word;
-	};
-} sdram_udata_t;
-
-//volatile unsigned long *sdram = SDRAM;
-unsigned long sdram_ptr = 0;  // Next location - word
-unsigned long sdram_size = 0; // Number of words
-/*************** PERSONAL ***************/
-/* Local Definitions */
-#define RC0_VALUE		46875 // 37500 // 100 ms
-
-/* Typedefs */
-typedef float float16_t;
-typedef double float32_t;
-
-typedef enum
-{
-	MAIN,
-	REPRODUCIR,
-	LYRICS,
-	EQ
-}state_t;
-
-typedef struct
-{
-	uint8_t lr;
-	uint8_t ud;
-}menu_keys_t;
-
-/* Local Declarations */
-// Module's memory address
-volatile avr32_tc_t *tc = &AVR32_TC;
-volatile avr32_pm_t *pm = &AVR32_PM;
-
-intc_qt_flags_t intc_qt;
-intc_tc_flags_t intc_tc;
-state_t state = MAIN;
-/* Prototype */
-static void init_sdram(void);
-static void init_fs(void);
-static void rep_menu(bool);
-static void menu_gui(bool);
-static unsigned long a2ul(const char*);
-static uint8_t x2u8(const char*);
 /*************** FREERTOS ***************/
-
-/* TaskHandles */
-TaskHandle_t myIntTaskHandleTC = NULL;
-TaskHandle_t qtHandle = NULL;
-TaskHandle_t audioHandle = NULL;
-TaskHandle_t fsHandle = NULL;
-TaskHandle_t etHandle = NULL;
-TaskHandle_t sdramHandle = NULL;
-
-/* QueueHandles */
-QueueHandle_t forwardQueue;
-QueueHandle_t reverseQueue;
-QueueHandle_t repLrQueue;
-QueueHandle_t repUdQueue;
-QueueHandle_t mainLrQueue;
-QueueHandle_t mainUdQueue;
-QueueHandle_t sdramQueue;
-
 void myIntTaskTC0 (void *p);
 void myIntTaskTC0 (void *p)
 {
@@ -935,8 +944,7 @@ ISR_FREERTOS(RT_ISR_tc0_irq_448, 448, 1)
 	return (checkIfYieldRequired ? 1 : 0);
 }
 
-/*! \brief Static function definitions
- */
+/***************   MAIN   ***************/
 static void init_sys_clocks(void)
 {
   // Switch to OSC0 to speed up the booting
@@ -1370,6 +1378,10 @@ static uint8_t x2u8(const char *str)
 	return res;
 }
 
+/*-----------------------------------------------------------*/
+/*							 MAIN							 */
+/*-----------------------------------------------------------*/
+
 int main (void)
 {
 	/* Insert system clock initialization code here (sysclk_init()). */
@@ -1392,22 +1404,14 @@ int main (void)
 	
 	init_sdram();
 
-	// Enable LED0 and LED1
-	gpio_enable_gpio_pin(LED0_GPIO);
-	gpio_enable_gpio_pin(LED1_GPIO);
-
 	print_dbg(MSG_WELCOME);
-	
-	//get_files();
 
 	/* Insert application code here, after the board has been initialized. */
 
-	//uint16_t pass = 25;
-	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
 	//xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
 	//xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
-	xTaskCreate(fsTask,		   "tFS",		 1024,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
 	//xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
+	xTaskCreate(fsTask,		   "tFS",		 1024,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
 	xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY + 1, &sdramHandle);
 	
 	vTaskStartScheduler();
