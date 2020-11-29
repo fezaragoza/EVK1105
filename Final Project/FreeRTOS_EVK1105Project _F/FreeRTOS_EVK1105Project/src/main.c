@@ -164,7 +164,7 @@
 
 /*************** TPA ***************/
 //! Sample Count Value
-#define SOUND_SAMPLES                256
+#define SOUND_SAMPLES                512
 #define TPA6130_TWI_MASTER_SPEED  100000
 
 void dac_reload_callback(void);
@@ -174,6 +174,7 @@ void adc_reload_callback(void);
 
 int16_t samples[SOUND_SAMPLES];
 uint32_t samples_count;
+static uint8_t selected_song = 0;
 
 //! Welcome message to display.
 #define MSG_WELCOME "\x1B[2J\x1B[H---------- Welcome to Final Project ---------- \r\n"
@@ -222,7 +223,6 @@ void adc_reload_callback(void)
 }
 
 /***************    FAT   *****************/
-unsigned int Filessize[10];
 static char str_buff[MAX_FILE_PATH_LENGTH];
 static char filenames[4][MAX_FILE_PATH_LENGTH];
 
@@ -248,7 +248,6 @@ typedef struct
 
 static sd_fat_data_t sd;
 static bool first_ls;
-
 
 /**************   SDRAM   ***************/
 #define LED_SDRAM_WRITE     LED0
@@ -379,13 +378,15 @@ void myIntTaskTC0 (void *p)
 portTASK_FUNCTION_PROTO(playAudioTask, p );
 portTASK_FUNCTION(playAudioTask, p )
 {
-	//print_dbg("Running audio...\r\n");
+	volatile unsigned long *sdram = SDRAM;
+	print_dbg("Running audio...\r\n");
 	static uint32_t count = 0;
-	static uint32_t i = 0;
+	uint32_t i = sd.audio_data[selected_song].init_ptr;
 	static portBASE_TYPE notificationValue = 0;
 	static bool playAudio = false;
 	static bool notify	  = false;
 	static uint16_t samplesRx;
+	static sdram_udata_t data;
 
 	while(true)
 	{
@@ -427,10 +428,28 @@ portTASK_FUNCTION(playAudioTask, p )
 			count = 0;
 			// Store sample from the sound_table array
 			while(count < (SOUND_SAMPLES)){
-				samples[count++] = ((uint8_t)letdownsong[i]+0x80) << 8; 
-				samples[count++] = ((uint8_t)letdownsong[i]+0x80) << 8;
+				memset(&data, 0, sizeof(data));
+				data.word = sdram[i];
+				for (uint8_t j = 0; j < 4; j++)
+				{	
+					samples[count++] = ((uint8_t)data.byte[j]+0x80) << 8;
+					samples[count++] = ((uint8_t)data.byte[j]+0x80) << 8;
+				}
 				i++;
-				if (i >= sizeof(letdownsong)) i = 0;
+				//if (i >= sizeof(letdownsong)) i = 0;
+				if (i >= (sd.audio_data[selected_song].end_ptr))
+				{
+					if (selected_song + 1 < sd.number_of_audio_files)
+					{
+						selected_song++;
+						i = sd.audio_data[selected_song].init_ptr;
+					}
+					else
+					{
+						notify = !notify;
+					}
+					
+				}
 			}
 
 			gpio_set_gpio_pin(LED0_GPIO);
@@ -584,7 +603,12 @@ portTASK_FUNCTION( fsTask, p )
 	}
 
 	nav_filelist_reset();
-	sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	//sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
+	sd.number_of_audio_files = 3;
+	print_dbg_ulong(sd.number_of_audio_files);
 	
 	nav_filelist_reset();
 	nav_filterlist_setfilter("h");
@@ -604,6 +628,10 @@ portTASK_FUNCTION( fsTask, p )
 	if (files == sd.number_of_audio_files)
 	{
 		print_dbg("Number of files coincide.\r\n");
+	}
+	else
+	{
+		print_dbg("Number of files does not coincide.\r\n");
 	}
 
 	nav_filelist_reset();
@@ -669,17 +697,13 @@ portTASK_FUNCTION( fsTask, p )
 					{
 						notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
 					}
-					//print_dbg("Here\r\n");
 					word_complete = 0;
 					xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
-					vTaskResume(sdramHandle);
+					vTaskResume( sdramHandle );
 					memset(&data_sd, 0, sizeof(data_sd));
 					//vTaskDelay(pdMS_TO_TICKS(100));
-					//print_dbg("Saved\r\n");
 				}
 			}
-		
-			//print_dbg_char(file_getc());				// Display next char from file.
 			//vTaskDelay(pdMS_TO_TICKS(100));
 		}
 		
@@ -692,7 +716,7 @@ portTASK_FUNCTION( fsTask, p )
 			}
 			word_complete = 0;
 			xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
-			vTaskResume(sdramHandle);
+			vTaskResume( sdramHandle );
 			memset(&data_sd, 0, sizeof(data_sd));
 		}
 		
@@ -708,13 +732,17 @@ portTASK_FUNCTION( fsTask, p )
 	}
 
 	print_dbg("DONE");
-	nav_exit();										// Cerramos sistemas de archivos
+	nav_exit();										// FS Closed
 
+	xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
+	xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	
-	while (1)
-	{
-
-	}
+	vTaskDelete(NULL);
+		
+	//while (1)
+	//{
+//
+	//}
 }
 
 // ethHandle
@@ -764,11 +792,7 @@ portTASK_FUNCTION( sdramTask, p )
 		{
 			if (xQueueReceive( sdramQueue, &sample, (TickType_t) 2 ))
 			{
-				//print_dbg("SDRAM QUEUE Received\r\n");
-				//print_dbg_ulong(sample);
-				//print_dbg("\r\n");
 				sdram[sdram_ptr++] = sample;
-				//print_dbg_ulong(sdram_ptr);
 				xTaskNotifyGive(fsHandle);
 				vTaskSuspend(NULL);
 				
@@ -1307,8 +1331,8 @@ int main (void)
 
 	//uint16_t pass = 25;
 	//xTaskCreate(myTask1, "taks1", 256, (void *)pass, mainLED_TASK_PRIORITY, &myTask1Handle);
-	////xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
-	////xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
+	//xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
+	//xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	xTaskCreate(fsTask,		   "tFS",		 1024,  (void *) 0, mainLED_TASK_PRIORITY, &fsHandle);
 	//xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
 	xTaskCreate(sdramTask,     "tSDRAM",	 256,  (void *) 0, mainLED_TASK_PRIORITY + 1, &sdramHandle);
