@@ -113,7 +113,7 @@
 /*--------------------------FREERTOS-------------------------*/
 /*-----------------------------------------------------------*/
 
-/****DEFINES****/
+/* Local Definitions */
 
 #define mainLED_TASK_PRIORITY     ( tskIDLE_PRIORITY + 1 )
 #define mainCOM_TEST_PRIORITY     ( tskIDLE_PRIORITY + 2 )
@@ -142,8 +142,29 @@
 #define mainMEM_CHECK_SIZE_2      ( ( size_t ) 52 )
 #define mainMEM_CHECK_SIZE_3      ( ( size_t ) 15 )
 
-/****PROTOTYPES****/
+/* Prototypes */
+portTASK_FUNCTION_PROTO( etTask,		p );
+portTASK_FUNCTION_PROTO( sdramTask,		p );
+portTASK_FUNCTION_PROTO( fsTask,		p );
+portTASK_FUNCTION_PROTO( playAudioTask, p );
+portTASK_FUNCTION_PROTO( qtButtonTask,	p );
 
+/* TaskHandles */
+TaskHandle_t myIntTaskHandleTC = NULL;
+TaskHandle_t qtHandle		   = NULL;
+TaskHandle_t audioHandle	   = NULL;
+TaskHandle_t fsHandle		   = NULL;
+TaskHandle_t etHandle		   = NULL;
+TaskHandle_t sdramHandle	   = NULL;
+
+/* QueueHandles */
+QueueHandle_t forwardQueue;
+QueueHandle_t reverseQueue;
+QueueHandle_t repLrQueue;
+QueueHandle_t repUdQueue;
+QueueHandle_t mainLrQueue;
+QueueHandle_t mainUdQueue;
+QueueHandle_t sdramQueue;
 
 /*-----------------------------------------------------------*/
 /*							DEFINES							 */
@@ -271,10 +292,10 @@ static song_info_t song_info[MAX_NUMBER_OF_SONGS];
 //static char song_data[10][5][20]; // Songs, parameters, data
 
 /***************    FAT   *****************/
-static char str_buff[MAX_FILE_PATH_LENGTH];
-static char filenames[4][MAX_FILE_PATH_LENGTH];
+static char			 str_buff[MAX_FILE_PATH_LENGTH];
+static char			 filenames[4][MAX_FILE_PATH_LENGTH];
+static bool			 first_ls;
 static sd_fat_data_t sd;
-static bool first_ls;
 
 /***************  SDRAM  *****************/
 //volatile unsigned long *sdram = SDRAM;
@@ -289,25 +310,6 @@ volatile avr32_pm_t *pm = &AVR32_PM;
 intc_qt_flags_t intc_qt;
 intc_tc_flags_t intc_tc;
 static state_t state = MAIN;
-
-/*************** FREERTOS ***************/
-
-/* TaskHandles */
-TaskHandle_t myIntTaskHandleTC = NULL;
-TaskHandle_t qtHandle = NULL;
-TaskHandle_t audioHandle = NULL;
-TaskHandle_t fsHandle = NULL;
-TaskHandle_t etHandle = NULL;
-TaskHandle_t sdramHandle = NULL;
-
-/* QueueHandles */
-QueueHandle_t forwardQueue;
-QueueHandle_t reverseQueue;
-QueueHandle_t repLrQueue;
-QueueHandle_t repUdQueue;
-QueueHandle_t mainLrQueue;
-QueueHandle_t mainUdQueue;
-QueueHandle_t sdramQueue;
 
 /*-----------------------------------------------------------*/
 /*						  FUNCTION DEFS						 */
@@ -396,9 +398,363 @@ void myIntTaskTC0 (void *p)
 
 }
 
+// fsHandle
+portTASK_FUNCTION( fsTask, p )
+{
+	sdramQueue = xQueueCreate( 1 , sizeof(unsigned long));
+	
+	/****		Get all files data	 ****/
+	nav_filelist_reset();
+	nav_filelist_goto( 0 ); // System volume information
+	uint8_t files = 0;
+	print_dbg("Files: \r\n");
+	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
+	for(size_t i = 0; i < sd.number_of_files; i++)
+	{
+		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
+		nav_file_getname(sd.name_of_files[i], 30);
+		print_dbg(sd.name_of_files[i]);
+		print_dbg("\r\n");
+		files++;
+		vTaskDelay(pdMS_TO_TICKS(100));
+	}
+	if (files == sd.number_of_files)
+	{
+		print_dbg("Number of files coincide.\r\n");
+	}
+	
+	/***	Retrieve Info data	****/
+	char info[20];
+	FS_STRING name;
+	nav_filelist_reset();
+	nav_filterlist_setfilter("txt");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	for (size_t i = 0; i < (sd.number_of_files / 2); i++)
+	{
+		nav_filterlist_next();
+		nav_file_getname(name, 30);
+		print_dbg(name);
+		print_dbg("\r\n");
+		
+		//file_open(FOPEN_MODE_R);
+		reader_txt_open( true );
+		
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].name, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].artist, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].album, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].year, info);
+		reader_txt_get_line(false, info, 20);
+		strcpy(song_info[i].duration, info);
+
+		// Close the file.
+		reader_txt_close();
+		
+		print_dbg(song_info[i].name);
+		print_dbg(song_info[i].artist);
+		print_dbg(song_info[i].album);
+		print_dbg(song_info[i].year);
+		print_dbg(song_info[i].duration);
+		
+		print_dbg("\r\n");
+
+		
+		vTaskDelay(pdMS_TO_TICKS(2000));
+	}
+	
+	/***	Retrieve Audio Info		****/
+
+	/* Filter List ".h" */
+	nav_filelist_reset();
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	//sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
+	sd.number_of_audio_files = (sd.number_of_files / 2);
+	print_dbg_ulong(sd.number_of_audio_files);
+	
+	/* Filter List ".h" */
+	files = 0;
+	nav_filelist_reset();
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	print_dbg("Audio Files: \r\n");
+	for(size_t i = 0; i < sd.number_of_audio_files; i++)
+	{
+		nav_filterlist_next();
+		nav_file_getname(sd.name_of_audio_files[i], 30);
+		print_dbg(sd.name_of_audio_files[i]);
+		print_dbg("\r\n");
+		files++;
+		vTaskDelay(pdMS_TO_TICKS(100));
+	}
+	if (files == sd.number_of_audio_files)
+	{
+		print_dbg("Number of files coincide.\r\n");
+	}
+	else
+	{
+		print_dbg("Number of files does not coincide.\r\n");
+	}
+
+	/* Filter List ".h" */
+	nav_filelist_reset();
+	nav_filterlist_setfilter("h");
+	nav_filterlist_root();
+	nav_filterlist_goto( 0 ); // System volume information
+	for(size_t i = 0; i < sd.number_of_audio_files; i++) // Loop through all
+	{
+		//nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
+		nav_filterlist_next();
+		nav_file_getname(sd.name_of_audio_files[i], 30);
+		print_dbg(sd.name_of_audio_files[i]);
+		print_dbg("\r\n");
+		//vTaskDelay(pdMS_TO_TICKS(2000));
+		
+		sd.audio_data[i].init_ptr = sdram_ptr; /* Audio data */
+		
+		/* Local declarations */
+		sdram_udata_t data_sd;
+		portBASE_TYPE notificationValue = 0;
+		uint8_t word_complete = 0;
+		
+		nav_checkdisk_disable();   // To optimize speed
+		
+		file_open(FOPEN_MODE_R);
+		
+		while (!file_eof())
+		{
+			char current_char = file_getc();
+			// Search for size fist, by looking for '[' and ']'
+			if (current_char == '[')
+			{
+				char size_of_song[9] = "";
+				current_char = file_getc();
+				while( current_char != ']' ){
+					strncat(size_of_song, &current_char, 1);
+					current_char = file_getc();
+				}
+				sd.audio_data[i].size_in_bytes = a2ul(size_of_song); /* Audio data */
+				print_dbg("\r\nSize of song in bytes:");
+				print_dbg_ulong(sd.audio_data[i].size_in_bytes);
+				print_dbg("\r\n");
+			}
+			// Search for the start of the next hex number
+			else if (current_char == '0')
+			{
+				char hex_byte[] = "";
+				strncat(hex_byte, &current_char, 1);
+				
+				for (uint8_t i = 0; i < 3; i++)				// Append next for 3 characters to get the byte in the form of 0x00
+				{
+					current_char = file_getc();
+					strncat(hex_byte, &current_char, 1);
+				}
+				
+				uint8_t data_byte = x2u8(hex_byte);			// Cast hex string to uint8_t
+				data_sd.byte[word_complete] = data_byte;	// SDRAM data type
+				word_complete++;
+				
+				if (word_complete == 4)
+				{
+					while(!(notificationValue > 0))
+					{
+						notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
+					}
+					word_complete = 0;
+					xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
+					vTaskResume( sdramHandle );
+					memset(&data_sd, 0, sizeof(data_sd));
+					//vTaskDelay(pdMS_TO_TICKS(100));
+				}
+			}
+			//vTaskDelay(pdMS_TO_TICKS(100));
+		}
+		
+		// Send the remaining data that didn't fill a word
+		if (word_complete != 0)
+		{
+			while(!(notificationValue > 0))
+			{
+				notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
+			}
+			word_complete = 0;
+			xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
+			vTaskResume( sdramHandle );
+			memset(&data_sd, 0, sizeof(data_sd));
+		}
+		
+		vTaskDelay(pdMS_TO_TICKS(10));
+		sd.audio_data[i].end_ptr = sdram_ptr; /* Audio data */
+		
+		// Close the file.
+		file_close();
+		print_dbg("DONE WITH FILE, SAMPLES IN BYTES: ");
+		print_dbg_ulong((sd.audio_data[i].end_ptr - sd.audio_data[i].init_ptr) * 4);
+		print_dbg("\r\n");
+		
+		nav_checkdisk_enable();
+	}
+
+	print_dbg("DONE");
+	nav_exit();	// FS Closed
+	
+
+	xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
+	xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
+	xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
+	
+	vTaskDelete(sdramHandle);
+	vTaskDelete(NULL);
+	
+}
+
+// sdramHandle
+portTASK_FUNCTION( sdramTask, p )
+{
+	volatile unsigned long *sdram = SDRAM;
+	UBaseType_t sample = 0;
+	
+	// Calculate SDRAM size in words (32 bits).
+	sdram_size = SDRAM_SIZE >> 2;
+	print_dbg("\x0CSDRAM size in bytes: ");
+	print_dbg_ulong(sdram_size*4);
+	print_dbg("\r\n");
+
+	//print_dbg("Suspending task");
+	xTaskNotifyGive(fsHandle);
+	vTaskSuspend(NULL);
+	
+	while(1)
+	{
+		if (sdramQueue != 0)
+		{
+			if (xQueueReceive( sdramQueue, &sample, (TickType_t) 2 ))
+			{
+				sdram[sdram_ptr++] = sample;
+				xTaskNotifyGive(fsHandle);
+				vTaskSuspend(NULL);
+				
+			}
+		}
+		
+	}
+
+	
+}
+
+// qtHandle
+portTASK_FUNCTION( qtButtonTask, p )
+{
+	gpio_set_gpio_pin(LED0_GPIO);
+	gpio_set_gpio_pin(LED1_GPIO);
+	gpio_set_gpio_pin(LED2_GPIO);
+	gpio_set_gpio_pin(LED3_GPIO);
+
+	static uint16_t samplesToMove;
+	static uint8_t lrValue = 0;
+	static uint8_t udValue = 0;
+	forwardQueue = xQueueCreate( 1 , sizeof(uint16_t));
+	reverseQueue = xQueueCreate( 1 , sizeof(uint16_t));
+	repUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
+	repLrQueue = xQueueCreate( 1 , sizeof(uint8_t));
+	mainUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
+	mainLrQueue = xQueueCreate( 1 , sizeof(uint8_t));
+
+	while (1)
+	{
+		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
+		if (INTC_QT_FLAG._left) {
+			INTC_QT_FLAG._left = false;
+			//gpio_tgl_gpio_pin(LED0_GPIO);
+			if (state == REPRODUCIR)
+			{
+				lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
+				xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+			else if(state == MAIN)
+			{
+				lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
+				xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+			else
+			{
+				samplesToMove = 4096;
+				xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+			}
+			
+		}
+		else if (INTC_QT_FLAG._right) {
+			INTC_QT_FLAG._right = false;
+			//gpio_tgl_gpio_pin(LED1_GPIO);
+			if (state == REPRODUCIR)
+			{
+				lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
+				xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+			else if(state == MAIN)
+			{
+				lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
+				xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+			else
+			{
+				samplesToMove = 4096;
+				xQueueSend( forwardQueue, &samplesToMove, (TickType_t) 0 );
+			}
+		}
+		else if (INTC_QT_FLAG._up) {
+			INTC_QT_FLAG._up = false;
+			//gpio_tgl_gpio_pin(LED2_GPIO);
+			if (state == REPRODUCIR)
+			{
+				udValue = (udValue > 0) ? udValue - 1 : udValue;
+				xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+			else if(state == MAIN)
+			{
+				udValue = (udValue > 0) ? udValue - 1 : udValue;
+				xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+		}
+		else if (INTC_QT_FLAG._down) {
+			INTC_QT_FLAG._down = false;
+			//gpio_tgl_gpio_pin(LED3_GPIO);
+			if (state == REPRODUCIR)
+			{
+				udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
+				xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+			else if(state == MAIN)
+			{
+				udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
+				xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+				vTaskResume(etHandle);
+			}
+		}
+		else if (INTC_QT_FLAG._enter) {
+			INTC_QT_FLAG._enter = false;
+			xTaskNotifyGive(audioHandle);
+
+		}
+
+	}
+}
+
 // audioHandle
-portTASK_FUNCTION_PROTO(playAudioTask, p );
-portTASK_FUNCTION(playAudioTask, p )
+portTASK_FUNCTION( playAudioTask, p )
 {
 	volatile unsigned long *sdram = SDRAM;
 	print_dbg("Running audio...\r\n");
@@ -409,6 +765,8 @@ portTASK_FUNCTION(playAudioTask, p )
 	static bool notify	  = false;
 	static uint16_t samplesRx;
 	static sdram_udata_t data;
+	
+	tpa6130_set_volume(0x45); // 2F
 
 	while(true)
 	{
@@ -492,343 +850,7 @@ portTASK_FUNCTION(playAudioTask, p )
 	}
 }
 
-// qtHandle
-portTASK_FUNCTION_PROTO( qtButtonTask, p );
-portTASK_FUNCTION( qtButtonTask, p )
-{
-	gpio_set_gpio_pin(LED0_GPIO);
-	gpio_set_gpio_pin(LED1_GPIO);
-	gpio_set_gpio_pin(LED2_GPIO);
-	gpio_set_gpio_pin(LED3_GPIO);
-
-	static uint16_t samplesToMove;
-	static uint8_t lrValue = 0;
-	static uint8_t udValue = 0;
-	forwardQueue = xQueueCreate( 1 , sizeof(uint16_t));
-	reverseQueue = xQueueCreate( 1 , sizeof(uint16_t));
-	repUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
-	repLrQueue = xQueueCreate( 1 , sizeof(uint8_t));
-	mainUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
-	mainLrQueue = xQueueCreate( 1 , sizeof(uint8_t));
-
-	while (1)
-	{
-		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
-		if (INTC_QT_FLAG._left) {
-			INTC_QT_FLAG._left = false;
-			//gpio_tgl_gpio_pin(LED0_GPIO);
-			if (state == REPRODUCIR)
-			{		
-				lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-				xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-				xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else
-			{
-				samplesToMove = 4096;
-				xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
-			}
-			
-		}
-		else if (INTC_QT_FLAG._right) {
-			INTC_QT_FLAG._right = false;
-			//gpio_tgl_gpio_pin(LED1_GPIO);
-			if (state == REPRODUCIR)
-			{
-				lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
-				xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
-				xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else
-			{
-				samplesToMove = 4096;
-				xQueueSend( forwardQueue, &samplesToMove, (TickType_t) 0 );
-			}
-		}
-		else if (INTC_QT_FLAG._up) {
-			INTC_QT_FLAG._up = false;
-			//gpio_tgl_gpio_pin(LED2_GPIO);
-			if (state == REPRODUCIR)
-			{
-				udValue = (udValue > 0) ? udValue - 1 : udValue;
-				xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				udValue = (udValue > 0) ? udValue - 1 : udValue;
-				xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-		}
-		else if (INTC_QT_FLAG._down) {
-			INTC_QT_FLAG._down = false;
-			//gpio_tgl_gpio_pin(LED3_GPIO);
-			if (state == REPRODUCIR)
-			{
-				udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-				xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-				xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-		}
-		else if (INTC_QT_FLAG._enter) {
-			INTC_QT_FLAG._enter = false;
-			xTaskNotifyGive(audioHandle);
-
-		}
-
-	}
-}
-
-// fsHandle
-portTASK_FUNCTION_PROTO( fsTask, p );
-portTASK_FUNCTION( fsTask, p )
-{
-	sdramQueue = xQueueCreate( 1 , sizeof(unsigned long));
-	
-	/****		Get all files data	 ****/
-	nav_filelist_reset();
-	nav_filelist_goto( 0 );
-	uint8_t files = 0;
-	print_dbg("Files: \r\n");
-	//while (nav_filelist_set(sd.drive_number, FS_FIND_NEXT))
-	for(size_t i = 0; i < sd.number_of_files; i++)
-	{
-		nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
-		nav_file_getname(sd.name_of_files[i], 30);
-		print_dbg(sd.name_of_files[i]);
-		print_dbg("\r\n");
-		files++;
-		vTaskDelay(pdMS_TO_TICKS(100));
-	}
-	if (files == sd.number_of_files)
-	{
-		print_dbg("Number of files coincide.\r\n");
-	}
-	
-	/***	Retrieve Info data	****/
-	nav_filelist_reset();
-	nav_filterlist_setfilter("txt");
-	nav_filterlist_root();
-	nav_filterlist_goto( 0 ); // System volume information
-	//song_info_t info;
-	char info[20];
-	FS_STRING name;
-	for (size_t i = 0; i < (sd.number_of_files / 2); i++)
-	{
-		nav_filterlist_next();
-		nav_file_getname(name, 30);
-		print_dbg(name);
-		print_dbg("\r\n");
-		
-		//file_open(FOPEN_MODE_R);
-		reader_txt_open( true );
-		
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].name, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].artist, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].album, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].year, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].duration, info);
-		//print_dbg(info[4]);
-		
-		//for(size_t j = 0; j < 5; j++)
-		//{
-			//reader_txt_get_line(false, info[j], 20);
-			//print_dbg(info[j]);
-		//}
-		// Close the file.
-		reader_txt_close();
-		
-		print_dbg(song_info[i].name);
-		print_dbg(song_info[i].artist);
-		print_dbg(song_info[i].album);
-		print_dbg(song_info[i].year);
-		print_dbg(song_info[i].duration);
-		
-		print_dbg("\r\n");
-		
-		//print_dbg(info);
-		//print_dbg(info.name);
-		//print_dbg(info.artist);
-		//print_dbg(info.album);
-		//print_dbg(info.year);
-		//print_dbg(info.dur);
-		
-		vTaskDelay(pdMS_TO_TICKS(2000));
-	}
-	
-	/***	Retrieve Audio info	****/
-
-	nav_filelist_reset();
-	nav_filterlist_setfilter("h");
-	nav_filterlist_root();
-	nav_filterlist_goto( 0 ); // System volume information
-	//sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
-	sd.number_of_audio_files = (sd.number_of_files / 2);
-	print_dbg_ulong(sd.number_of_audio_files);
-	
-	nav_filelist_reset();
-	nav_filterlist_setfilter("h");
-	nav_filterlist_root();
-	nav_filterlist_goto( 0 ); // System volume information
-	print_dbg("Audio Files: \r\n");
-	files = 0;
-	for(size_t i = 0; i < sd.number_of_audio_files; i++)
-	{
-		nav_filterlist_next();
-		nav_file_getname(sd.name_of_audio_files[i], 30);
-		print_dbg(sd.name_of_audio_files[i]);
-		print_dbg("\r\n");
-		files++;
-		vTaskDelay(pdMS_TO_TICKS(100));
-	}
-	if (files == sd.number_of_audio_files)
-	{
-		print_dbg("Number of files coincide.\r\n");
-	}
-	else
-	{
-		print_dbg("Number of files does not coincide.\r\n");
-	}
-
-	nav_filelist_reset();
-	nav_filterlist_setfilter("h");
-	nav_filterlist_root();
-	nav_filterlist_goto( 0 ); // System volume information
-	
-	for(size_t i = 0; i < sd.number_of_audio_files; i++) // Loop through all 
-	{
-		//nav_filelist_set(sd.drive_number, FS_FIND_NEXT);
-		nav_filterlist_next();
-		nav_file_getname(sd.name_of_audio_files[i], 30);
-		print_dbg(sd.name_of_audio_files[i]);
-		print_dbg("\r\n");
-		//vTaskDelay(pdMS_TO_TICKS(2000));
-		
-		sd.audio_data[i].init_ptr = sdram_ptr; /* Audio data */
-		
-		/* Local declarations */
-		sdram_udata_t data_sd;
-		portBASE_TYPE notificationValue = 0;
-		uint8_t word_complete = 0;
-		
-		nav_checkdisk_disable();   // To optimize speed
-		
-		file_open(FOPEN_MODE_R);
-		
-		while (!file_eof())	
-		{
-			char current_char = file_getc();
-			// Search for size fist, by looking for '[' and ']'
-			if (current_char == '[')
-			{
-				char size_of_song[9] = "";
-				current_char = file_getc();
-				while( current_char != ']' ){
-					strncat(size_of_song, &current_char, 1);
-					current_char = file_getc();
-				}
-				sd.audio_data[i].size_in_bytes = a2ul(size_of_song); /* Audio data */
-				print_dbg("\r\nSize of song in bytes:");
-				print_dbg_ulong(sd.audio_data[i].size_in_bytes);
-				print_dbg("\r\n");
-			}
-			// Search for the start of the next hex number
-			else if (current_char == '0')
-			{
-				char hex_byte[] = "";
-				strncat(hex_byte, &current_char, 1);
-				
-				for (uint8_t i = 0; i < 3; i++)				// Append next for 3 characters to get the byt in the form of 0x00
-				{
-					current_char = file_getc();
-					strncat(hex_byte, &current_char, 1);
-				}
-				
-				uint8_t data_byte = x2u8(hex_byte);
-				data_sd.byte[word_complete] = data_byte;	// SDRAM data type
-				word_complete++;
-			
-				if (word_complete == 4)
-				{
-					while(!(notificationValue > 0))
-					{
-						notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
-					}
-					word_complete = 0;
-					xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
-					vTaskResume( sdramHandle );
-					memset(&data_sd, 0, sizeof(data_sd));
-					//vTaskDelay(pdMS_TO_TICKS(100));
-				}
-			}
-			//vTaskDelay(pdMS_TO_TICKS(100));
-		}
-		
-		// Send the remaining data that didn't fill a word
-		if (word_complete != 0)
-		{
-			while(!(notificationValue > 0))
-			{
-				notificationValue = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
-			}
-			word_complete = 0;
-			xQueueSend( sdramQueue , &data_sd.word, (TickType_t) 1);
-			vTaskResume( sdramHandle );
-			memset(&data_sd, 0, sizeof(data_sd));
-		}
-		
-		vTaskDelay(pdMS_TO_TICKS(10));
-		sd.audio_data[i].end_ptr = sdram_ptr; /* Audio data */
-		
-		// Close the file.
-		file_close();
-		print_dbg("DONE WITH FILE, SAMPLES IN BYTES: ");
-		print_dbg_ulong((sd.audio_data[i].end_ptr - sd.audio_data[i].init_ptr) * 4);
-		print_dbg("\r\n");
-		//cpu_delay_ms(5000, PBA_HZ);
-		nav_checkdisk_enable();   // To optimize speed
-	}
-
-	print_dbg("DONE");
-	nav_exit();										// FS Closed
-
-	xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
-	xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
-	
-	vTaskDelete(NULL);
-		
-	//while (1)
-	//{
-//
-	//}
-}
-
 // ethHandle
-portTASK_FUNCTION_PROTO( etTask, p );
 portTASK_FUNCTION( etTask, p )
 {
 	while (1)
@@ -849,41 +871,6 @@ portTASK_FUNCTION( etTask, p )
 		}
 		vTaskSuspend(NULL);
 	}
-}
-
-// sdramHandle
-portTASK_FUNCTION_PROTO( sdramTask, p );
-portTASK_FUNCTION( sdramTask, p )
-{
-	volatile unsigned long *sdram = SDRAM;
-	UBaseType_t sample = 0;
-	
-	// Calculate SDRAM size in words (32 bits).
-	sdram_size = SDRAM_SIZE >> 2;
-	print_dbg("\x0CSDRAM size in bytes: ");
-	print_dbg_ulong(sdram_size*4);
-	print_dbg("\r\n");
-
-	//print_dbg("Suspending task");
-	xTaskNotifyGive(fsHandle);
-	vTaskSuspend(NULL);
-	
-	while(1)
-	{
-		if (sdramQueue != 0)
-		{
-			if (xQueueReceive( sdramQueue, &sample, (TickType_t) 2 ))
-			{
-				sdram[sdram_ptr++] = sample;
-				xTaskNotifyGive(fsHandle);
-				vTaskSuspend(NULL);
-				
-			}
-		}
-		
-	}
-
-	
 }
 
 // ISR
@@ -1043,7 +1030,7 @@ static void init_twi_tpa(void)
 						| AUDIO_DAC_RELOAD_CB,
 						PBA_HZ); /**/
 
-	tpa6130_set_volume(0x35); // 2F
+	tpa6130_set_volume(0x00); // 2F
 	tpa6130_get_volume();
 
 }
@@ -1091,7 +1078,7 @@ static void init_tft_bl(void)
 	pwm_channel_init(6, &pwm_channel6);
 	pwm_start_channels(AVR32_PWM_ENA_CHID6_MASK);
 
-	et024006_DrawFilledRect(0, 0, ET024006_WIDTH, ET024006_HEIGHT, WHITE);
+	et024006_DrawFilledRect(0, 0, ET024006_WIDTH, ET024006_HEIGHT, BLACK);
 
 	while(pwm_channel6.cdty < pwm_channel6.cprd)
 	{
@@ -1232,8 +1219,8 @@ static void menu_gui(bool init)
 	{
 		if (xQueueReceive( mainLrQueue, &keys.lr, (TickType_t) 2 ))
 		{
-			print_dbg("Received for MAIN LR");
-			print_dbg_ulong(keys.lr);
+			//print_dbg("Received for MAIN LR");
+			//print_dbg_ulong(keys.lr);
 		}
 	}
 	
@@ -1241,8 +1228,8 @@ static void menu_gui(bool init)
 	{
 		if (xQueueReceive( mainUdQueue, &keys.ud, (TickType_t) 2 ))
 		{
-			print_dbg("Received for MAIN UD");
-			print_dbg_ulong(keys.ud);
+			//print_dbg("Received for MAIN UD");
+			//print_dbg_ulong(keys.ud);
 		}
 	}
 	
@@ -1396,7 +1383,7 @@ int main (void)
 
 	sd_mmc_resources_init();
 	check_sd_card();
-	et024006_PrintString("****** INIT SD/MMC ******",(const unsigned char*)&FONT8x8,10,10,BLUE,-1);
+	//et024006_PrintString("****** INIT SD/MMC ******",(const unsigned char*)&FONT8x8,10,10,BLUE,-1);
 
 	init_qt_interrupt();
 
