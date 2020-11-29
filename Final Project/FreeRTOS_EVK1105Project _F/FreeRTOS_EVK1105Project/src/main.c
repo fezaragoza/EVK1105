@@ -81,7 +81,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fastmath.h>
+#include <math.h>
 
 /* Environment header files. */
 #include "power_clocks_lib.h"
@@ -176,6 +176,7 @@ QueueHandle_t sdramQueue;
 #define TPA6130_TWI_MASTER_SPEED  100000
 #define MAX_NUMBER_OF_SONGS		  10
 #define SIZE_OF_STRING			  20
+#define AUDIO					  0
 
 /*************  SDRAM  **************/
 #define LED_SDRAM_WRITE     LED0
@@ -245,6 +246,13 @@ typedef struct
 	};
 } sdram_udata_t;
 
+/*************** ET-LCD ***************/
+typedef struct 
+{
+	uint8_t pages_available;
+	uint8_t actual_page;
+} et_data_t;
+
 /*************** MAIN ***************/
 typedef enum
 {
@@ -252,13 +260,13 @@ typedef enum
 	REPRODUCIR,
 	LYRICS,
 	EQ
-}state_t;
+} state_t;
 
 typedef struct
 {
 	uint8_t lr;
 	uint8_t ud;
-}menu_keys_t;
+} menu_keys_t;
 
 typedef float float16_t;
 typedef double float32_t;
@@ -277,7 +285,7 @@ void adc_reload_callback(void);
 static void init_sdram(void);
 static void init_fs(void);
 static void rep_menu(bool);
-static void menu_gui(bool);
+static void menu_gui(bool, bool);
 static unsigned long a2ul(const char*);
 static uint8_t x2u8(const char*);
 
@@ -301,6 +309,9 @@ static sd_fat_data_t sd;
 //volatile unsigned long *sdram = SDRAM;
 unsigned long sdram_ptr  = 0;	// Next location - word
 unsigned long sdram_size = 0;	// Number of words
+
+/*************** ET-LCD ***************/
+static et_data_t et_data;
 
 /***************   MAIN   ***************/
 // Module's memory address
@@ -463,7 +474,7 @@ portTASK_FUNCTION( fsTask, p )
 		print_dbg("\r\n");
 
 		
-		vTaskDelay(pdMS_TO_TICKS(2000));
+		//vTaskDelay(pdMS_TO_TICKS(2000));
 	}
 	
 	/***	Retrieve Audio Info		****/
@@ -476,6 +487,12 @@ portTASK_FUNCTION( fsTask, p )
 	//sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
 	sd.number_of_audio_files = (sd.number_of_files / 2);
 	print_dbg_ulong(sd.number_of_audio_files);
+	et_data.pages_available = sd.number_of_audio_files / 4;
+	if (sd.number_of_files % 4 != 0)
+	{
+		et_data.pages_available++;
+	}
+	//print_dbg_ulong(et_data.pages_available);
 	
 	/* Filter List ".h" */
 	files = 0;
@@ -502,6 +519,7 @@ portTASK_FUNCTION( fsTask, p )
 		print_dbg("Number of files does not coincide.\r\n");
 	}
 
+#if AUDIO
 	/* Filter List ".h" */
 	nav_filelist_reset();
 	nav_filterlist_setfilter("h");
@@ -600,6 +618,7 @@ portTASK_FUNCTION( fsTask, p )
 		
 		nav_checkdisk_enable();
 	}
+#endif
 
 	print_dbg("DONE");
 	nav_exit();	// FS Closed
@@ -669,86 +688,210 @@ portTASK_FUNCTION( qtButtonTask, p )
 	while (1)
 	{
 		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
-		if (INTC_QT_FLAG._left) {
-			INTC_QT_FLAG._left = false;
-			//gpio_tgl_gpio_pin(LED0_GPIO);
-			if (state == REPRODUCIR)
-			{
-				lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-				xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-				xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else
-			{
-				samplesToMove = 4096;
-				xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
-			}
-			
+		
+		switch(state)
+		{
+			default:
+			case MAIN:
+				if (INTC_QT_FLAG._left) {
+					INTC_QT_FLAG._left = false;
+					lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
+					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._right) {
+					INTC_QT_FLAG._right = false;
+					lrValue = (lrValue + 1 < 2) ? lrValue + 1 : lrValue;
+					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._up) {
+					INTC_QT_FLAG._up = false;
+					//udValue = (udValue > 0) ? udValue - 1 : udValue;
+					if (udValue == 0)
+					{
+						if (et_data.actual_page > 0)
+						{
+							et_data.actual_page--;
+							xTaskNotifyGive( etHandle );
+							udValue = 1;
+						}
+					}
+					else
+					{
+						udValue--;
+					}
+					xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._down) {
+					INTC_QT_FLAG._down = false;
+					//udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
+					if (udValue == 1)
+					{
+						if (et_data.actual_page < et_data.pages_available - 1)
+						{
+							et_data.actual_page++;
+							xTaskNotifyGive( etHandle );
+							udValue = 0;
+						}
+					}
+					else
+					{
+						udValue++;
+					}
+					xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._enter) {
+					INTC_QT_FLAG._enter = false;
+					xTaskNotifyGive(audioHandle);
+				}
+				
+			case REPRODUCIR:
+				if (INTC_QT_FLAG._left) {
+					INTC_QT_FLAG._left = false;
+					lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
+					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._right) {
+					INTC_QT_FLAG._right = false;
+					lrValue = (lrValue + 1 < 2) ? lrValue + 1 : lrValue;
+					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._up) {
+					INTC_QT_FLAG._up = false;
+					udValue = (udValue > 0) ? udValue - 1 : udValue;
+					xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._down) {
+					INTC_QT_FLAG._down = false;
+					udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
+					xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._enter) {
+					INTC_QT_FLAG._enter = false;
+					//xTaskNotifyGive(audioHandle);
+				}
+				break;
+				
+				
+			case LYRICS:
+				break;
+			case EQ:
+				break;
 		}
-		else if (INTC_QT_FLAG._right) {
-			INTC_QT_FLAG._right = false;
-			//gpio_tgl_gpio_pin(LED1_GPIO);
-			if (state == REPRODUCIR)
-			{
-				lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
-				xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
-				xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else
-			{
-				samplesToMove = 4096;
-				xQueueSend( forwardQueue, &samplesToMove, (TickType_t) 0 );
-			}
-		}
-		else if (INTC_QT_FLAG._up) {
-			INTC_QT_FLAG._up = false;
-			//gpio_tgl_gpio_pin(LED2_GPIO);
-			if (state == REPRODUCIR)
-			{
-				udValue = (udValue > 0) ? udValue - 1 : udValue;
-				xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				udValue = (udValue > 0) ? udValue - 1 : udValue;
-				xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-		}
-		else if (INTC_QT_FLAG._down) {
-			INTC_QT_FLAG._down = false;
-			//gpio_tgl_gpio_pin(LED3_GPIO);
-			if (state == REPRODUCIR)
-			{
-				udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-				xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-			else if(state == MAIN)
-			{
-				udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-				xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
-				vTaskResume(etHandle);
-			}
-		}
-		else if (INTC_QT_FLAG._enter) {
-			INTC_QT_FLAG._enter = false;
-			xTaskNotifyGive(audioHandle);
-
-		}
+		
+		
+		//if (INTC_QT_FLAG._left) {
+			//INTC_QT_FLAG._left = false;
+			////gpio_tgl_gpio_pin(LED0_GPIO);
+			//if (state == REPRODUCIR)
+			//{
+				//lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
+				//xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+			//else if(state == MAIN)
+			//{
+				//lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
+				//xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+			//else
+			//{
+				//samplesToMove = 4096;
+				//xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+			//}
+			//
+		//}
+		//else if (INTC_QT_FLAG._right) {
+			//INTC_QT_FLAG._right = false;
+			////gpio_tgl_gpio_pin(LED1_GPIO);
+			//if (state == REPRODUCIR)
+			//{
+				//lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
+				//xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+			//else if(state == MAIN)
+			//{
+				//lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
+				//xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+			//else
+			//{
+				//samplesToMove = 4096;
+				//xQueueSend( forwardQueue, &samplesToMove, (TickType_t) 0 );
+			//}
+		//}
+		//else if (INTC_QT_FLAG._up) {
+			//INTC_QT_FLAG._up = false;
+			////gpio_tgl_gpio_pin(LED2_GPIO);
+			//if (state == REPRODUCIR)
+			//{
+				//udValue = (udValue > 0) ? udValue - 1 : udValue;
+				//xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//
+			//}
+			//else if(state == MAIN)
+			//{
+				////udValue = (udValue > 0) ? udValue - 1 : udValue;
+				//if (udValue == 0)
+				//{
+					//if (et_data.actual_page > 0)
+					//{
+						//et_data.actual_page--;
+						//xTaskNotifyGive( etHandle );
+					//}
+				//}
+				//else
+				//{
+					//udValue--;
+				//}
+				//xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+		//}
+		//else if (INTC_QT_FLAG._down) {
+			//INTC_QT_FLAG._down = false;
+			////gpio_tgl_gpio_pin(LED3_GPIO);
+			//if (state == REPRODUCIR)
+			//{
+				//udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
+				//xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+			//else if(state == MAIN)
+			//{
+				////udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
+				//if (udValue == 1)
+				//{
+					//if (et_data.actual_page < et_data.pages_available)
+					//{
+						//et_data.actual_page++;
+						//xTaskNotifyGive( etHandle );
+					//}
+				//}
+				//else
+				//{
+					//udValue++;
+				//}
+				//xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+				//vTaskResume(etHandle);
+			//}
+		//}
+		//else if (INTC_QT_FLAG._enter) {
+			//INTC_QT_FLAG._enter = false;
+			//xTaskNotifyGive(audioHandle);
+//
+		//}
 
 	}
 }
@@ -853,13 +996,22 @@ portTASK_FUNCTION( playAudioTask, p )
 // ethHandle
 portTASK_FUNCTION( etTask, p )
 {
+	static portBASE_TYPE notif_chaneg_page = 0;
+	static bool change_page = false;
+	
 	while (1)
 	{
 		switch(state)
 		{
 			default:
 			case MAIN:
-				menu_gui(false);
+				notif_chaneg_page = ulTaskNotifyTake( pdTRUE, (TickType_t) 1 );
+				if (notif_chaneg_page > 0)
+				{
+					change_page = true;
+				}
+				menu_gui(false, change_page);
+				change_page = false;
 				break;
 			case REPRODUCIR:
 				rep_menu(false);
@@ -1210,17 +1362,17 @@ static void rep_menu(bool init)
 
 }
 
-static void menu_gui(bool init)
+static void menu_gui(bool init, bool change_page)
 {
-	static bool first_time = true;
+	static bool first_time	  = true;
+	static bool change_dected = false;
 	static menu_keys_t keys;
 	
 	if (mainLrQueue != 0)
 	{
 		if (xQueueReceive( mainLrQueue, &keys.lr, (TickType_t) 2 ))
 		{
-			//print_dbg("Received for MAIN LR");
-			//print_dbg_ulong(keys.lr);
+			change_dected = true;
 		}
 	}
 	
@@ -1228,14 +1380,12 @@ static void menu_gui(bool init)
 	{
 		if (xQueueReceive( mainUdQueue, &keys.ud, (TickType_t) 2 ))
 		{
-			//print_dbg("Received for MAIN UD");
-			//print_dbg_ulong(keys.ud);
+			change_dected = true;
 		}
 	}
 	
-	if (first_time || init)
+	if (first_time || init || change_page)
 	{
-		first_time = false;
 		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
 		et024006_DrawVertLine(160,0,120,WHITE);
 		et024006_DrawVertLine(160,120,120,WHITE);
@@ -1243,84 +1393,109 @@ static void menu_gui(bool init)
 		et024006_DrawHorizLine(0,120,160,WHITE);
 		et024006_DrawHorizLine(160,120,160,WHITE);
 	
-	
-		et024006_PutPixmap(letdown, 70, 0, 0, 30, 140, 70, 70);
-		et024006_PrintString("dur: 4:59", (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
-	
-		et024006_PutPixmap(wearethechampions, 70, 0, 0, 30, 20, 70, 70);
-		et024006_PrintString("dur: 3:04", (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
-	
-		et024006_PutPixmap(fercaspian, 70, 0, 0, 190, 20, 70, 70);
-		et024006_PrintString("dur: 3:04", (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
-	
-		et024006_PutPixmap(takeonme, 70, 0, 0, 190, 140, 70, 70);
-		et024006_PrintString("dur: 4:36", (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
+		/* Place four images */
+		// FIXME: Read images via SD card, and make this loopable
+		uint8_t index_page = et_data.actual_page * 4;
+		if (et_data.actual_page == 0)
+		{
+			et024006_PutPixmap(letdown, 70, 0, 0, 30, 140, 70, 70);
+			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
+			
+			et024006_PutPixmap(wearethechampions, 70, 0, 0, 30, 20, 70, 70);
+			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
+			
+			et024006_PutPixmap(fercaspian, 70, 0, 0, 190, 20, 70, 70);
+			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
+			
+			et024006_PutPixmap(takeonme, 70, 0, 0, 190, 140, 70, 70);
+			et024006_PrintString(song_info[index_page + 3].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
+		}
+		
+		else if (et_data.actual_page == 1)
+		{
+			et024006_PutPixmap(wearethechampions, 70, 0, 0, 30, 140, 70, 70);
+			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
+			
+			et024006_PutPixmap(letdown, 70, 0, 0, 30, 20, 70, 70);
+			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
+			
+			et024006_PutPixmap(takeonme, 70, 0, 0, 190, 20, 70, 70);
+			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
+			
+			et024006_PutPixmap(fercaspian, 70, 0, 0, 190, 140, 70, 70);
+			et024006_PrintString(song_info[0].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
+			
+		}
+		
 		
 	}
-	
-	if (keys.ud == 0 && keys.lr == 0){
-		et024006_DrawVertLine(160,0,120,WHITE);
-		et024006_DrawVertLine(160,120,120,WHITE);
-		et024006_DrawHorizLine(0,120,160,WHITE);
-		et024006_DrawHorizLine(160,120,160,WHITE);
-		et024006_DrawVertLine(160,0,120,GREEN);
-		et024006_DrawHorizLine(0,120,160,GREEN);
-		//if(center==1){
+	if (first_time || change_dected || init)
+	{
+		first_time = false;
+		if (keys.ud == 0 && keys.lr == 0){
+			et024006_DrawVertLine(160,0,120,WHITE);
+			et024006_DrawVertLine(160,120,120,WHITE);
+			et024006_DrawHorizLine(0,120,160,WHITE);
+			et024006_DrawHorizLine(160,120,160,WHITE);
+			et024006_DrawVertLine(160,0,120,GREEN);
+			et024006_DrawHorizLine(0,120,160,GREEN);
+			//if(center==1){
 			//et024006_DrawFilledRect(30, 20, 100, 90, BLACK);
 			//et024006_PrintString("We are the champions", (const unsigned char*) &FONT8x8, 30, 20, WHITE, -1);
 			//et024006_PrintString("Queen", (const unsigned char*) &FONT8x8, 30, 40, WHITE, -1);
 			//et024006_PrintString("News of the World", (const unsigned char*) &FONT8x8, 30, 60, WHITE, -1);
 			//et024006_PrintString("1977", (const unsigned char*) &FONT8x8, 30, 80, WHITE, -1);
 			//et024006_PrintString("dur: 3:04", (const unsigned char*) &FONT8x8, 30, 100, BLACK, -1);
-		//}
-	}
-	else if (keys.ud == 1 && keys.lr == 0){
-		et024006_DrawVertLine(160,0,120,WHITE);
-		et024006_DrawVertLine(160,120,120,WHITE);
-		et024006_DrawHorizLine(0,120,160,WHITE);
-		et024006_DrawHorizLine(160,120,160,WHITE);
-		et024006_DrawVertLine(160,120,120,GREEN);
-		et024006_DrawHorizLine(0,120,160,GREEN);
-		//if(center==1){
+			//}
+		}
+		else if (keys.ud == 1 && keys.lr == 0){
+			et024006_DrawVertLine(160,0,120,WHITE);
+			et024006_DrawVertLine(160,120,120,WHITE);
+			et024006_DrawHorizLine(0,120,160,WHITE);
+			et024006_DrawHorizLine(160,120,160,WHITE);
+			et024006_DrawVertLine(160,120,120,GREEN);
+			et024006_DrawHorizLine(0,120,160,GREEN);
+			//if(center==1){
 			//et024006_DrawFilledRect(30, 140, 100, 210, BLACK);
 			//et024006_PrintString("Let Down", (const unsigned char*) &FONT8x8, 30, 140, WHITE, -1);
 			//et024006_PrintString("Radiohead", (const unsigned char*) &FONT8x8, 30, 160, WHITE, -1);
 			//et024006_PrintString("Ok Computer", (const unsigned char*) &FONT8x8, 30, 180, WHITE, -1);
 			//et024006_PrintString("1997", (const unsigned char*) &FONT8x8, 30, 200, WHITE, -1);
 			//et024006_PrintString("dur: 4:59", (const unsigned char*) &FONT8x8, 30, 220, BLACK, -1);
-		//}
-	}
-	else if (keys.ud == 0 && keys.lr == 1){
-		et024006_DrawVertLine(160,0,120,WHITE);
-		et024006_DrawVertLine(160,120,120,WHITE);
-		et024006_DrawHorizLine(0,120,160,WHITE);
-		et024006_DrawHorizLine(160,120,160,WHITE);
-		et024006_DrawVertLine(160,0,120,GREEN);
-		et024006_DrawHorizLine(160,120,160,GREEN);
-		//if(center==1){
+			//}
+		}
+		else if (keys.ud == 0 && keys.lr == 1){
+			et024006_DrawVertLine(160,0,120,WHITE);
+			et024006_DrawVertLine(160,120,120,WHITE);
+			et024006_DrawHorizLine(0,120,160,WHITE);
+			et024006_DrawHorizLine(160,120,160,WHITE);
+			et024006_DrawVertLine(160,0,120,GREEN);
+			et024006_DrawHorizLine(160,120,160,GREEN);
+			//if(center==1){
 			//et024006_DrawFilledRect(190, 20, 260, 90, BLACK);
 			//et024006_PrintString("Let?s go outside", (const unsigned char*) &FONT8x8,190, 20, WHITE, -1);
 			//et024006_PrintString("Far caspian", (const unsigned char*) &FONT8x8, 190, 40, WHITE, -1);
 			//et024006_PrintString("between days", (const unsigned char*) &FONT8x8, 190, 60, WHITE, -1);
 			//et024006_PrintString("2018", (const unsigned char*) &FONT8x8, 190, 80, WHITE, -1);
 			//et024006_PrintString("dur: 4:36", (const unsigned char*) &FONT8x8, 190, 100, BLACK, -1);
-		//}
-	}
-	else if (keys.ud == 1 && keys.lr == 1){
-		et024006_DrawVertLine(160,0,120,WHITE);
-		et024006_DrawVertLine(160,120,120,WHITE);
-		et024006_DrawHorizLine(0,120,160,WHITE);
-		et024006_DrawHorizLine(160,120,160,WHITE);
-		et024006_DrawVertLine(160,120,120,GREEN);
-		et024006_DrawHorizLine(160,120,160,GREEN);
-		//if(center==1){
+			//}
+		}
+		else if (keys.ud == 1 && keys.lr == 1){
+			et024006_DrawVertLine(160,0,120,WHITE);
+			et024006_DrawVertLine(160,120,120,WHITE);
+			et024006_DrawHorizLine(0,120,160,WHITE);
+			et024006_DrawHorizLine(160,120,160,WHITE);
+			et024006_DrawVertLine(160,120,120,GREEN);
+			et024006_DrawHorizLine(160,120,160,GREEN);
+			//if(center==1){
 			//et024006_DrawFilledRect(190, 140, 260, 210, BLACK);
 			//et024006_PrintString("Take on Me", (const unsigned char*) &FONT8x8,190, 140, WHITE, -1);
 			//et024006_PrintString("a-Ha", (const unsigned char*) &FONT8x8, 190, 160, WHITE, -1);
 			//et024006_PrintString("Hunting High and Low", (const unsigned char*) &FONT8x8, 190, 180, WHITE, -1);
 			//et024006_PrintString("1985", (const unsigned char*) &FONT8x8, 190, 200, WHITE, -1);
 			//et024006_PrintString("dur: 4:36", (const unsigned char*) &FONT8x8, 190, 220, BLACK, -1);
-		//}
+			//}
+		}
 	}
 	
 	
