@@ -148,6 +148,7 @@ portTASK_FUNCTION_PROTO( sdramTask,		p );
 portTASK_FUNCTION_PROTO( fsTask,		p );
 portTASK_FUNCTION_PROTO( playAudioTask, p );
 portTASK_FUNCTION_PROTO( qtButtonTask,	p );
+portTASK_FUNCTION_PROTO( tftTask,		p );
 
 /* TaskHandles */
 TaskHandle_t myIntTaskHandleTC = NULL;
@@ -156,19 +157,18 @@ TaskHandle_t audioHandle	   = NULL;
 TaskHandle_t fsHandle		   = NULL;
 TaskHandle_t etHandle		   = NULL;
 TaskHandle_t sdramHandle	   = NULL;
+TaskHandle_t tftHandle		   = NULL;
 
 /* QueueHandles */
 QueueHandle_t forwardQueue;
 QueueHandle_t reverseQueue;
 QueueHandle_t lrQueue;
 QueueHandle_t udQueue;
-//QueueHandle_t repLrQueue;
-//QueueHandle_t repUdQueue;
-//QueueHandle_t mainLrQueue;
-//QueueHandle_t mainUdQueue;
 QueueHandle_t initBoolQueue;
 QueueHandle_t volumeUdQueue;
 QueueHandle_t sdramQueue;
+QueueHandle_t tftQueue;
+QueueHandle_t etToggleQueue;
 
 /*-----------------------------------------------------------*/
 /*							DEFINES							 */
@@ -192,6 +192,12 @@ QueueHandle_t sdramQueue;
 #define MASK_B1(x) (uint8_t)( ((0xFF << 16) & x) >> 16 )
 #define MASK_B2(x) (uint8_t)( ((0xFF << 8)  & x) >> 8 )
 #define MASK_B3(x) (uint8_t)( ((0xFF << 0)  & x) >> 0 )
+
+/**********  TFT - TOUCH  ***********/
+#define TR 63
+#define TT 62
+#define TB 23
+#define TL 21
 
 /*************** MAIN ***************/
 /* Local Definitions */
@@ -257,6 +263,22 @@ typedef struct
 	uint8_t actual_page;
 } et_data_t;
 
+/**********  TFT - TOUCH  ***********/
+typedef struct
+{
+	int16_t v1;
+	int16_t v2;
+	int16_t v3;
+	int16_t v4;
+	int16_t v5;
+	int16_t v21;
+	int16_t v32;
+	int16_t v43;
+	int16_t v54;
+	int16_t vprom;
+	int16_t vtotal;
+} filter_t;
+
 /*************** MAIN ***************/
 typedef enum
 {
@@ -299,10 +321,14 @@ void adc_reload_callback(void);
 static void init_sdram(void);
 static void init_fs(void);
 static void rep_menu(bool);
-static void menu_gui(bool, bool);
+static void menu_gui(bool, bool, bool);
 static void volumen_gui(bool);
 static unsigned long a2ul(const char*);
 static uint8_t x2u8(const char*);
+
+/**********  TFT - TOUCH  ***********/
+static void get_XY(void);
+static int32_t moving_filter(filter_t* x, filter_t* y);
 
 /*-----------------------------------------------------------*/
 /*						  DECLARATIONS						 */
@@ -331,10 +357,15 @@ unsigned long sdram_size = 0;	// Number of words
 static et_data_t et_data;
 static reproduce_menu_t reproduce_option;
 
+/**********  TFT - TOUCH  ***********/
+int32_t x_touch;
+int32_t y_touch;
+
 /***************   MAIN   ***************/
 // Module's memory address
-volatile avr32_tc_t *tc = &AVR32_TC;
-volatile avr32_pm_t *pm = &AVR32_PM;
+volatile avr32_tc_t *tc   = &AVR32_TC;
+volatile avr32_pm_t *pm	  = &AVR32_PM;
+volatile avr32_adc_t *adc = &AVR32_ADC;
 
 intc_qt_flags_t intc_qt;
 intc_tc_flags_t intc_tc;
@@ -646,6 +677,7 @@ portTASK_FUNCTION( fsTask, p )
 	xTaskCreate(qtButtonTask,  "tQT",        256,  (void *) 0, mainCOM_TEST_PRIORITY, &qtHandle);
 	xTaskCreate(playAudioTask, "tPlayAudio", 2048, (void *) 0, mainLED_TASK_PRIORITY, &audioHandle);
 	xTaskCreate(etTask,		   "tET",		 512,  (void *) 0, mainLED_TASK_PRIORITY, &etHandle);
+	xTaskCreate(tftTask,	   "tTFT",		 256,  (void *) 0, mainCOM_TEST_PRIORITY, &tftHandle);
 	
 	vTaskDelete(sdramHandle);
 	vTaskDelete(NULL);
@@ -691,10 +723,12 @@ portTASK_FUNCTION( qtButtonTask, p )
 	gpio_set_gpio_pin(LED3_GPIO);
 
 	static uint16_t samplesToMove;
-	static uint8_t lrValue  = 0;
-	static uint8_t udValue  = 0;
-	static int8_t volume_ud = 0;
-	static bool    init_gui = false;
+	static uint8_t lrValue    = 0;
+	static uint8_t udValue    = 0;
+	static int8_t  volume_ud  = 0;
+	static bool    init_gui   = false;
+	static uint8_t tft_square = 0;
+	static bool	   tft_touch  = false;
 	
 	forwardQueue  = xQueueCreate( 1 , sizeof(uint16_t));
 	reverseQueue  = xQueueCreate( 1 , sizeof(uint16_t));
@@ -702,10 +736,21 @@ portTASK_FUNCTION( qtButtonTask, p )
 	lrQueue       = xQueueCreate( 1 , sizeof(uint8_t));
 	initBoolQueue = xQueueCreate( 1 , sizeof(bool));
 	volumeUdQueue = xQueueCreate( 1 , sizeof(int8_t));
+	etToggleQueue = xQueueCreate( 1 , sizeof(bool));
 
 	while (1)
 	{
 		vTaskSuspend(NULL); // Suspend itself at start, remain there and wait for an external event to resume it.
+		
+		if (tftQueue != 0)
+		{
+			if (xQueueReceive( tftQueue, &tft_square, (TickType_t) 2 ))
+			{
+				tft_touch = true;
+				lrValue = (tft_square % 2 == 0) ? 0 : 1;
+				udValue = (tft_square > 1) ? 1 : 0;
+			}
+		}
 		
 		switch(state)
 		{
@@ -781,8 +826,17 @@ portTASK_FUNCTION( qtButtonTask, p )
 					xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
 					init_gui = false;
 					// Resume etTask
+					vTaskSuspend( tftHandle );
 					vTaskResume(etHandle);
 					//xTaskNotifyGive(audioHandle);
+				}
+				else if (tft_touch)
+				{
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
+					xQueueSend( etToggleQueue, &tft_touch, (TickType_t) 0);
+					tft_touch = false;
+					vTaskResume(etHandle);
 				}
 				
 			case REPRODUCIR:
@@ -829,6 +883,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 							xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
 							init_gui = false;
 							vTaskResume(etHandle);
+							vTaskResume(tftHandle);
 							// Adjust volume to 0 or leave it as previous
 							break;
 							
@@ -1023,6 +1078,7 @@ portTASK_FUNCTION( etTask, p )
 	static portBASE_TYPE notif_chaneg_page = 0;
 	static bool change_page = false;
 	static bool init_gui = false;
+	static bool toggle = false;
 	
 	while (1)
 	{
@@ -1042,9 +1098,20 @@ portTASK_FUNCTION( etTask, p )
 				{
 					change_page = true;
 				}
-				menu_gui(init_gui, change_page);
+				if ( etToggleQueue != 0)
+				{
+					if (xQueueReceive( etToggleQueue, &toggle, (TickType_t) 1 ))
+					{
+					}
+				}
+				menu_gui(init_gui, change_page, toggle);
 				init_gui    = false;
 				change_page = false;
+				if (toggle)
+				{
+					toggle = false;
+					vTaskResume( tftHandle );
+				}
 				break;
 				
 			case REPRODUCIR:
@@ -1060,7 +1127,85 @@ portTASK_FUNCTION( etTask, p )
 				init_gui = false;
 				break;
 		}
+		
 		vTaskSuspend(NULL);
+	}
+}
+
+// tftHandle
+portTASK_FUNCTION( tftTask,	p )
+{
+	static filter_t x;
+	static filter_t y;
+	static int32_t  xytotal;
+	static uint8_t square;
+	static bool	   pressed;
+	
+	memset(&x, 0, sizeof(x));
+	memset(&y, 0, sizeof(y));
+	
+	//print_dbg("\r\n TFT TASK\r\n");
+	
+	tftQueue = xQueueCreate( 1 , sizeof(uint8_t));
+	
+	while(1)
+	{
+		switch(state)
+		{
+			case MAIN:
+				get_XY();
+				xytotal = moving_filter(&x, &y);
+				//print_dbg("DETECTADO, COORDS:");
+				//print_dbg("\r\n");
+				//print_dbg_ulong(x.vtotal);
+				//print_dbg("\r\n");
+				//print_dbg_ulong(y.vtotal);
+				if(x.vtotal <= 10 && y.vtotal <= 10 && pressed != true)
+				{
+					pressed = true;
+					if (x_touch == 52 && y_touch == 40)
+					{
+						// Upper Left
+						square = 0;
+						xQueueSend( tftQueue, &square, (TickType_t) 0);
+						vTaskResume( qtHandle );
+						vTaskSuspend( NULL );
+					}
+					else if (x_touch == 257 && y_touch == 40)
+					{
+						// Upper right
+						square = 1;
+						xQueueSend( tftQueue, &square, (TickType_t) 0);
+						vTaskResume( qtHandle );
+						vTaskSuspend( NULL );
+					}
+					else if (x_touch == 52 && y_touch == 194)
+					{
+						// Lower Left
+						square = 2;
+						xQueueSend( tftQueue, &square, (TickType_t) 0);
+						vTaskResume( qtHandle );
+						vTaskSuspend( NULL );
+					}
+					else if (x_touch == 257 && y_touch == 194)
+					{
+						// Lower right
+						square = 3;
+						xQueueSend( tftQueue, &square, (TickType_t) 0);
+						vTaskResume( qtHandle );
+						vTaskSuspend( NULL );
+					}
+				}
+				else if (x.vtotal > 10 && y.vtotal > 10 && pressed == true)
+				{
+					pressed = false;
+				}
+				break;
+			default:
+				//vTaskSuspend( NULL );
+				break;	
+		}
+		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }
 
@@ -1120,6 +1265,103 @@ ISR_FREERTOS(RT_ISR_tc0_irq_448, 448, 1)
 
 	BaseType_t checkIfYieldRequired = xTaskResumeFromISR(myIntTaskHandleTC);
 	return (checkIfYieldRequired ? 1 : 0);
+}
+
+/**********  TFT - TOUCH  ***********/
+static void get_XY(void)
+{
+	/* X Coordinate */
+	gpio_enable_gpio_pin(TL);	// Reinitialize pins
+	gpio_enable_gpio_pin(TR);
+	gpio_set_gpio_pin(TT);		// Screen polarization
+	gpio_clr_gpio_pin(TB);
+	cpu_delay_ms( 1, PBA_HZ);
+	
+
+	adc_enable( adc , 0 );
+	cpu_delay_ms( 1, PBA_HZ );
+	adc_start( adc );
+	x_touch = adc_get_value( adc , 0 )*.4;	// Reading and linearization
+	adc_disable( adc, 0 );
+	cpu_delay_ms( 1, PBA_HZ );
+	
+	/* Y Coordinate */
+	gpio_enable_gpio_pin(TT);	// Reinitialize pins
+	gpio_enable_gpio_pin(TB);
+	gpio_set_gpio_pin(TL);		// Screen polarization
+	gpio_clr_gpio_pin(TR);
+	
+	adc_enable( adc, 2 );
+	cpu_delay_ms( 1, PBA_HZ );
+	adc_start(&AVR32_ADC);
+	y_touch = adc_get_value( adc, 2 )*.3;	// Reading and linearization
+	adc_disable( adc, 2 );
+	
+	// Offset elimination
+	y_touch = 270 - y_touch;
+	x_touch = x_touch - 50;
+}
+
+static int32_t moving_filter(filter_t* x, filter_t* y)
+{
+	y->v4  = y->v3;
+	y->v3  = y->v2;
+	y->v2  = y->v1;
+	y->v1 = y_touch;
+	
+	x->v4 = x->v3;
+	x->v3 = x->v2;
+	x->v2 = x->v1;
+	x->v1 = x_touch;
+	
+	/***** X ****/
+	if(x->v4 > x->v3){
+		x->v43 = x->v4 - x->v3;
+	}
+	else{
+		x->v43 = x->v3 - x->v4;
+	}
+	
+	if(x->v3 > x->v2){
+		x->v32 = x->v3 - x->v2;
+	}
+	else{
+		x->v32 = x->v2 - x->v3;
+	}
+	
+	if(x->v2 > x->v1){
+		x->v21 = x->v2 - x->v1;
+	}
+	else{
+		x->v21 = x->v1 - x->v2;
+	}
+
+	/***** X ****/
+	if(y->v4 - y->v3){
+		y->v43 = y->v4 - y->v3;
+	}
+	else{
+		y->v43 = y->v3 - y->v4;
+	}
+	if(y->v3 > y->v2){
+		y->v32 = y->v3 - y->v2;
+	}
+	else{
+		y->v32 = y->v2 - y->v3;
+	}
+	
+	if(y->v2 > y->v1){
+		y->v21 = y->v2 - y->v1;
+	}
+	else{
+		y->v21 = y->v1 - y->v2;
+	}
+	
+	y->vtotal = y->v43 + y->v32 + y->v21;
+	x->vtotal = x->v43 + x->v32 + x->v21;
+	
+	return (x->vtotal + y->vtotal);
+
 }
 
 /***************   MAIN   ***************/
@@ -1425,11 +1667,15 @@ static void rep_menu(bool init)
 
 }
 
-static void menu_gui(bool init, bool change_page)
+static void menu_gui(bool init, bool change_page, bool toggle)
 {
 	static bool first_time	  = true;
 	static bool change_dected = false;
+	static bool change_string = false;
 	static menu_keys_t keys;
+	
+	static uint16_t coords_x[2] = {0, 165};
+	static uint16_t coords_y[2] = {0, 125};
 	
 	if (lrQueue != 0)
 	{
@@ -1447,7 +1693,7 @@ static void menu_gui(bool init, bool change_page)
 		}
 	}
 	
-	if (first_time || init || change_page)
+	if (first_time || init || change_page || toggle)
 	{
 		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
 		et024006_DrawVertLine(160,0,120,WHITE);
@@ -1488,8 +1734,24 @@ static void menu_gui(bool init, bool change_page)
 			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
 		}
 		
+		uint8_t square = (keys.ud * 2) + keys.lr;
+		
+		if (toggle)
+		{
+			change_string = !change_string;
+		}
+		
+		if (change_string)
+		{
+			et024006_DrawFilledRect(coords_x[keys.lr], coords_y[keys.ud], 150, 110, BLACK);
+			et024006_PrintString(song_info[index_page + square].name, (const unsigned char*) &FONT8x8, coords_x[keys.lr]+20, coords_y[keys.ud]+10, WHITE, -1);
+			et024006_PrintString(song_info[index_page + square].artist, (const unsigned char*) &FONT8x8, coords_x[keys.lr]+20, coords_y[keys.ud]+25, WHITE, -1);
+			et024006_PrintString(song_info[index_page + square].album, (const unsigned char*) &FONT8x8, coords_x[keys.lr]+20, coords_y[keys.ud]+40, WHITE, -1);
+			et024006_PrintString(song_info[index_page + square].year, (const unsigned char*) &FONT8x8, coords_x[keys.lr]+20, coords_y[keys.ud]+55, WHITE, -1);
+		}
+		
 	}
-	if (first_time || change_dected || init)
+	if (first_time || change_dected || init || toggle)
 	{
 		first_time = false;
 		if (keys.ud == 0 && keys.lr == 0){
