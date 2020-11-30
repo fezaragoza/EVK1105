@@ -86,17 +86,9 @@ src\img\atrasarblanco.c
 
 src\img\atrasarverde.c
 
-src\img\disconnected.c
-
-src\img\Hookedonafeeling.c
-
 src\img\play.c
 
 src\img\playverde.c
-
-src\img\Thebends.c
-
-src\img\underthebridge.c
 
 src\lib\conf_gpio.c
 

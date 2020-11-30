@@ -180,7 +180,7 @@ QueueHandle_t sdramQueue;
 #define TPA6130_TWI_MASTER_SPEED  100000
 #define MAX_NUMBER_OF_SONGS		  10
 #define SIZE_OF_STRING			  20
-#define AUDIO					  0
+#define AUDIO					  1
 
 /*************  SDRAM  **************/
 #define LED_SDRAM_WRITE     LED0
@@ -228,8 +228,8 @@ typedef struct
 	uint8_t		 drive_number;
 	uint8_t		 number_of_files;
 	uint8_t		 number_of_audio_files;
-	FS_STRING	 name_of_files[25];							// Strings of each name inside SD card.
-	FS_STRING    name_of_audio_files[MAX_NUMBER_OF_SONGS];	// Strings of each name of the audio songs.
+	char		 name_of_files[25][30];							// Strings of each name inside SD card. 30 Size of buffer
+	char		 name_of_audio_files[MAX_NUMBER_OF_SONGS][30];	// Strings of each name of the audio songs. 30 Size of buffer
 	audio_data_t audio_data[MAX_NUMBER_OF_SONGS];			// Audio data with pointer reference per song.
 }sd_fat_data_t;
 
@@ -313,6 +313,7 @@ static int16_t     samples[SOUND_SAMPLES];
 static song_info_t song_info[MAX_NUMBER_OF_SONGS];
 static uint8_t     selected_song = 0;
 static int8_t	   volume = 0x00;
+static uint32_t	   sdram_song_ptr = 0;
 //static char song_data[10][5][20]; // Songs, parameters, data
 
 /***************    FAT   *****************/
@@ -692,6 +693,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 	static uint16_t samplesToMove;
 	static uint8_t lrValue  = 0;
 	static uint8_t udValue  = 0;
+	static int8_t volume_ud = 0;
 	static bool    init_gui = false;
 	
 	forwardQueue  = xQueueCreate( 1 , sizeof(uint16_t));
@@ -699,7 +701,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 	udQueue		  = xQueueCreate( 1 , sizeof(uint8_t));
 	lrQueue       = xQueueCreate( 1 , sizeof(uint8_t));
 	initBoolQueue = xQueueCreate( 1 , sizeof(bool));
-	volumeUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
+	volumeUdQueue = xQueueCreate( 1 , sizeof(int8_t));
 
 	while (1)
 	{
@@ -764,8 +766,11 @@ portTASK_FUNCTION( qtButtonTask, p )
 					// Change state
 					state = REPRODUCIR;
 					// Reproduce song
-					// Check first selected song
+					// Check first selected song and update pointer
 					selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
+					vTaskSuspend( audioHandle );
+					sdram_song_ptr = sd.audio_data[selected_song].init_ptr;
+					vTaskResume( audioHandle );
 					// Reset Values (Or set) Put into play
 					udValue = 2;
 					lrValue = 1;
@@ -841,6 +846,11 @@ portTASK_FUNCTION( qtButtonTask, p )
 							
 						case PLAY:
 							xTaskNotifyGive(audioHandle);
+							print_dbg("Playing song: ");
+							print_dbg(sd.name_of_audio_files[selected_song]);
+							print_dbg("Num: ");
+							print_dbg_ulong(selected_song);
+							print_dbg("\r\n");
 							break;
 							
 						case FORWARD:
@@ -878,8 +888,11 @@ portTASK_FUNCTION( qtButtonTask, p )
 					INTC_QT_FLAG._up = false;
 					if (lrValue == 1)
 					{
-						udValue = (udValue + 1 <= 6) ? udValue + 1 : udValue;
-						xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						//udValue = (udValue + 1 <= 6) ? udValue + 1 : udValue;
+						//xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						volume_ud = 1;
+						xQueueSend( volumeUdQueue, &volume_ud, (TickType_t) 0);
+						volume_ud = 0;
 						vTaskResume(etHandle);
 					}
 				}
@@ -887,8 +900,11 @@ portTASK_FUNCTION( qtButtonTask, p )
 					INTC_QT_FLAG._down = false;
 					if (lrValue == 1)
 					{
-						udValue = (udValue > 0) ? udValue - 1 : udValue;
-						xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						//udValue = (udValue > 0) ? udValue - 1 : udValue;
+						//xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						volume_ud = -1;
+						xQueueSend( volumeUdQueue, &volume_ud, (TickType_t) 0);
+						volume_ud = 0;
 						vTaskResume(etHandle);
 					}
 				}
@@ -918,7 +934,7 @@ portTASK_FUNCTION( playAudioTask, p )
 	volatile unsigned long *sdram = SDRAM;
 	print_dbg("Running audio...\r\n");
 	static uint32_t count = 0;
-	uint32_t i = sd.audio_data[selected_song].init_ptr;
+	//uint32_t i = sd.audio_data[selected_song].init_ptr;
 	static portBASE_TYPE notificationValue = 0;
 	static bool playAudio = false;
 	static bool notify	  = false;
@@ -948,7 +964,7 @@ portTASK_FUNCTION( playAudioTask, p )
 			{
 				if (xQueueReceive( forwardQueue, &samplesRx, (TickType_t) 2 ))
 				{
-					i = ( (i + samplesRx) <= sizeof(sound_table) ) ? (i + samplesRx) : i;
+					sdram_song_ptr = ( (sdram_song_ptr + samplesRx) <= sizeof(sd.audio_data[selected_song].end_ptr) ) ? (sdram_song_ptr + samplesRx) : sdram_song_ptr;
 				}
 			}
 
@@ -956,7 +972,7 @@ portTASK_FUNCTION( playAudioTask, p )
 			//{
 				//if (xQueueReceive( reverseQueue, &samplesRx, (TickType_t) 5 ))
 				//{
-					//i = (i > samplesRx) ? (i - samplesRx) : i;
+					//sdram_song_ptr = ((sd.audio_data[selected_song].end_ptr - sdram_song_ptr) > samplesRx) ? (sdram_song_ptr - samplesRx) : sdram_song_ptr;
 				//}
 			//}
 		}
@@ -968,26 +984,18 @@ portTASK_FUNCTION( playAudioTask, p )
 			// Store sample from the sound_table array
 			while(count < (SOUND_SAMPLES)){
 				memset(&data, 0, sizeof(data));
-				data.word = sdram[i];
+				data.word = sdram[sdram_song_ptr];
 				for (uint8_t j = 0; j < 4; j++)
 				{	
 					samples[count++] = ((uint8_t)data.byte[j]+0x80) << 8;
 					samples[count++] = ((uint8_t)data.byte[j]+0x80) << 8;
 				}
-				i++;
-				//if (i >= sizeof(letdownsong)) i = 0;
-				if (i >= (sd.audio_data[selected_song].end_ptr))
+				sdram_song_ptr++;
+				if (sdram_song_ptr >= (sd.audio_data[selected_song].end_ptr))
 				{
-					if (selected_song + 1 < sd.number_of_audio_files)
-					{
-						selected_song++;
-						i = sd.audio_data[selected_song].init_ptr;
-					}
-					else
-					{
-						notify = !notify;
-					}
-					
+					playAudio = false;
+					notify = !notify;
+					sdram_song_ptr = sd.audio_data[selected_song].init_ptr;
 				}
 			}
 
@@ -1559,6 +1567,8 @@ static void volumen_gui(bool init)
 	static bool change_dected = false;
 	static bool update_volume = false;
 	static menu_keys_t keys;
+	static int8_t valueUd = 0;
+	static uint8_t volume_val = 0;
 	
 	if (lrQueue != 0)///////////////
 	{
@@ -1573,6 +1583,13 @@ static void volumen_gui(bool init)
 		if (xQueueReceive( udQueue, &keys.ud, (TickType_t) 2 ))
 		{
 			change_dected = true;
+		}
+	}
+	
+	if (volumeUdQueue != 0)
+	{
+		if (xQueueReceive( volumeUdQueue, &valueUd, (TickType_t) 2 ))
+		{
 			update_volume = true;
 		}
 	}
@@ -1581,6 +1598,8 @@ static void volumen_gui(bool init)
 	{
 		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
 		et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
+		et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
+		et024006_DrawFilledRect(180, 220-(volume_val * 30), 30, (volume_val * 30), RED); // Update volume
 		et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, WHITE, -1);
 	}
 	
@@ -1590,20 +1609,29 @@ static void volumen_gui(bool init)
 		if (keys.lr == 0){
 			et024006_DrawFilledRect(178, 38, 34, 184, BLACK);
 			et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
-			et024006_DrawFilledRect(180, 220-(keys.ud * 30), 30, (keys.ud * 30), RED); // Update volume
+			et024006_DrawFilledRect(180, 220-(volume_val * 30), 30, (volume_val * 30), RED); // Update volume
 			et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, GREEN, -1);
 		}
 		else if (keys.lr == 1){
 			et024006_DrawFilledRect(178, 38, 34, 184, GREEN);
 			et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
-			et024006_DrawFilledRect(180, 220-(keys.ud * 30), 30, (keys.ud * 30), RED); // Update volume
+			et024006_DrawFilledRect(180, 220-(volume_val * 30), 30, (volume_val * 30), RED); // Update volume
 			et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, WHITE, -1);
 			if (update_volume)
 			{
-				volume = keys.ud * (0x15);
+				if ((valueUd > 0) && (volume_val < 6)) 
+				{
+					volume_val += valueUd;
+				}
+				else if ((valueUd < 0) && (volume_val > 0)) 
+				{
+					volume_val += valueUd;
+				}
+				volume = volume_val * (0x08);
 				et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
-				et024006_DrawFilledRect(180, 220-(keys.ud * 30), 30, (keys.ud * 30), RED); // Update volume
-				print_dbg_char_hex(volume);
+				et024006_DrawFilledRect(180, 220-(volume_val * 30), 30, (volume_val * 30), RED); // Update volume
+				//print_dbg_char_hex(volume);
+				tpa6130_set_volume(volume);
 			}
 		}
 		update_volume = false;
