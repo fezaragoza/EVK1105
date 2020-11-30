@@ -340,6 +340,7 @@ static song_info_t song_info[MAX_NUMBER_OF_SONGS];
 static uint8_t     selected_song = 0;
 static int8_t	   volume = 0x00;
 static uint32_t	   sdram_song_ptr = 0;
+static bool		   playAudio = false;
 //static char song_data[10][5][20]; // Songs, parameters, data
 
 /***************    FAT   *****************/
@@ -812,10 +813,14 @@ portTASK_FUNCTION( qtButtonTask, p )
 					state = REPRODUCIR;
 					// Reproduce song
 					// Check first selected song and update pointer
-					selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
-					vTaskSuspend( audioHandle );
-					sdram_song_ptr = sd.audio_data[selected_song].init_ptr;
-					vTaskResume( audioHandle );
+					//selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
+					if (selected_song != (et_data.actual_page * 4 + (2*udValue) + lrValue))
+					{
+						selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
+						vTaskSuspend( audioHandle );
+						sdram_song_ptr = sd.audio_data[selected_song].init_ptr;
+						vTaskResume( audioHandle );
+					}
 					// Reset Values (Or set) Put into play
 					udValue = 2;
 					lrValue = 1;
@@ -827,7 +832,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 					init_gui = false;
 					// Resume etTask
 					vTaskSuspend( tftHandle );
-					vTaskResume(etHandle);
+					vTaskResume( etHandle );
 					//xTaskNotifyGive(audioHandle);
 				}
 				else if (tft_touch)
@@ -901,11 +906,11 @@ portTASK_FUNCTION( qtButtonTask, p )
 							
 						case PLAY:
 							xTaskNotifyGive(audioHandle);
-							print_dbg("Playing song: ");
-							print_dbg(sd.name_of_audio_files[selected_song]);
-							print_dbg("Num: ");
-							print_dbg_ulong(selected_song);
-							print_dbg("\r\n");
+							//print_dbg("Playing song: ");
+							//print_dbg(sd.name_of_audio_files[selected_song]);
+							//print_dbg("Num: ");
+							//print_dbg_ulong(selected_song);
+							//print_dbg("\r\n");
 							break;
 							
 						case FORWARD:
@@ -991,7 +996,7 @@ portTASK_FUNCTION( playAudioTask, p )
 	static uint32_t count = 0;
 	//uint32_t i = sd.audio_data[selected_song].init_ptr;
 	static portBASE_TYPE notificationValue = 0;
-	static bool playAudio = false;
+	//static bool playAudio = false;
 	static bool notify	  = false;
 	static uint16_t samplesRx;
 	static sdram_udata_t data;
@@ -1160,7 +1165,7 @@ portTASK_FUNCTION( tftTask,	p )
 				//print_dbg_ulong(x.vtotal);
 				//print_dbg("\r\n");
 				//print_dbg_ulong(y.vtotal);
-				if(x.vtotal <= 10 && y.vtotal <= 10 && pressed != true)
+				if(x.vtotal <= 10 && y.vtotal <= 10 && pressed != true && playAudio == false) // Check playAudio to enable this and avoid weird sounds.
 				{
 					pressed = true;
 					if (x_touch == 52 && y_touch == 40)
@@ -1205,7 +1210,7 @@ portTASK_FUNCTION( tftTask,	p )
 				//vTaskSuspend( NULL );
 				break;	
 		}
-		vTaskDelay(pdMS_TO_TICKS(10));
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
