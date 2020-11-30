@@ -105,9 +105,9 @@
 #include "lib/conf_interrupt.h"
 #include "lib/conf_tc.h"
 #include "lib/conf_spi_sd.h"
-//#include "lib/sound.h"
+#include "lib/sound.h"
 #include "img/image.h"
-#include "lib/letdown.h"
+//#include "lib/letdown.h"
 
 /*-----------------------------------------------------------*/
 /*--------------------------FREERTOS-------------------------*/
@@ -160,10 +160,14 @@ TaskHandle_t sdramHandle	   = NULL;
 /* QueueHandles */
 QueueHandle_t forwardQueue;
 QueueHandle_t reverseQueue;
-QueueHandle_t repLrQueue;
-QueueHandle_t repUdQueue;
-QueueHandle_t mainLrQueue;
-QueueHandle_t mainUdQueue;
+QueueHandle_t lrQueue;
+QueueHandle_t udQueue;
+//QueueHandle_t repLrQueue;
+//QueueHandle_t repUdQueue;
+//QueueHandle_t mainLrQueue;
+//QueueHandle_t mainUdQueue;
+QueueHandle_t initBoolQueue;
+QueueHandle_t volumeUdQueue;
 QueueHandle_t sdramQueue;
 
 /*-----------------------------------------------------------*/
@@ -259,7 +263,7 @@ typedef enum
 	MAIN,
 	REPRODUCIR,
 	LYRICS,
-	EQ
+	VOLUME
 } state_t;
 
 typedef struct
@@ -267,6 +271,16 @@ typedef struct
 	uint8_t lr;
 	uint8_t ud;
 } menu_keys_t;
+
+typedef enum
+{
+	LYRICS_GUI,
+	MAIN_GUI,
+	VOLUME_GUI,
+	PLAY,
+	FORWARD,
+	REVERSE
+} reproduce_menu_t;
 
 typedef float float16_t;
 typedef double float32_t;
@@ -286,6 +300,7 @@ static void init_sdram(void);
 static void init_fs(void);
 static void rep_menu(bool);
 static void menu_gui(bool, bool);
+static void volumen_gui(bool);
 static unsigned long a2ul(const char*);
 static uint8_t x2u8(const char*);
 
@@ -295,8 +310,9 @@ static uint8_t x2u8(const char*);
 
 /***************   TPA    ***************/
 static int16_t     samples[SOUND_SAMPLES];
-static uint8_t     selected_song = 0;
 static song_info_t song_info[MAX_NUMBER_OF_SONGS];
+static uint8_t     selected_song = 0;
+static int8_t	   volume = 0x00;
 //static char song_data[10][5][20]; // Songs, parameters, data
 
 /***************    FAT   *****************/
@@ -312,6 +328,7 @@ unsigned long sdram_size = 0;	// Number of words
 
 /*************** ET-LCD ***************/
 static et_data_t et_data;
+static reproduce_menu_t reproduce_option;
 
 /***************   MAIN   ***************/
 // Module's memory address
@@ -658,13 +675,9 @@ portTASK_FUNCTION( sdramTask, p )
 				sdram[sdram_ptr++] = sample;
 				xTaskNotifyGive(fsHandle);
 				vTaskSuspend(NULL);
-				
 			}
 		}
-		
 	}
-
-	
 }
 
 // qtHandle
@@ -676,14 +689,16 @@ portTASK_FUNCTION( qtButtonTask, p )
 	gpio_set_gpio_pin(LED3_GPIO);
 
 	static uint16_t samplesToMove;
-	static uint8_t lrValue = 0;
-	static uint8_t udValue = 0;
-	forwardQueue = xQueueCreate( 1 , sizeof(uint16_t));
-	reverseQueue = xQueueCreate( 1 , sizeof(uint16_t));
-	repUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
-	repLrQueue = xQueueCreate( 1 , sizeof(uint8_t));
-	mainUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
-	mainLrQueue = xQueueCreate( 1 , sizeof(uint8_t));
+	static uint8_t lrValue  = 0;
+	static uint8_t udValue  = 0;
+	static bool    init_gui = false;
+	
+	forwardQueue  = xQueueCreate( 1 , sizeof(uint16_t));
+	reverseQueue  = xQueueCreate( 1 , sizeof(uint16_t));
+	udQueue		  = xQueueCreate( 1 , sizeof(uint8_t));
+	lrQueue       = xQueueCreate( 1 , sizeof(uint8_t));
+	initBoolQueue = xQueueCreate( 1 , sizeof(bool));
+	volumeUdQueue = xQueueCreate( 1 , sizeof(uint8_t));
 
 	while (1)
 	{
@@ -696,13 +711,13 @@ portTASK_FUNCTION( qtButtonTask, p )
 				if (INTC_QT_FLAG._left) {
 					INTC_QT_FLAG._left = false;
 					lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._right) {
 					INTC_QT_FLAG._right = false;
 					lrValue = (lrValue + 1 < 2) ? lrValue + 1 : lrValue;
-					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._up) {
@@ -721,7 +736,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 					{
 						udValue--;
 					}
-					xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._down) {
@@ -740,161 +755,161 @@ portTASK_FUNCTION( qtButtonTask, p )
 					{
 						udValue++;
 					}
-					xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._enter) {
 					INTC_QT_FLAG._enter = false;
-					xTaskNotifyGive(audioHandle);
+					// Change state
+					state = REPRODUCIR;
+					// Reproduce song
+					// Check first selected song
+					selected_song = et_data.actual_page * 4 + udValue + lrValue;
+					// Reset Values (Or set) Put into play
+					udValue = 2;
+					lrValue = 1;
+					init_gui = true;
+					// Send to queue those values
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
+					xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+					init_gui = false;
+					// Resume etTask
+					vTaskResume(etHandle);
+					//xTaskNotifyGive(audioHandle);
 				}
 				
 			case REPRODUCIR:
 				if (INTC_QT_FLAG._left) {
 					INTC_QT_FLAG._left = false;
 					lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._right) {
 					INTC_QT_FLAG._right = false;
-					lrValue = (lrValue + 1 < 2) ? lrValue + 1 : lrValue;
-					xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
+					lrValue = (lrValue + 1 < 3) ? lrValue + 1 : lrValue;
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._up) {
 					INTC_QT_FLAG._up = false;
 					udValue = (udValue > 0) ? udValue - 1 : udValue;
-					xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._down) {
 					INTC_QT_FLAG._down = false;
-					udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-					xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
+					udValue = (udValue + 1 < 3) ? udValue + 1 : udValue;
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
 					vTaskResume(etHandle);
 				}
 				else if (INTC_QT_FLAG._enter) {
 					INTC_QT_FLAG._enter = false;
-					//xTaskNotifyGive(audioHandle);
+					switch(reproduce_option)
+					{
+						case LYRICS_GUI:
+							break;
+							
+						default:
+						case MAIN_GUI:
+							state = MAIN;
+							udValue = 0;
+							lrValue = 0;
+							et_data.actual_page = 0;
+							init_gui = true;
+							xQueueSend( udQueue, &udValue, (TickType_t) 0);
+							xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+							xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+							init_gui = false;
+							vTaskResume(etHandle);
+							// Adjust volume to 0 or leave it as previous
+							break;
+							
+						case VOLUME_GUI:
+							state = VOLUME;
+							udValue = 0;
+							lrValue = 0;
+							init_gui = true;
+							xQueueSend( udQueue, &udValue, (TickType_t) 0);
+							xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+							xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+							init_gui = false;
+							vTaskResume(etHandle);
+							break;
+							
+						case PLAY:
+							xTaskNotifyGive(audioHandle);
+							break;
+							
+						case FORWARD:
+							samplesToMove = 4096;
+							xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+							// Adjust time with this
+							break;
+							
+						case REVERSE:
+							samplesToMove = 4096;
+							xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+							// Adjust time with this
+							break;
+					}
 				}
 				break;
 				
-				
 			case LYRICS:
 				break;
-			case EQ:
+				
+			case VOLUME:
+				if (INTC_QT_FLAG._left) {
+					INTC_QT_FLAG._left = false;
+					lrValue = (lrValue == 1) ? 0 : 1;
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._right) {
+					INTC_QT_FLAG._right = false;
+					lrValue = (lrValue == 0) ? 1 : 0;
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+					vTaskResume(etHandle);
+				}
+				else if (INTC_QT_FLAG._up) {
+					INTC_QT_FLAG._up = false;
+					if (lrValue == 1)
+					{
+						udValue = (udValue + 1 <= 6) ? udValue + 1 : udValue;
+						xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						vTaskResume(etHandle);
+					}
+				}
+				else if (INTC_QT_FLAG._down) {
+					INTC_QT_FLAG._down = false;
+					if (lrValue == 1)
+					{
+						udValue = (udValue > 0) ? udValue - 1 : udValue;
+						xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						vTaskResume(etHandle);
+					}
+				}
+				else if (INTC_QT_FLAG._enter) {
+					INTC_QT_FLAG._enter = false;
+					if (lrValue == 0)
+					{
+						state = REPRODUCIR;
+						udValue = 2;
+						lrValue = 1;
+						init_gui = true;
+						xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+						xQueueSend( udQueue, &udValue, (TickType_t) 0);
+						xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+						init_gui = false;
+						vTaskResume(etHandle);
+					}
+				}
 				break;
-		}
-		
-		
-		//if (INTC_QT_FLAG._left) {
-			//INTC_QT_FLAG._left = false;
-			////gpio_tgl_gpio_pin(LED0_GPIO);
-			//if (state == REPRODUCIR)
-			//{
-				//lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-				//xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-			//else if(state == MAIN)
-			//{
-				//lrValue = (lrValue > 0) ? lrValue - 1 : lrValue;
-				//xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-			//else
-			//{
-				//samplesToMove = 4096;
-				//xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
-			//}
-			//
-		//}
-		//else if (INTC_QT_FLAG._right) {
-			//INTC_QT_FLAG._right = false;
-			////gpio_tgl_gpio_pin(LED1_GPIO);
-			//if (state == REPRODUCIR)
-			//{
-				//lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
-				//xQueueSend( repLrQueue, &lrValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-			//else if(state == MAIN)
-			//{
-				//lrValue = (lrValue + 1 <= 2) ? lrValue + 1 : lrValue;
-				//xQueueSend( mainLrQueue, &lrValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-			//else
-			//{
-				//samplesToMove = 4096;
-				//xQueueSend( forwardQueue, &samplesToMove, (TickType_t) 0 );
-			//}
-		//}
-		//else if (INTC_QT_FLAG._up) {
-			//INTC_QT_FLAG._up = false;
-			////gpio_tgl_gpio_pin(LED2_GPIO);
-			//if (state == REPRODUCIR)
-			//{
-				//udValue = (udValue > 0) ? udValue - 1 : udValue;
-				//xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//
-			//}
-			//else if(state == MAIN)
-			//{
-				////udValue = (udValue > 0) ? udValue - 1 : udValue;
-				//if (udValue == 0)
-				//{
-					//if (et_data.actual_page > 0)
-					//{
-						//et_data.actual_page--;
-						//xTaskNotifyGive( etHandle );
-					//}
-				//}
-				//else
-				//{
-					//udValue--;
-				//}
-				//xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-		//}
-		//else if (INTC_QT_FLAG._down) {
-			//INTC_QT_FLAG._down = false;
-			////gpio_tgl_gpio_pin(LED3_GPIO);
-			//if (state == REPRODUCIR)
-			//{
-				//udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-				//xQueueSend( repUdQueue, &udValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-			//else if(state == MAIN)
-			//{
-				////udValue = (udValue + 1 <= 2) ? udValue + 1 : udValue;
-				//if (udValue == 1)
-				//{
-					//if (et_data.actual_page < et_data.pages_available)
-					//{
-						//et_data.actual_page++;
-						//xTaskNotifyGive( etHandle );
-					//}
-				//}
-				//else
-				//{
-					//udValue++;
-				//}
-				//xQueueSend( mainUdQueue, &udValue, (TickType_t) 0);
-				//vTaskResume(etHandle);
-			//}
-		//}
-		//else if (INTC_QT_FLAG._enter) {
-			//INTC_QT_FLAG._enter = false;
-			//xTaskNotifyGive(audioHandle);
-//
-		//}
-
-	}
-}
+		} // switch
+	} // while
+} // function
 
 // audioHandle
 portTASK_FUNCTION( playAudioTask, p )
@@ -909,7 +924,7 @@ portTASK_FUNCTION( playAudioTask, p )
 	static uint16_t samplesRx;
 	static sdram_udata_t data;
 	
-	tpa6130_set_volume(0x45); // 2F
+	tpa6130_set_volume(volume); // 2F
 
 	while(true)
 	{
@@ -932,7 +947,7 @@ portTASK_FUNCTION( playAudioTask, p )
 			{
 				if (xQueueReceive( forwardQueue, &samplesRx, (TickType_t) 2 ))
 				{
-					i = ( (i + samplesRx) <= sizeof(letdownsong) ) ? (i + samplesRx) : i;
+					i = ( (i + samplesRx) <= sizeof(sound_table) ) ? (i + samplesRx) : i;
 				}
 			}
 
@@ -998,9 +1013,17 @@ portTASK_FUNCTION( etTask, p )
 {
 	static portBASE_TYPE notif_chaneg_page = 0;
 	static bool change_page = false;
+	static bool init_gui = false;
 	
 	while (1)
 	{
+		if ( initBoolQueue != 0)
+		{
+			if (xQueueReceive( initBoolQueue, &init_gui, (TickType_t) 1 ))
+			{
+			}
+		}
+		
 		switch(state)
 		{
 			default:
@@ -1010,15 +1033,22 @@ portTASK_FUNCTION( etTask, p )
 				{
 					change_page = true;
 				}
-				menu_gui(false, change_page);
+				menu_gui(init_gui, change_page);
+				init_gui    = false;
 				change_page = false;
 				break;
+				
 			case REPRODUCIR:
-				rep_menu(false);
+				rep_menu(init_gui);
+				init_gui	= false;
 				break;
+				
 			case LYRICS:
 				break;
-			case EQ:
+				
+			case VOLUME:
+				volumen_gui(init_gui);
+				init_gui = false;
 				break;
 		}
 		vTaskSuspend(NULL);
@@ -1182,7 +1212,7 @@ static void init_twi_tpa(void)
 						| AUDIO_DAC_RELOAD_CB,
 						PBA_HZ); /**/
 
-	tpa6130_set_volume(0x00); // 2F
+	tpa6130_set_volume(volume); // 2F
 	tpa6130_get_volume();
 
 }
@@ -1288,36 +1318,36 @@ static void rep_menu(bool init)
 	static bool first_time = true;
 	static menu_keys_t keys;
 
-	if (repLrQueue != 0)
+	if (lrQueue != 0)
 	{
-		if (xQueueReceive( repLrQueue, &keys.lr, (TickType_t) 2 ))
+		if (xQueueReceive( lrQueue, &keys.lr, (TickType_t) 2 ))
 		{
-			print_dbg("Received for REP LR");
-			print_dbg_ulong(keys.lr);
+			//print_dbg("Received for REP LR");
+			//print_dbg_ulong(keys.lr);
 		}
 	}
 	
-	if (repUdQueue != 0)
+	if (udQueue != 0)
 	{
-		if (xQueueReceive( repUdQueue, &keys.ud, (TickType_t) 2 ))
+		if (xQueueReceive( udQueue, &keys.ud, (TickType_t) 2 ))
 		{
-			print_dbg("Received for REP UD");
-			print_dbg_ulong(keys.ud);
+			//print_dbg("Received for REP UD");
+			//print_dbg_ulong(keys.ud);
 		}
 	}
 
 	if (first_time || init)
 	{
 		first_time = false;
-		memset(&keys, 0, sizeof(keys));
+		//memset(&keys, 0, sizeof(keys));
 
 		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
-		et024006_PrintString("Lyrics",		 (const unsigned char *) &FONT8x16, 10, 10, WHITE, -1);
-		et024006_PrintString("Main",		 (const unsigned char *) &FONT8x16, 120, 10, WHITE, -1);
-		et024006_PrintString("Ecualizador", (const unsigned char *) &FONT8x16, 220, 10, WHITE, -1);
+		et024006_PrintString("Lyrics", (const unsigned char *) &FONT8x16, 10, 10, WHITE, -1);
+		et024006_PrintString("Main",   (const unsigned char *) &FONT8x16, 120, 10, WHITE, -1);
+		et024006_PrintString("Volume", (const unsigned char *) &FONT8x16, 220, 10, WHITE, -1);
 
-		et024006_PutPixmap(letdown, 70, 0, 0, 120, 70, 70, 70);
-		et024006_PrintString("Let Down", (const unsigned char *) &FONT8x16, 125, 160, WHITE, -1);
+		et024006_PutPixmap(song_image[1], 70, 0, 0, 120, 70, 70, 70);
+		et024006_PrintString("Let Down", (const unsigned char *) &FONT8x16, 125, 160, WHITE, -1); // Ajustar el nombre de la cancion dependiendo la cancion guardada.
 
 		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
 		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
@@ -1327,37 +1357,61 @@ static void rep_menu(bool init)
 	if (keys.ud == 0 && keys.lr == 0){
 		et024006_PrintString("Lyrics", (const unsigned char*) &FONT8x16, 10, 10, GREEN, -1);
 		et024006_PrintString("Main", (const unsigned char*) &FONT8x16, 120, 10, WHITE, -1);
-		et024006_PrintString("Ecualizador", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
+		et024006_PrintString("Volume", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
+		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
+		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
+		et024006_PutPixmap(adelantar, 50, 0, 0, 260, 190, 50, 50);
+		reproduce_option = LYRICS_GUI;
 	}
 	else if (keys.ud == 0 && keys.lr == 1){
 		et024006_PrintString("Lyrics", (const unsigned char*) &FONT8x16, 10, 10, WHITE, -1);
 		et024006_PrintString("Main", (const unsigned char*) &FONT8x16, 120, 10, GREEN, -1);
-		et024006_PrintString("Ecualizador", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
+		et024006_PrintString("Volume", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
+		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
+		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
+		et024006_PutPixmap(adelantar, 50, 0, 0, 260, 190, 50, 50);
+		reproduce_option = MAIN_GUI;
 	}
 	else if (keys.ud == 0 && keys.lr == 2){
 		et024006_PrintString("Lyrics", (const unsigned char*) &FONT8x16, 10, 10, WHITE, -1);
 		et024006_PrintString("Main", (const unsigned char*) &FONT8x16, 120, 10, WHITE, -1);
-		et024006_PrintString("Ecualizador", (const unsigned char*) &FONT8x16, 220, 10, GREEN, -1);
+		et024006_PrintString("Volume", (const unsigned char*) &FONT8x16, 220, 10, GREEN, -1);
+		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
+		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
+		et024006_PutPixmap(adelantar, 50, 0, 0, 260, 190, 50, 50);
+		reproduce_option = VOLUME_GUI;
 	}
-	else if (keys.ud == 2 && keys.lr == 0){
-		et024006_PutPixmap(letdown, 70, 0, 0, 120, 70, 70, 70);
-		et024006_PrintString("cancion2", (const unsigned char*) &FONT8x16, 120, 170, WHITE, -1);
-
+	//else if (keys.ud == 2 && keys.lr == 0){
+		//et024006_PutPixmap(song_image[3], 70, 0, 0, 120, 70, 70, 70);
+		//et024006_PrintString("cancion2", (const unsigned char*) &FONT8x16, 120, 170, WHITE, -1);
+//
+	//}
+	else if(keys.ud == 2 && keys.lr == 0){
+		et024006_PrintString("Lyrics", (const unsigned char*) &FONT8x16, 10, 10, WHITE, -1);
+		et024006_PrintString("Main", (const unsigned char*) &FONT8x16, 120, 10, WHITE, -1);
+		et024006_PrintString("Volume", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
+		et024006_PutPixmap(atrasarverde, 50, 0, 0, 10, 190, 50, 50);
+		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
+		et024006_PutPixmap(adelantar, 50, 0, 0, 260, 190, 50, 50);
+		reproduce_option = REVERSE;
 	}
 	else if (keys.ud == 2 && keys.lr == 1){
+		et024006_PrintString("Lyrics", (const unsigned char*) &FONT8x16, 10, 10, WHITE, -1);
+		et024006_PrintString("Main", (const unsigned char*) &FONT8x16, 120, 10, WHITE, -1);
+		et024006_PrintString("Volume", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
 		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
-		et024006_PutPixmap(playverde, 50, 0, 0, 140, 190, 50, 50);
+		et024006_PutPixmap(playverde, 50, 0, 0, 135, 190, 50, 50);
 		et024006_PutPixmap(adelantar, 50, 0, 0, 260, 190, 50, 50);
-	}
-	else if(keys.ud == 2 && keys.lr == 0){
-		et024006_PutPixmap(atrasarverde, 50, 0, 0, 10, 190, 50, 50);
-		et024006_PutPixmap(play, 50, 0, 0, 140, 190, 50, 50);
-		et024006_PutPixmap(adelantar, 50, 0, 0, 260, 190, 50, 50);
+		reproduce_option = PLAY;
 	}
 	else if (keys.ud == 2 && keys.lr == 2){
+		et024006_PrintString("Lyrics", (const unsigned char*) &FONT8x16, 10, 10, WHITE, -1);
+		et024006_PrintString("Main", (const unsigned char*) &FONT8x16, 120, 10, WHITE, -1);
+		et024006_PrintString("Volume", (const unsigned char*) &FONT8x16, 220, 10, WHITE, -1);
 		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
-		et024006_PutPixmap(play, 50, 0, 0, 140, 190, 50, 50);
+		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
 		et024006_PutPixmap(adelantarverde, 50, 0, 0, 260, 190, 50, 50);
+		reproduce_option = FORWARD;
 	}
 
 }
@@ -1368,17 +1422,17 @@ static void menu_gui(bool init, bool change_page)
 	static bool change_dected = false;
 	static menu_keys_t keys;
 	
-	if (mainLrQueue != 0)
+	if (lrQueue != 0)
 	{
-		if (xQueueReceive( mainLrQueue, &keys.lr, (TickType_t) 2 ))
+		if (xQueueReceive( lrQueue, &keys.lr, (TickType_t) 2 ))
 		{
 			change_dected = true;
 		}
 	}
 	
-	if (mainUdQueue != 0)
+	if (udQueue != 0)
 	{
-		if (xQueueReceive( mainUdQueue, &keys.ud, (TickType_t) 2 ))
+		if (xQueueReceive( udQueue, &keys.ud, (TickType_t) 2 ))
 		{
 			change_dected = true;
 		}
@@ -1398,31 +1452,31 @@ static void menu_gui(bool init, bool change_page)
 		uint8_t index_page = et_data.actual_page * 4;
 		if (et_data.actual_page == 0)
 		{
-			et024006_PutPixmap(letdown, 70, 0, 0, 30, 140, 70, 70);
+			et024006_PutPixmap(song_image[1], 70, 0, 0, 30, 140, 70, 70);
 			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
 			
-			et024006_PutPixmap(wearethechampions, 70, 0, 0, 30, 20, 70, 70);
+			et024006_PutPixmap(song_image[3], 70, 0, 0, 30, 20, 70, 70);
 			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
 			
-			et024006_PutPixmap(fercaspian, 70, 0, 0, 190, 20, 70, 70);
+			et024006_PutPixmap(song_image[0], 70, 0, 0, 190, 20, 70, 70);
 			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
 			
-			et024006_PutPixmap(takeonme, 70, 0, 0, 190, 140, 70, 70);
+			et024006_PutPixmap(song_image[2], 70, 0, 0, 190, 140, 70, 70);
 			et024006_PrintString(song_info[index_page + 3].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
 		}
 		
 		else if (et_data.actual_page == 1)
 		{
-			et024006_PutPixmap(wearethechampions, 70, 0, 0, 30, 140, 70, 70);
+			et024006_PutPixmap(song_image[3], 70, 0, 0, 30, 140, 70, 70);
 			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
 			
-			et024006_PutPixmap(letdown, 70, 0, 0, 30, 20, 70, 70);
+			et024006_PutPixmap(song_image[2], 70, 0, 0, 30, 20, 70, 70);
 			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
 			
-			et024006_PutPixmap(takeonme, 70, 0, 0, 190, 20, 70, 70);
+			et024006_PutPixmap(song_image[1], 70, 0, 0, 190, 20, 70, 70);
 			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
 			
-			et024006_PutPixmap(fercaspian, 70, 0, 0, 190, 140, 70, 70);
+			et024006_PutPixmap(song_image[0], 70, 0, 0, 190, 140, 70, 70);
 			et024006_PrintString(song_info[0].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
 			
 		}
@@ -1496,6 +1550,65 @@ static void menu_gui(bool init, bool change_page)
 			//et024006_PrintString("dur: 4:36", (const unsigned char*) &FONT8x8, 190, 220, BLACK, -1);
 			//}
 		}
+	}
+	
+	
+}
+
+static void volumen_gui(bool init)
+{
+	static bool first_time    = true;
+	static bool change_dected = false;
+	static bool update_volume = false;
+	static menu_keys_t keys;
+	
+	if (lrQueue != 0)///////////////
+	{
+		if (xQueueReceive( lrQueue, &keys.lr, (TickType_t) 2 ))
+		{
+			change_dected = true;
+		}
+	}
+	
+	if (udQueue != 0)
+	{
+		if (xQueueReceive( udQueue, &keys.ud, (TickType_t) 2 ))
+		{
+			change_dected = true;
+			update_volume = true;
+		}
+	}
+	
+	if (first_time || init)
+	{
+		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
+		et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
+		et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, WHITE, -1);
+	}
+	
+	if (first_time || change_dected || init)
+	{
+		first_time = false;
+		if (keys.lr == 0){
+			et024006_DrawFilledRect(178, 38, 34, 184, BLACK);
+			et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
+			et024006_DrawFilledRect(180, 220-(keys.ud * 30), 30, (keys.ud * 30), RED); // Update volume
+			et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, GREEN, -1);
+		}
+		else if (keys.lr == 1){
+			et024006_DrawFilledRect(178, 38, 34, 184, GREEN);
+			et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
+			et024006_DrawFilledRect(180, 220-(keys.ud * 30), 30, (keys.ud * 30), RED); // Update volume
+			et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, WHITE, -1);
+			if (update_volume)
+			{
+				volume = keys.ud * (0x15);
+				et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
+				et024006_DrawFilledRect(180, 220-(keys.ud * 30), 30, (keys.ud * 30), RED); // Update volume
+				print_dbg_char_hex(volume);
+			}
+		}
+		update_volume = false;
 	}
 	
 	

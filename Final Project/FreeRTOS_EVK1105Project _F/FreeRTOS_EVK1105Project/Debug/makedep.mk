@@ -86,17 +86,9 @@ src\img\atrasarblanco.c
 
 src\img\atrasarverde.c
 
-src\img\fercaspian.c
-
-src\img\letdown.c
-
 src\img\play.c
 
 src\img\playverde.c
-
-src\img\takeonme.c
-
-src\img\we_are_the_champions.c
 
 src\lib\conf_gpio.c
 
