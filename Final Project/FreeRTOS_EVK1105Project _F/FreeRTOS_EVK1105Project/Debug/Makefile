@@ -154,8 +154,12 @@ C_SRCS +=  \
 ../src/img/adelantarverde.c \
 ../src/img/atrasarblanco.c \
 ../src/img/atrasarverde.c \
+../src/img/disconnected.c \
+../src/img/Hookedonafeeling.c \
 ../src/img/play.c \
 ../src/img/playverde.c \
+../src/img/Thebends.c \
+../src/img/underthebridge.c \
 ../src/lib/conf_gpio.c \
 ../src/lib/conf_interrupt.c \
 ../src/lib/conf_qt.c \
@@ -224,8 +228,12 @@ src/img/adelantar.o \
 src/img/adelantarverde.o \
 src/img/atrasarblanco.o \
 src/img/atrasarverde.o \
+src/img/disconnected.o \
+src/img/Hookedonafeeling.o \
 src/img/play.o \
 src/img/playverde.o \
+src/img/Thebends.o \
+src/img/underthebridge.o \
 src/lib/conf_gpio.o \
 src/lib/conf_interrupt.o \
 src/lib/conf_qt.o \
@@ -286,8 +294,12 @@ src/img/adelantar.o \
 src/img/adelantarverde.o \
 src/img/atrasarblanco.o \
 src/img/atrasarverde.o \
+src/img/disconnected.o \
+src/img/Hookedonafeeling.o \
 src/img/play.o \
 src/img/playverde.o \
+src/img/Thebends.o \
+src/img/underthebridge.o \
 src/lib/conf_gpio.o \
 src/lib/conf_interrupt.o \
 src/lib/conf_qt.o \
@@ -348,8 +360,12 @@ src/img/adelantar.d \
 src/img/adelantarverde.d \
 src/img/atrasarblanco.d \
 src/img/atrasarverde.d \
+src/img/disconnected.d \
+src/img/Hookedonafeeling.d \
 src/img/play.d \
 src/img/playverde.d \
+src/img/Thebends.d \
+src/img/underthebridge.d \
 src/lib/conf_gpio.d \
 src/lib/conf_interrupt.d \
 src/lib/conf_qt.d \
@@ -410,8 +426,12 @@ src/img/adelantar.d \
 src/img/adelantarverde.d \
 src/img/atrasarblanco.d \
 src/img/atrasarverde.d \
+src/img/disconnected.d \
+src/img/Hookedonafeeling.d \
 src/img/play.d \
 src/img/playverde.d \
+src/img/Thebends.d \
+src/img/underthebridge.d \
 src/lib/conf_gpio.d \
 src/lib/conf_interrupt.d \
 src/lib/conf_qt.d \
@@ -731,6 +751,20 @@ src/img/atrasarverde.o: ../src/img/atrasarverde.c
 	@echo Finished building: $<
 	
 
+src/img/disconnected.o: ../src/img/disconnected.c
+	@echo Building file: $<
+	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105 -D__FREERTOS__ -DSD_MMC_SPI_ENABLE -DACCESS_MEM_TO_RAM_ENABLED -DFREERTOS_USED  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/thirdparty/freertos/demo/common/include" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example" -I"../src/ASF/avr32/drivers/gpio" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/tc" -I"../src/ASF/avr32/drivers/usart" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/portable/gcc/avr32_uc3" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/include" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/common/boards" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example/at32uc3a0512_evk1105" -I"../src" -I"../src/config" -I"../src/FreeRTOS/Source/include" -I"../src/FreeRTOS/Source/portable/GCC/AVR32_UC3" -I"../src/FreeRTOS/Source/portable/MemMang" -I"../src/FreeRTOS/Demo/Common/include" -I"../src/FreeRTOS/Demo/Common/Minimal" -I"../src/ASF/avr32/components/display/et024006dhu" -I"../src/ASF/avr32/components/memory/sdram" -I"../src/ASF/avr32/drivers/abdac" -I"../src/ASF/avr32/drivers/adc" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/avr32/drivers/ebi/smc" -I"../src/ASF/avr32/drivers/pdca" -I"../src/ASF/avr32/drivers/spi" -I"../src/ASF/avr32/drivers/ssc/i2s" -I"../src/ASF/avr32/drivers/twi" -I"../src/ASF/avr32/services/fs/fat" -I"../src/ASF/avr32/utils/debug" -I"../src/ASF/common/services/storage/ctrl_access" -I"../src/ASF/avr32/components/audio" -I"../src/ASF/avr32/components/audio/amp/tpa6130a2" -I"../src/ASF/avr32/drivers/ebi/sdramc" -I"../src/ASF/avr32/drivers/pwm" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay" -I"../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi" -I"../src/ASF/avr32/services/audio/wav"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/img/Hookedonafeeling.o: ../src/img/Hookedonafeeling.c
+	@echo Building file: $<
+	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105 -D__FREERTOS__ -DSD_MMC_SPI_ENABLE -DACCESS_MEM_TO_RAM_ENABLED -DFREERTOS_USED  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/thirdparty/freertos/demo/common/include" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example" -I"../src/ASF/avr32/drivers/gpio" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/tc" -I"../src/ASF/avr32/drivers/usart" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/portable/gcc/avr32_uc3" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/include" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/common/boards" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example/at32uc3a0512_evk1105" -I"../src" -I"../src/config" -I"../src/FreeRTOS/Source/include" -I"../src/FreeRTOS/Source/portable/GCC/AVR32_UC3" -I"../src/FreeRTOS/Source/portable/MemMang" -I"../src/FreeRTOS/Demo/Common/include" -I"../src/FreeRTOS/Demo/Common/Minimal" -I"../src/ASF/avr32/components/display/et024006dhu" -I"../src/ASF/avr32/components/memory/sdram" -I"../src/ASF/avr32/drivers/abdac" -I"../src/ASF/avr32/drivers/adc" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/avr32/drivers/ebi/smc" -I"../src/ASF/avr32/drivers/pdca" -I"../src/ASF/avr32/drivers/spi" -I"../src/ASF/avr32/drivers/ssc/i2s" -I"../src/ASF/avr32/drivers/twi" -I"../src/ASF/avr32/services/fs/fat" -I"../src/ASF/avr32/utils/debug" -I"../src/ASF/common/services/storage/ctrl_access" -I"../src/ASF/avr32/components/audio" -I"../src/ASF/avr32/components/audio/amp/tpa6130a2" -I"../src/ASF/avr32/drivers/ebi/sdramc" -I"../src/ASF/avr32/drivers/pwm" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay" -I"../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi" -I"../src/ASF/avr32/services/audio/wav"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 src/img/play.o: ../src/img/play.c
 	@echo Building file: $<
 	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
@@ -739,6 +773,20 @@ src/img/play.o: ../src/img/play.c
 	
 
 src/img/playverde.o: ../src/img/playverde.c
+	@echo Building file: $<
+	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105 -D__FREERTOS__ -DSD_MMC_SPI_ENABLE -DACCESS_MEM_TO_RAM_ENABLED -DFREERTOS_USED  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/thirdparty/freertos/demo/common/include" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example" -I"../src/ASF/avr32/drivers/gpio" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/tc" -I"../src/ASF/avr32/drivers/usart" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/portable/gcc/avr32_uc3" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/include" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/common/boards" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example/at32uc3a0512_evk1105" -I"../src" -I"../src/config" -I"../src/FreeRTOS/Source/include" -I"../src/FreeRTOS/Source/portable/GCC/AVR32_UC3" -I"../src/FreeRTOS/Source/portable/MemMang" -I"../src/FreeRTOS/Demo/Common/include" -I"../src/FreeRTOS/Demo/Common/Minimal" -I"../src/ASF/avr32/components/display/et024006dhu" -I"../src/ASF/avr32/components/memory/sdram" -I"../src/ASF/avr32/drivers/abdac" -I"../src/ASF/avr32/drivers/adc" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/avr32/drivers/ebi/smc" -I"../src/ASF/avr32/drivers/pdca" -I"../src/ASF/avr32/drivers/spi" -I"../src/ASF/avr32/drivers/ssc/i2s" -I"../src/ASF/avr32/drivers/twi" -I"../src/ASF/avr32/services/fs/fat" -I"../src/ASF/avr32/utils/debug" -I"../src/ASF/common/services/storage/ctrl_access" -I"../src/ASF/avr32/components/audio" -I"../src/ASF/avr32/components/audio/amp/tpa6130a2" -I"../src/ASF/avr32/drivers/ebi/sdramc" -I"../src/ASF/avr32/drivers/pwm" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay" -I"../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi" -I"../src/ASF/avr32/services/audio/wav"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/img/Thebends.o: ../src/img/Thebends.c
+	@echo Building file: $<
+	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105 -D__FREERTOS__ -DSD_MMC_SPI_ENABLE -DACCESS_MEM_TO_RAM_ENABLED -DFREERTOS_USED  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/thirdparty/freertos/demo/common/include" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example" -I"../src/ASF/avr32/drivers/gpio" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/tc" -I"../src/ASF/avr32/drivers/usart" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/portable/gcc/avr32_uc3" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/include" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/common/boards" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example/at32uc3a0512_evk1105" -I"../src" -I"../src/config" -I"../src/FreeRTOS/Source/include" -I"../src/FreeRTOS/Source/portable/GCC/AVR32_UC3" -I"../src/FreeRTOS/Source/portable/MemMang" -I"../src/FreeRTOS/Demo/Common/include" -I"../src/FreeRTOS/Demo/Common/Minimal" -I"../src/ASF/avr32/components/display/et024006dhu" -I"../src/ASF/avr32/components/memory/sdram" -I"../src/ASF/avr32/drivers/abdac" -I"../src/ASF/avr32/drivers/adc" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/avr32/drivers/ebi/smc" -I"../src/ASF/avr32/drivers/pdca" -I"../src/ASF/avr32/drivers/spi" -I"../src/ASF/avr32/drivers/ssc/i2s" -I"../src/ASF/avr32/drivers/twi" -I"../src/ASF/avr32/services/fs/fat" -I"../src/ASF/avr32/utils/debug" -I"../src/ASF/common/services/storage/ctrl_access" -I"../src/ASF/avr32/components/audio" -I"../src/ASF/avr32/components/audio/amp/tpa6130a2" -I"../src/ASF/avr32/drivers/ebi/sdramc" -I"../src/ASF/avr32/drivers/pwm" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay" -I"../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi" -I"../src/ASF/avr32/services/audio/wav"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/img/underthebridge.o: ../src/img/underthebridge.c
 	@echo Building file: $<
 	@echo Invoking: AVR32/GNU C Compiler : 4.4.7
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr32\avr32-gnu-toolchain\bin\avr32-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=EVK1105 -D__FREERTOS__ -DSD_MMC_SPI_ENABLE -DACCESS_MEM_TO_RAM_ENABLED -DFREERTOS_USED  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\UC3A_DFP\1.0.80\include\AT32UC3A0512" -I"../src/ASF/thirdparty/freertos/demo/common/include" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example" -I"../src/ASF/avr32/drivers/gpio" -I"../src/ASF/avr32/utils/preprocessor" -I"../src/ASF/avr32/utils" -I"../src/ASF/common/utils" -I"../src/ASF/avr32/drivers/intc" -I"../src/ASF/avr32/drivers/pm" -I"../src/ASF/avr32/drivers/flashc" -I"../src/ASF/avr32/drivers/tc" -I"../src/ASF/avr32/drivers/usart" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/portable/gcc/avr32_uc3" -I"../src/ASF/thirdparty/freertos/freertos-7.0.0/source/include" -I"../src/ASF/avr32/boards/evk1105" -I"../src/ASF/avr32/boards" -I"../src/ASF/common/boards" -I"../src/ASF/thirdparty/freertos/demo/avr32_uc3_example/at32uc3a0512_evk1105" -I"../src" -I"../src/config" -I"../src/FreeRTOS/Source/include" -I"../src/FreeRTOS/Source/portable/GCC/AVR32_UC3" -I"../src/FreeRTOS/Source/portable/MemMang" -I"../src/FreeRTOS/Demo/Common/include" -I"../src/FreeRTOS/Demo/Common/Minimal" -I"../src/ASF/avr32/components/display/et024006dhu" -I"../src/ASF/avr32/components/memory/sdram" -I"../src/ASF/avr32/drivers/abdac" -I"../src/ASF/avr32/drivers/adc" -I"../src/ASF/avr32/drivers/cpu/cycle_counter" -I"../src/ASF/avr32/drivers/ebi/smc" -I"../src/ASF/avr32/drivers/pdca" -I"../src/ASF/avr32/drivers/spi" -I"../src/ASF/avr32/drivers/ssc/i2s" -I"../src/ASF/avr32/drivers/twi" -I"../src/ASF/avr32/services/fs/fat" -I"../src/ASF/avr32/utils/debug" -I"../src/ASF/common/services/storage/ctrl_access" -I"../src/ASF/avr32/components/audio" -I"../src/ASF/avr32/components/audio/amp/tpa6130a2" -I"../src/ASF/avr32/drivers/ebi/sdramc" -I"../src/ASF/avr32/drivers/pwm" -I"../src/ASF/common/services/clock" -I"../src/ASF/common/services/delay" -I"../src/ASF/avr32/components/memory/sd_mmc/sd_mmc_spi" -I"../src/ASF/avr32/services/audio/wav"  -O1 -fdata-sections -ffunction-sections -masm-addr-pseudos -g3 -Wall -mpart=uc3a0512 -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -mno-cond-exec-before-reload -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

@@ -450,11 +450,12 @@ portTASK_FUNCTION( fsTask, p )
 	{
 		print_dbg("Number of files coincide.\r\n");
 	}
+	print_dbg_ulong(sd.number_of_files / 2);
 	
 	/***	Retrieve Info data	****/
 	char info[20];
 	FS_STRING name;
-	nav_filelist_reset();
+	nav_filterlist_reset();
 	nav_filterlist_setfilter("txt");
 	nav_filterlist_root();
 	nav_filterlist_goto( 0 ); // System volume information
@@ -764,7 +765,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 					state = REPRODUCIR;
 					// Reproduce song
 					// Check first selected song
-					selected_song = et_data.actual_page * 4 + udValue + lrValue;
+					selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
 					// Reset Values (Or set) Put into play
 					udValue = 2;
 					lrValue = 1;
@@ -816,7 +817,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 							state = MAIN;
 							udValue = 0;
 							lrValue = 0;
-							et_data.actual_page = 0;
+							//et_data.actual_page = 0;
 							init_gui = true;
 							xQueueSend( udQueue, &udValue, (TickType_t) 0);
 							xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
@@ -1346,8 +1347,8 @@ static void rep_menu(bool init)
 		et024006_PrintString("Main",   (const unsigned char *) &FONT8x16, 120, 10, WHITE, -1);
 		et024006_PrintString("Volume", (const unsigned char *) &FONT8x16, 220, 10, WHITE, -1);
 
-		et024006_PutPixmap(song_image[1], 70, 0, 0, 120, 70, 70, 70);
-		et024006_PrintString("Let Down", (const unsigned char *) &FONT8x16, 125, 160, WHITE, -1); // Ajustar el nombre de la cancion dependiendo la cancion guardada.
+		et024006_PutPixmap(song_image[selected_song], 70, 0, 0, 120, 70, 70, 70);
+		et024006_PrintString(song_info[selected_song].name, (const unsigned char *) &FONT8x16, 110, 160, WHITE, -1); // Ajustar el nombre de la cancion dependiendo la cancion guardada.
 
 		et024006_PutPixmap(atrasarblanco, 50, 0, 0, 10, 190, 50, 50);
 		et024006_PutPixmap(play, 50, 0, 0, 135, 190, 50, 50);
@@ -1452,35 +1453,32 @@ static void menu_gui(bool init, bool change_page)
 		uint8_t index_page = et_data.actual_page * 4;
 		if (et_data.actual_page == 0)
 		{
-			et024006_PutPixmap(song_image[1], 70, 0, 0, 30, 140, 70, 70);
-			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
-			
-			et024006_PutPixmap(song_image[3], 70, 0, 0, 30, 20, 70, 70);
-			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
-			
-			et024006_PutPixmap(song_image[0], 70, 0, 0, 190, 20, 70, 70);
-			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
-			
-			et024006_PutPixmap(song_image[2], 70, 0, 0, 190, 140, 70, 70);
-			et024006_PrintString(song_info[index_page + 3].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
-		}
-		
-		else if (et_data.actual_page == 1)
-		{
-			et024006_PutPixmap(song_image[3], 70, 0, 0, 30, 140, 70, 70);
-			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 220, WHITE, -1);
-			
-			et024006_PutPixmap(song_image[2], 70, 0, 0, 30, 20, 70, 70);
-			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 30, 100, WHITE, -1);
+			et024006_PutPixmap(song_image[0], 70, 0, 0, 30, 20, 70, 70);
+			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 100, WHITE, -1);
 			
 			et024006_PutPixmap(song_image[1], 70, 0, 0, 190, 20, 70, 70);
-			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
+			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
 			
-			et024006_PutPixmap(song_image[0], 70, 0, 0, 190, 140, 70, 70);
-			et024006_PrintString(song_info[0].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
+			et024006_PutPixmap(song_image[2], 70, 0, 0, 30, 140, 70, 70);
+			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 30, 220, WHITE, -1);
 			
+			et024006_PutPixmap(song_image[3], 70, 0, 0, 190, 140, 70, 70);
+			et024006_PrintString(song_info[index_page + 3].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
 		}
-		
+		else if (et_data.actual_page == 1)
+		{
+			et024006_PutPixmap(song_image[4], 70, 0, 0, 30, 20, 70, 70);
+			et024006_PrintString(song_info[index_page].duration, (const unsigned char *) &FONT8x8, 30, 100, WHITE, -1);
+			
+			et024006_PutPixmap(song_image[5], 70, 0, 0, 190, 20, 70, 70);
+			et024006_PrintString(song_info[index_page + 1].duration, (const unsigned char*) &FONT8x8, 190, 100, WHITE, -1);
+			
+			et024006_PutPixmap(song_image[6], 70, 0, 0, 30, 140, 70, 70);
+			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 30, 220, WHITE, -1);
+			
+			et024006_PutPixmap(song_image[7], 70, 0, 0, 190, 140, 70, 70);
+			et024006_PrintString(song_info[index_page + 2].duration, (const unsigned char*) &FONT8x8, 190, 220, WHITE, -1);
+		}
 		
 	}
 	if (first_time || change_dected || init)

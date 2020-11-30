@@ -1021,6 +1021,12 @@
     <Compile Include="src\img\atrasarverde.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\img\disconnected.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\img\Hookedonafeeling.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\img\image.h">
       <SubType>compile</SubType>
     </Compile>
@@ -1028,6 +1034,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\img\playverde.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\img\Thebends.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\img\underthebridge.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\lib\conf_gpio.c">
