@@ -180,7 +180,7 @@ QueueHandle_t etToggleQueue;
 #define TPA6130_TWI_MASTER_SPEED  100000
 #define MAX_NUMBER_OF_SONGS		  10
 #define SIZE_OF_STRING			  20
-#define AUDIO					  1
+#define AUDIO					  0
 
 /*************  SDRAM  **************/
 #define LED_SDRAM_WRITE     LED0
@@ -238,6 +238,16 @@ typedef struct
 	char		 name_of_audio_files[MAX_NUMBER_OF_SONGS][30];	// Strings of each name of the audio songs. 30 Size of buffer
 	audio_data_t audio_data[MAX_NUMBER_OF_SONGS];			// Audio data with pointer reference per song.
 }sd_fat_data_t;
+
+typedef struct  
+{
+	char line1[40];
+	char line2[40];
+	char line3[40];
+	char line4[40];
+	char line5[40];
+	char line6[40];
+}lyrics_t;
 
 /************  SDRAM  *************/
 typedef struct
@@ -323,6 +333,7 @@ static void init_fs(void);
 static void rep_menu(bool);
 static void menu_gui(bool, bool, bool);
 static void volumen_gui(bool);
+static void lyrics_gui(bool init);
 static unsigned long a2ul(const char*);
 static uint8_t x2u8(const char*);
 
@@ -348,7 +359,7 @@ static char			 str_buff[MAX_FILE_PATH_LENGTH];
 static char			 filenames[4][MAX_FILE_PATH_LENGTH];
 static bool			 first_ls;
 static sd_fat_data_t sd;
-
+static lyrics_t	     song_lyrics[MAX_FILE_PATH_LENGTH];
 /***************  SDRAM  *****************/
 //volatile unsigned long *sdram = SDRAM;
 unsigned long sdram_ptr  = 0;	// Next location - word
@@ -487,45 +498,91 @@ portTASK_FUNCTION( fsTask, p )
 	
 	/***	Retrieve Info data	****/
 	char info[20];
+	char lyrics[40];
 	FS_STRING name;
 	nav_filterlist_reset();
 	nav_filterlist_setfilter("txt");
 	nav_filterlist_root();
 	nav_filterlist_goto( 0 ); // System volume information
-	for (size_t i = 0; i < (sd.number_of_files / 2); i++)
+	for (size_t i = 0; i < 2*(sd.number_of_files / 3); i++)
 	{
-		nav_filterlist_next();
-		nav_file_getname(name, 30);
-		print_dbg(name);
-		print_dbg("\r\n");
-		
-		//file_open(FOPEN_MODE_R);
-		reader_txt_open( true );
-		
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].name, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].artist, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].album, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].year, info);
-		reader_txt_get_line(false, info, 20);
-		strcpy(song_info[i].duration, info);
+		if (i < (sd.number_of_files / 3))
+		{
+			nav_filterlist_next();
+			nav_file_getname(name, 30);
+			print_dbg(name);
+			print_dbg("\r\n");
+			
+			//file_open(FOPEN_MODE_R);
+			reader_txt_open( true );
+			
+			reader_txt_get_line(false, info, 20);
+			strcpy(song_info[i].name, info);
+			reader_txt_get_line(false, info, 20);
+			strcpy(song_info[i].artist, info);
+			reader_txt_get_line(false, info, 20);
+			strcpy(song_info[i].album, info);
+			reader_txt_get_line(false, info, 20);
+			strcpy(song_info[i].year, info);
+			reader_txt_get_line(false, info, 20);
+			strcpy(song_info[i].duration, info);
 
-		// Close the file.
-		reader_txt_close();
-		
-		print_dbg(song_info[i].name);
-		print_dbg(song_info[i].artist);
-		print_dbg(song_info[i].album);
-		print_dbg(song_info[i].year);
-		print_dbg(song_info[i].duration);
-		
-		print_dbg("\r\n");
-
-		
-		//vTaskDelay(pdMS_TO_TICKS(2000));
+			// Close the file.
+			reader_txt_close();
+			
+			print_dbg(song_info[i].name);
+			print_dbg(song_info[i].artist);
+			print_dbg(song_info[i].album);
+			print_dbg(song_info[i].year);
+			print_dbg(song_info[i].duration);
+			
+			print_dbg("\r\n");
+		}
+		else
+		{
+			uint8_t j = i - 8;
+			
+			nav_filterlist_next();
+			nav_file_getname(name, 30);
+			print_dbg(name);
+			print_dbg("\r\n");
+			
+			//file_open(FOPEN_MODE_R);
+			reader_txt_open( true );
+			
+			reader_txt_get_line(false, lyrics, 40);
+			strcpy(song_lyrics[j].line1, lyrics);
+			memset(lyrics, 0, 40*sizeof(char));
+			reader_txt_get_line(false, lyrics, 40);
+			strcpy(song_lyrics[j].line2, lyrics);
+			memset(lyrics, 0, 40*sizeof(char));
+			reader_txt_get_line(false, lyrics, 40);
+			strcpy(song_lyrics[j].line3, lyrics);
+			memset(lyrics, 0, 40*sizeof(char));
+			reader_txt_get_line(false, lyrics, 40);
+			strcpy(song_lyrics[j].line4, lyrics);
+			memset(lyrics, 0, 40*sizeof(char));
+			reader_txt_get_line(false, lyrics, 40);
+			strcpy(song_lyrics[j].line5, lyrics);
+			memset(lyrics, 0, 40*sizeof(char));
+			reader_txt_get_line(false, lyrics, 40);
+			strcpy(song_lyrics[j].line6, lyrics);
+			memset(lyrics, 0, 40*sizeof(char));
+			
+			// Close the file.
+			reader_txt_close();
+			
+			print_dbg(song_lyrics[j].line1);
+			print_dbg(song_lyrics[j].line2);
+			print_dbg(song_lyrics[j].line3);
+			print_dbg(song_lyrics[j].line4);
+			print_dbg(song_lyrics[j].line5);
+			print_dbg(song_lyrics[j].line6);
+			
+			print_dbg("\r\n");
+			
+		}
+		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 	
 	/***	Retrieve Audio Info		****/
@@ -536,7 +593,7 @@ portTASK_FUNCTION( fsTask, p )
 	nav_filterlist_root();
 	nav_filterlist_goto( 0 ); // System volume information
 	//sd.number_of_audio_files = nav_filterlist_nb(FS_FILE, "h");
-	sd.number_of_audio_files = (sd.number_of_files / 2);
+	sd.number_of_audio_files = (sd.number_of_files / 3);
 	print_dbg_ulong(sd.number_of_audio_files);
 	et_data.pages_available = sd.number_of_audio_files / 4;
 	if (sd.number_of_files % 4 != 0)
@@ -813,7 +870,7 @@ portTASK_FUNCTION( qtButtonTask, p )
 					state = REPRODUCIR;
 					// Reproduce song
 					// Check first selected song and update pointer
-					//selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
+					// selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
 					if (selected_song != (et_data.actual_page * 4 + (2*udValue) + lrValue))
 					{
 						selected_song = et_data.actual_page * 4 + (2*udValue) + lrValue;
@@ -874,6 +931,11 @@ portTASK_FUNCTION( qtButtonTask, p )
 					switch(reproduce_option)
 					{
 						case LYRICS_GUI:
+							state = LYRICS;
+							init_gui = true;
+							xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+							init_gui = false;
+							vTaskResume(etHandle);
 							break;
 							
 						default:
@@ -914,14 +976,33 @@ portTASK_FUNCTION( qtButtonTask, p )
 							break;
 							
 						case FORWARD:
-							samplesToMove = 4096;
-							xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+							//samplesToMove = 4096;
+							//xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+							
+							selected_song = (selected_song + 1 < 8) ? selected_song + 1 : selected_song;
+							vTaskSuspend( audioHandle );
+							sdram_song_ptr = sd.audio_data[selected_song].init_ptr;
+							vTaskResume( audioHandle );
+							init_gui = true;
+							xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+							init_gui = false;
+							vTaskResume(etHandle);
 							// Adjust time with this
 							break;
 							
 						case REVERSE:
-							samplesToMove = 4096;
-							xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+							//samplesToMove = 4096;
+							//xQueueSend( reverseQueue, &samplesToMove, (TickType_t) 0 );
+							
+							selected_song = (selected_song - 1 >= 0) ? selected_song - 1 : selected_song;
+							vTaskSuspend( audioHandle );
+							sdram_song_ptr = sd.audio_data[selected_song].init_ptr;
+							vTaskResume( audioHandle );
+							init_gui = true;
+							xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+							init_gui = false;
+							vTaskResume( etHandle );
+							
 							// Adjust time with this
 							break;
 					}
@@ -929,6 +1010,18 @@ portTASK_FUNCTION( qtButtonTask, p )
 				break;
 				
 			case LYRICS:
+				if (INTC_QT_FLAG._enter) {
+					INTC_QT_FLAG._enter = false;
+					state = REPRODUCIR;
+					udValue = 0;
+					lrValue = 0;
+					init_gui = true;
+					xQueueSend( lrQueue, &lrValue, (TickType_t) 0);
+					xQueueSend( udQueue, &udValue, (TickType_t) 0);
+					xQueueSend( initBoolQueue, &init_gui, (TickType_t) 0);
+					init_gui = false;
+					vTaskResume(etHandle);
+				}
 				break;
 				
 			case VOLUME:
@@ -1125,6 +1218,8 @@ portTASK_FUNCTION( etTask, p )
 				break;
 				
 			case LYRICS:
+				lyrics_gui(init_gui);
+				init_gui = false;
 				break;
 				
 			case VOLUME:
@@ -1526,6 +1621,9 @@ static void init_tft_bl(void)
 		pwm_async_update_channel(AVR32_PWM_ENA_CHID6, &pwm_channel6);
 		delay_ms(10);
 	}
+	
+	et024006_PrintString("BIENVENIDO AL REPRODUCTOR", (const unsigned char *) &FONT8x16, 70, 110, WHITE, -1);
+	et024006_PrintString("CARGANDO...", (const unsigned char *) &FONT8x16, 90, 140, WHITE, -1);
 }
 
 static void init_fs(void)
@@ -1865,7 +1963,6 @@ static void volumen_gui(bool init)
 	{
 		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
 		et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
-		et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
 		et024006_DrawFilledRect(180, 220-(volume_val * 30), 30, (volume_val * 30), RED); // Update volume
 		et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 30, 115, WHITE, -1);
 	}
@@ -1894,7 +1991,7 @@ static void volumen_gui(bool init)
 				{
 					volume_val += valueUd;
 				}
-				volume = volume_val * (0x08);
+				volume = volume_val * (0x0A);
 				et024006_DrawFilledRect(180, 40, 30, 180, WHITE);
 				et024006_DrawFilledRect(180, 220-(volume_val * 30), 30, (volume_val * 30), RED); // Update volume
 				//print_dbg_char_hex(volume);
@@ -1904,6 +2001,29 @@ static void volumen_gui(bool init)
 		update_volume = false;
 	}
 	
+	
+}
+
+static void lyrics_gui(bool init)
+{
+	static bool first_time    = true;
+	static bool change_dected = false;
+	static bool update_volume = false;
+	static menu_keys_t keys;
+	static int8_t valueUd = 0;
+	
+	if (first_time || init)
+	{
+		et024006_DrawFilledRect(0, 0, 320, 240, BLACK);
+		et024006_PrintString("Regresar", (const unsigned char *) &FONT8x16, 130, 10, GREEN, -1);
+		
+		et024006_PrintString(song_lyrics[selected_song].line1, (const unsigned char *) &FONT8x8, 20, 40, WHITE, -1);
+		et024006_PrintString(song_lyrics[selected_song].line2, (const unsigned char *) &FONT8x8, 20, 70, WHITE, -1);
+		et024006_PrintString(song_lyrics[selected_song].line3, (const unsigned char *) &FONT8x8, 20, 100, WHITE, -1);
+		et024006_PrintString(song_lyrics[selected_song].line4, (const unsigned char *) &FONT8x8, 20, 130, WHITE, -1);
+		et024006_PrintString(song_lyrics[selected_song].line5, (const unsigned char *) &FONT8x8, 20, 160, WHITE, -1);
+		et024006_PrintString(song_lyrics[selected_song].line6, (const unsigned char *) &FONT8x8, 20, 190, WHITE, -1);
+	}
 	
 }
 
